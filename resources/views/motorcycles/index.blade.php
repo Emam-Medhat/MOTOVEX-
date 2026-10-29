@@ -820,13 +820,20 @@
 
                                     <div class="mvx-card-actions">
                                         @if($orderable)
-                                            <form method="POST" action="{{ route('cart.add', $moto) }}"
-                                                  class="mvx-order-form" data-mvx-guard>
-                                                @csrf
-                                                <button type="submit" class="mvx-btn mvx-btn-ghost mvx-btn-block">
-                                                    <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Order
-                                                </button>
-                                            </form>
+                                            <button type="button"
+                                                    class="mvx-btn mvx-btn-ghost mvx-btn-block mvx-order-trigger"
+                                                    data-id="{{ $moto->id }}"
+                                                    data-slug="{{ $moto->slug }}"
+                                                    data-name="{{ $moto->model_name }}"
+                                                    data-brand="{{ $brandName }}"
+                                                    data-price="{{ $moto->price ? ($moto->currency ?: 'USD') . ' ' . number_format($moto->price) : 'Price on request' }}"
+                                                    data-img="{{ $moto->image_url ?: '' }}"
+                                                    data-cc="{{ $moto->engine_capacity ? number_format($moto->engine_capacity).' cc' : '' }}"
+                                                    data-hp="{{ $moto->horsepower ? $moto->horsepower.' hp' : '' }}"
+                                                    data-year="{{ $moto->year ?? '' }}"
+                                                    data-cart="{{ route('cart.add', $moto) }}">
+                                                <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i> Order
+                                            </button>
                                         @endif
                                         <a href="{{ $productUrl }}" class="mvx-btn mvx-btn-primary mvx-btn-block">
                                             View Details
@@ -899,13 +906,20 @@
                                 </div>
                                 <div class="mvx-card-actions">
                                     @if($orderable)
-                                        <form method="POST" action="{{ route('cart.add', $moto) }}"
-                                              class="mvx-order-form" data-mvx-guard>
-                                            @csrf
-                                            <button type="submit" class="mvx-btn mvx-btn-ghost mvx-btn-block">
-                                                <i class="fa-solid fa-cart-plus" aria-hidden="true"></i> Order
-                                            </button>
-                                        </form>
+                                        <button type="button"
+                                                class="mvx-btn mvx-btn-ghost mvx-btn-block mvx-order-trigger"
+                                                data-id="{{ $moto->id }}"
+                                                data-slug="{{ $moto->slug }}"
+                                                data-name="{{ $moto->model_name }}"
+                                                data-brand="{{ $brandName }}"
+                                                data-price="{{ $moto->price ? ($moto->currency ?: 'USD') . ' ' . number_format($moto->price) : 'Price on request' }}"
+                                                data-img="{{ $moto->image_url ?: '' }}"
+                                                data-cc="{{ $moto->engine_capacity ? number_format($moto->engine_capacity).' cc' : '' }}"
+                                                data-hp="{{ $moto->horsepower ? $moto->horsepower.' hp' : '' }}"
+                                                data-year="{{ $moto->year ?? '' }}"
+                                                data-cart="{{ route('cart.add', $moto) }}">
+                                            <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i> Order
+                                        </button>
                                     @endif
                                     <a href="{{ $productUrl }}" class="mvx-btn mvx-btn-primary mvx-btn-block">
                                         View Details
@@ -949,6 +963,120 @@
 @include('partials.footer')
 
 <div id="mvxToast" class="mvx-toast" role="status" aria-live="polite"></div>
+
+{{-- ══════════════════════════════════════════════
+     ORDER REVIEW MODAL
+     Opens when clicking "Order" on any card.
+     Shows motorcycle details, confirms add-to-cart.
+══════════════════════════════════════════════ --}}
+<div id="mvxOrderModal"
+     class="fixed inset-0 z-50 hidden items-center justify-center p-4"
+     role="dialog" aria-modal="true" aria-labelledby="mvxModalTitle"
+     style="background:rgba(15,23,42,.65);backdrop-filter:blur(6px);">
+
+    {{-- Backdrop --}}
+    <div id="mvxModalBackdrop" class="absolute inset-0"></div>
+
+    {{-- Panel --}}
+    <div class="relative z-10 w-full max-w-lg rounded-2xl bg-white shadow-2xl overflow-hidden"
+         style="border:1px solid #e2e8f0;">
+
+        {{-- Header --}}
+        <div class="flex items-center justify-between gap-3 border-b border-slate-100 px-6 py-4">
+            <div class="flex items-center gap-3">
+                <div class="flex h-9 w-9 items-center justify-center rounded-xl"
+                     style="background:#f3e8ff;color:#7c3aed;">
+                    <i class="fa-solid fa-cart-shopping text-sm"></i>
+                </div>
+                <div>
+                    <h2 id="mvxModalTitle" class="text-sm font-extrabold text-slate-900">Review Your Motorcycle</h2>
+                    <p class="text-[10px] text-slate-500">Please review your selection before continuing.</p>
+                </div>
+            </div>
+            <button id="mvxModalClose" type="button" aria-label="Close"
+                    class="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        {{-- Body --}}
+        <div class="p-6">
+            <div class="flex gap-5">
+                {{-- Image --}}
+                <div id="mvxModalImg"
+                     class="w-36 h-28 flex-shrink-0 rounded-xl overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center">
+                    <i class="fa-solid fa-motorcycle text-3xl text-slate-300"></i>
+                </div>
+
+                {{-- Info --}}
+                <div class="flex-1 min-w-0">
+                    <p id="mvxModalBrand" class="text-[10px] font-bold uppercase tracking-widest text-purple-600 mb-1"></p>
+                    <h3 id="mvxModalName" class="text-xl font-extrabold text-slate-900 leading-tight mb-2"></h3>
+                    <div id="mvxModalSpecs" class="flex flex-wrap gap-1.5 mb-3"></div>
+                    {{-- In Stock badge --}}
+                    <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[10px] font-bold"
+                          style="background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;">
+                        <span style="width:5px;height:5px;border-radius:50%;background:#4ade80;display:inline-block;"></span>
+                        In Stock
+                    </span>
+                </div>
+            </div>
+
+            {{-- Price summary --}}
+            <div class="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <div class="flex items-center justify-between text-sm mb-2">
+                    <span class="text-slate-500 font-medium">Quantity</span>
+                    <div class="flex items-center gap-3">
+                        <button type="button" disabled
+                                class="h-7 w-7 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 text-xs cursor-not-allowed">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+                        <span class="font-bold text-slate-900 w-4 text-center">1</span>
+                        <button type="button" disabled
+                                class="h-7 w-7 rounded-lg border border-slate-200 flex items-center justify-center text-slate-400 text-xs cursor-not-allowed">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between text-sm mb-1">
+                    <span class="text-slate-500">Subtotal</span>
+                    <span id="mvxModalSubtotal" class="font-semibold text-slate-700"></span>
+                </div>
+                <div class="flex items-center justify-between border-t border-slate-200 pt-2 mt-2">
+                    <span class="font-bold text-slate-900">Total</span>
+                    <span id="mvxModalTotal" class="font-extrabold text-lg text-slate-900"></span>
+                </div>
+            </div>
+
+            {{-- Note --}}
+            <div class="mt-3 flex items-start gap-2 text-[10.5px] text-slate-500">
+                <i class="fa-solid fa-shield-halved text-purple-500 mt-0.5 flex-shrink-0"></i>
+                Your motorcycle will not be added to the cart until you confirm.
+            </div>
+        </div>
+
+        {{-- Footer --}}
+        <div class="border-t border-slate-100 px-6 py-4 flex flex-col gap-2.5">
+            {{-- Hidden form for actual cart submission --}}
+            <form id="mvxModalForm" method="POST" action="">
+                @csrf
+                <button type="submit" id="mvxModalConfirm"
+                        class="flex w-full items-center justify-center gap-2.5 rounded-xl py-3.5 text-sm font-bold text-white transition"
+                        style="background:linear-gradient(135deg,#7c3aed,#6d28d9);box-shadow:0 8px 24px -10px rgba(124,58,237,.5);">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    Confirm &amp; Add to Cart
+                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+            </form>
+            <button id="mvxModalCancel" type="button"
+                    class="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
+                <i class="fa-solid fa-arrow-left text-xs"></i>
+                Continue Shopping
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
     (function () {
         'use strict';
@@ -981,14 +1109,11 @@
 
         window.mvxSetView = function (mode) {
             if (!gridView || !listView) return;
-
             var isGrid = mode !== 'list';
             gridView.style.display = isGrid ? '' : 'none';
             listView.style.display = isGrid ? 'none' : 'flex';
-
             if (btnGrid) btnGrid.classList.toggle('is-active', isGrid);
             if (btnList) btnList.classList.toggle('is-active', !isGrid);
-
             try { localStorage.setItem('moto-view', isGrid ? 'grid' : 'list'); } catch (e) {}
         };
 
@@ -1005,7 +1130,6 @@
                 var isOpen = filterPanel.classList.toggle('is-open');
                 filterToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
             });
-
             window.addEventListener('resize', function () {
                 if (window.innerWidth >= 1024) {
                     filterPanel.classList.remove('is-open');
@@ -1014,20 +1138,8 @@
             });
         }
 
-        /* ---------- Prevent duplicate submissions ---------- */
-        document.querySelectorAll('form[data-mvx-guard]').forEach(function (form) {
-            form.addEventListener('submit', function () {
-                var submit = form.querySelector('button[type="submit"]');
-                if (submit) {
-                    submit.disabled = true;
-                    submit.setAttribute('aria-busy', 'true');
-                }
-            });
-        });
-
-        /* ---------- Scroll-reveal animations with stagger ---------- */
+        /* ---------- Scroll-reveal ---------- */
         var revealItems = document.querySelectorAll('[data-reveal]');
-
         if (revealItems.length > 0 && !prefersReduced && 'IntersectionObserver' in window) {
             function getGridColumns() {
                 var grid = document.getElementById('mvx-grid');
@@ -1036,7 +1148,6 @@
                 if (!cols || cols === 'none') return 3;
                 return cols.split(/\s+/).filter(Boolean).length || 3;
             }
-
             var observer = new IntersectionObserver(function (entries) {
                 var cols = getGridColumns();
                 entries.forEach(function (entry) {
@@ -1047,19 +1158,92 @@
                         observer.unobserve(entry.target);
                     }
                 });
-            }, {
-                threshold: 0.08,
-                rootMargin: '0px 0px -40px 0px'
-            });
-
+            }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
             revealItems.forEach(function (item) { observer.observe(item); });
         } else {
-            /* Fallback: just show everything immediately */
             revealItems.forEach(function (item) {
                 item.style.setProperty('--stagger', '0');
                 item.classList.add('is-visible');
             });
         }
+
+        /* ══════════════════════════════════════════
+           ORDER REVIEW MODAL
+        ══════════════════════════════════════════ */
+        var modal       = document.getElementById('mvxOrderModal');
+        var modalForm   = document.getElementById('mvxModalForm');
+        var modalImg    = document.getElementById('mvxModalImg');
+        var modalBrand  = document.getElementById('mvxModalBrand');
+        var modalName   = document.getElementById('mvxModalName');
+        var modalSpecs  = document.getElementById('mvxModalSpecs');
+        var modalSub    = document.getElementById('mvxModalSubtotal');
+        var modalTotal  = document.getElementById('mvxModalTotal');
+        var modalClose  = document.getElementById('mvxModalClose');
+        var modalCancel = document.getElementById('mvxModalCancel');
+        var modalBdrop  = document.getElementById('mvxModalBackdrop');
+        var modalConfirm = document.getElementById('mvxModalConfirm');
+
+        function openOrderModal(btn) {
+            var d = btn.dataset;
+
+            // Populate image
+            if (d.img) {
+                modalImg.innerHTML = '<img src="' + d.img + '" alt="' + d.name + '" style="width:100%;height:100%;object-fit:cover;">';
+            } else {
+                modalImg.innerHTML = '<i class="fa-solid fa-motorcycle text-3xl text-slate-300"></i>';
+            }
+
+            // Text content
+            modalBrand.textContent = d.brand;
+            modalName.textContent  = d.name;
+
+            // Specs chips
+            var specHtml = '';
+            [d.cc, d.hp, d.year].forEach(function(s) {
+                if (s) specHtml += '<span style="padding:.25rem .55rem;border-radius:7px;background:#f1f5f9;border:1px solid #e2e8f0;font-size:.7rem;font-weight:600;color:#475569;">' + s + '</span>';
+            });
+            modalSpecs.innerHTML = specHtml;
+
+            // Price
+            modalSub.textContent   = d.price;
+            modalTotal.textContent = d.price;
+
+            // Set form action
+            modalForm.action = d.cart;
+
+            // Show modal
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeOrderModal() {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+
+        // Open on Order button click
+        document.querySelectorAll('.mvx-order-trigger').forEach(function(btn) {
+            btn.addEventListener('click', function() { openOrderModal(btn); });
+        });
+
+        // Close handlers
+        if (modalClose)  modalClose.addEventListener('click', closeOrderModal);
+        if (modalCancel) modalCancel.addEventListener('click', closeOrderModal);
+        if (modalBdrop)  modalBdrop.addEventListener('click', closeOrderModal);
+        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeOrderModal(); });
+
+        // Prevent double-submission on confirm
+        if (modalForm) {
+            modalForm.addEventListener('submit', function() {
+                if (modalConfirm) {
+                    modalConfirm.disabled = true;
+                    modalConfirm.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Adding…';
+                }
+            });
+        }
+
     })();
 </script>
 </body>

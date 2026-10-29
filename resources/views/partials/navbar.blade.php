@@ -4,13 +4,6 @@
      Fully responsive: mobile → tablet → desktop → ultrawide.
      ===================================================================== --}}
 
-{{-- TOP ANNOUNCEMENT BAR --}}
-<div dir="ltr" class="w-full bg-slate-900 px-3 py-2 text-center text-[10px] font-semibold leading-tight text-white sm:text-xs">
-    <i class="fa-solid fa-motorcycle mr-1.5 text-brand-400"></i>
-    <span class="hidden sm:inline">2026 Models In Stock · Free Test Rides · Certified Inspections · Nationwide Delivery</span>
-    <span class="sm:hidden">Free Test Rides · Nationwide Delivery</span>
-</div>
-
 {{-- MAIN HEADER NAV --}}
 <header dir="ltr" class="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-xl shadow-sm">
     <div class="mx-auto flex h-16 w-full max-w-[1600px] items-center gap-3 px-4 sm:px-6 lg:px-8 xl:px-10">
@@ -53,9 +46,15 @@
             </a>
 
             @auth
-                <a href="{{ route('account.dashboard') }}" class="hidden items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 transition hover:border-brand-300 sm:inline-flex">
-                    <i class="fa-solid fa-user"></i> Account
-                </a>
+                @if(auth()->user()->isAdmin() || auth()->user()->isDataEntry() || auth()->user()->isSalesAgent())
+                    <a href="{{ route('admin.dashboard') }}" class="hidden items-center gap-2 rounded-full bg-brand-600 px-4 py-2 text-xs font-bold text-white shadow-sm shadow-brand-500/20 transition hover:bg-brand-700 sm:inline-flex">
+                        <i class="fa-solid fa-gauge-high"></i> Dashboard
+                    </a>
+                @else
+                    <a href="{{ route('account.dashboard') }}" class="hidden items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 transition hover:border-brand-300 hover:text-brand-600 sm:inline-flex">
+                        <i class="fa-solid fa-user"></i> Account
+                    </a>
+                @endif
             @else
                 <a href="{{ route('login') }}" class="hidden items-center gap-2 rounded-full bg-brand-600 px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-brand-500/20 transition hover:bg-brand-500 sm:inline-flex">
                     Sign In
@@ -95,9 +94,18 @@
                 <i class="fa-solid fa-cart-shopping w-5 text-center"></i> Cart
             </a>
             @auth
-                <a href="{{ route('account.dashboard') }}" class="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">
-                    <i class="fa-solid fa-user w-5 text-center"></i> My Account
-                </a>
+                @if(auth()->user()->isAdmin() || auth()->user()->isDataEntry() || auth()->user()->isSalesAgent())
+                    <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5 rounded-xl bg-brand-50 px-3 py-2.5 text-sm font-bold text-brand-700 transition hover:bg-brand-100">
+                        <i class="fa-solid fa-gauge-high w-5 text-center"></i> Dashboard
+                    </a>
+                    <a href="{{ route('account.dashboard') }}" class="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">
+                        <i class="fa-solid fa-user w-5 text-center"></i> My Account
+                    </a>
+                @else
+                    <a href="{{ route('account.dashboard') }}" class="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">
+                        <i class="fa-solid fa-user w-5 text-center"></i> My Account
+                    </a>
+                @endif
             @else
                 <a href="{{ route('login') }}" class="flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-brand-500">
                     <i class="fa-solid fa-right-to-bracket"></i> Sign In

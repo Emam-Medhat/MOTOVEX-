@@ -1,84 +1,521 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout | MOTOVEX</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Plus Jakarta Sans','sans-serif'] },
+          colors: {
+            brand: {
+              50:'#f5f3ff',100:'#ede9fe',200:'#ddd6fe',
+              300:'#c4b5fd',400:'#a78bfa',500:'#8b5cf6',
+              600:'#7c3aed',700:'#6d28d9',800:'#5b21b6',900:'#4c1d95'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: #f4f3ff;
+      color: #0f172a;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
 
-@section('title', 'Checkout | RIDEAXIS')
+    /* ── Animated gradient background ── */
+    .co-bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background: linear-gradient(135deg, #f0edff 0%, #faf9ff 35%, #ede9fe 65%, #f5f0ff 100%);
+      animation: bgShift 12s ease-in-out infinite alternate;
+    }
+    @keyframes bgShift {
+      0%   { background-position: 0% 50%; }
+      100% { background-position: 100% 50%; }
+    }
 
-@section('content')
-<div class="bg-white text-[#1e1f20]">
-    <div class="mx-auto max-w-7xl px-5 py-16 lg:px-8">
+    /* Floating orbs */
+    .orb {
+      position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
+      filter: blur(80px); opacity: .35;
+    }
+    .orb-1 { width: 500px; height: 500px; background: radial-gradient(circle, #a78bfa, transparent 70%); top: -120px; left: -100px; animation: float1 14s ease-in-out infinite; }
+    .orb-2 { width: 400px; height: 400px; background: radial-gradient(circle, #818cf8, transparent 70%); bottom: -80px; right: -80px; animation: float2 16s ease-in-out infinite; }
+    .orb-3 { width: 280px; height: 280px; background: radial-gradient(circle, #c4b5fd, transparent 70%); top: 40%; left: 55%; animation: float3 11s ease-in-out infinite; }
+    @keyframes float1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(40px,30px)} }
+    @keyframes float2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-30px,-40px)} }
+    @keyframes float3 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(20px,-25px)} }
 
-        <nav class="mb-8 text-xs text-gray-400">
-            <a href="{{ route('home') }}" class="hover:text-[#ff9aa9]">Home</a>
-            <span class="mx-2">/</span>
-            <a href="{{ route('cart.index') }}" class="hover:text-[#ff9aa9]">Cart</a>
-            <span class="mx-2">/</span>
-            <span class="text-[#1e1f20]">Checkout</span>
-        </nav>
+    /* ── Layout ── */
+    .co-wrap {
+      position: relative; z-index: 1;
+      max-width: 1100px; margin: 0 auto;
+      padding: 0 1.25rem 4rem;
+    }
+    @media(min-width:640px)  { .co-wrap { padding-inline: 1.75rem; } }
+    @media(min-width:1024px) { .co-wrap { padding-inline: 2.25rem; } }
 
-        <h1 class="text-4xl font-black uppercase tracking-tighter md:text-5xl">Checkout</h1>
-        <p class="mt-3 max-w-xl text-sm text-gray-500">
-            Submit your details and our team will contact you to finalise this order.
-        </p>
+    /* ── Page heading ── */
+    .co-hero { padding: 2.5rem 0 2rem; text-align: center; }
+    .co-hero-badge {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: #f3e8ff; border: 1px solid #e9d5ff; color: #7c3aed;
+      border-radius: 999px; padding: .38rem .9rem; font-size: .72rem; font-weight: 700; letter-spacing: .04em;
+      margin-bottom: 1rem;
+    }
+    .co-hero h1 {
+      font-size: clamp(2rem, 5vw, 3rem); font-weight: 900; letter-spacing: -.04em;
+      background: linear-gradient(135deg, #4c1d95, #7c3aed, #8b5cf6);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      line-height: 1.1;
+    }
+    .co-hero p { font-size: .95rem; color: #64748b; margin-top: .65rem; }
 
-        <div class="mt-12 grid gap-10 lg:grid-cols-[1fr_360px]">
-            {{-- Form --}}
-            <form method="POST" action="{{ route('cart.place-order') }}"
-                  class="rounded-3xl border border-gray-100 p-8 shadow-sm">
-                @csrf
-                <div class="grid gap-5 sm:grid-cols-2">
-                    <div class="sm:col-span-2">
-                        <label class="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-400">Full Name *</label>
-                        <input type="text" name="name" value="{{ old('name', auth()->user()->name ?? '') }}" required
-                               class="w-full rounded-xl border px-4 py-3 text-sm outline-none transition
-                                      {{ $errors->has('name') ? 'border-red-500' : 'border-gray-200 focus:border-[#ff9aa9]' }}">
-                        @error('name')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
-                    </div>
+    /* ── Progress steps ── */
+    .co-steps {
+      display: flex; align-items: center; justify-content: center; gap: 0;
+      margin: 0 auto 2.5rem; max-width: 420px;
+    }
+    .co-step { display: flex; flex-direction: column; align-items: center; gap: .4rem; flex: 1; position: relative; }
+    .co-step::after {
+      content: ''; position: absolute; top: 17px; left: 50%; width: 100%; height: 2px;
+      background: #e2e8f0; z-index: 0;
+    }
+    .co-step:last-child::after { display: none; }
+    .co-step-dot {
+      width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
+      font-size: 12px; font-weight: 800; position: relative; z-index: 1;
+      border: 2px solid #e2e8f0; background: #fff; color: #94a3b8;
+      transition: all .25s;
+    }
+    .co-step.done .co-step-dot  { background: #f3e8ff; border-color: #a78bfa; color: #7c3aed; }
+    .co-step.done::after        { background: linear-gradient(90deg, #a78bfa, #e2e8f0); }
+    .co-step.active .co-step-dot { background: linear-gradient(135deg,#7c3aed,#6d28d9); border-color: #7c3aed; color: #fff; box-shadow: 0 6px 18px rgba(124,58,237,.35); }
+    .co-step-lbl { font-size: .68rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: .04em; }
+    .co-step.active .co-step-lbl { color: #7c3aed; }
+    .co-step.done .co-step-lbl   { color: #a78bfa; }
 
-                    <div>
-                        <label class="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-400">Email *</label>
-                        <input type="email" name="email" value="{{ old('email', auth()->user()->email ?? '') }}" required
-                               class="w-full rounded-xl border px-4 py-3 text-sm outline-none transition
-                                      {{ $errors->has('email') ? 'border-red-500' : 'border-gray-200 focus:border-[#ff9aa9]' }}">
-                        @error('email')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
-                    </div>
+    /* ── Main grid ── */
+    .co-grid { display: grid; gap: 1.75rem; align-items: start; }
+    @media(min-width:900px) { .co-grid { grid-template-columns: 1fr 360px; } }
 
-                    <div>
-                        <label class="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-400">Phone *</label>
-                        <input type="text" name="phone" value="{{ old('phone', auth()->user()->phone ?? '') }}" required
-                               class="w-full rounded-xl border px-4 py-3 text-sm outline-none transition
-                                      {{ $errors->has('phone') ? 'border-red-500' : 'border-gray-200 focus:border-[#ff9aa9]' }}">
-                        @error('phone')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
-                    </div>
+    /* ── Glass card ── */
+    .co-card {
+      background: rgba(255,255,255,.92); backdrop-filter: blur(24px);
+      border: 1px solid rgba(139,92,246,.12);
+      border-radius: 22px;
+      box-shadow: 0 4px 24px rgba(124,58,237,.06), 0 1px 3px rgba(0,0,0,.04);
+    }
+    .co-card-head {
+      padding: 1.35rem 1.6rem;
+      border-bottom: 1px solid rgba(139,92,246,.08);
+      display: flex; align-items: center; gap: .75rem;
+    }
+    .co-card-ico {
+      width: 38px; height: 38px; border-radius: 12px; flex-shrink: 0;
+      display: grid; place-items: center; font-size: 14px;
+      background: linear-gradient(135deg, #f3e8ff, #ede9fe);
+      color: #7c3aed; border: 1px solid #e9d5ff;
+    }
+    .co-card-title { font-size: 1rem; font-weight: 800; color: #0f172a; letter-spacing: -.01em; }
+    .co-card-sub   { font-size: .78rem; color: #94a3b8; margin-top: .15rem; }
+    .co-card-body  { padding: 1.6rem; }
 
-                    <div class="sm:col-span-2">
-                        <label class="mb-1.5 block text-xs font-bold uppercase tracking-widest text-gray-400">Message</label>
-                        <textarea name="message" rows="4" placeholder="Anything we should know about your order?"
-                                  class="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-[#ff9aa9]">{{ old('message') }}</textarea>
-                        @error('message')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
-                    </div>
-                </div>
+    /* ── Form fields ── */
+    .co-field { margin-bottom: 1.15rem; }
+    .co-label {
+      display: block; font-size: .78rem; font-weight: 700; color: #475569;
+      margin-bottom: .45rem; letter-spacing: .01em;
+    }
+    .co-label .req { color: #a78bfa; margin-left: .2rem; }
+    .co-input-wrap { position: relative; }
+    .co-input-wrap i {
+      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+      color: #a78bfa; font-size: 13px; pointer-events: none;
+    }
+    textarea.co-input-wrap i { top: 16px; transform: none; }
+    .co-input {
+      width: 100%; background: #faf9ff; border: 1.5px solid #e8e4f8;
+      border-radius: 13px; padding: .82rem 1rem .82rem 2.65rem;
+      font-size: .9rem; font-family: inherit; color: #0f172a;
+      transition: all .22s; outline: none;
+    }
+    .co-input::placeholder { color: #c4b5fd; }
+    .co-input:focus { border-color: #8b5cf6; background: #fff; box-shadow: 0 0 0 4px rgba(139,92,246,.12); }
+    .co-input.is-err { border-color: #f87171; box-shadow: 0 0 0 3px rgba(248,113,113,.15); }
+    .co-err { font-size: .74rem; color: #ef4444; font-weight: 600; margin-top: .35rem; display: flex; align-items: center; gap: .3rem; }
+    textarea.co-input { padding-top: .9rem; padding-bottom: .9rem; resize: vertical; min-height: 100px; }
 
-                <button type="submit" class="btn-primary mt-8 w-full sm:w-auto">Place Order Enquiry</button>
-            </form>
+    .co-grid-2 { display: grid; gap: 1rem; }
+    @media(min-width:580px) { .co-grid-2 { grid-template-columns: 1fr 1fr; } }
 
-            {{-- Summary --}}
-            <aside class="h-fit rounded-3xl bg-[#f8f9fa] p-8">
-                <h2 class="text-lg font-black uppercase tracking-tight">Your Order</h2>
-                <ul class="mt-6 space-y-4">
-                    @foreach($cartItems as $item)
-                        @php($moto = $item['motorcycle'])
-                        <li class="flex items-center justify-between gap-4 text-sm">
-                            <span class="min-w-0 truncate text-gray-600">{{ $moto->model_name }}</span>
-                            <span class="shrink-0 font-bold">{{ $moto->currency ?: 'USD' }} {{ number_format($moto->price ?? 0) }}</span>
-                        </li>
-                    @endforeach
-                </ul>
-                <div class="mt-6 flex items-center justify-between border-t border-gray-200 pt-4">
-                    <span class="text-sm text-gray-500">Total</span>
-                    <span class="text-2xl font-black text-[#ff9aa9]">USD {{ number_format($total) }}</span>
-                </div>
-            </aside>
+    /* ── Submit button ── */
+    .co-submit {
+      width: 100%; display: flex; align-items: center; justify-content: center; gap: .75rem;
+      padding: 1.05rem 2rem; border-radius: 15px; border: none; cursor: pointer;
+      font-family: inherit; font-size: .95rem; font-weight: 800; letter-spacing: -.01em;
+      color: #fff; position: relative; overflow: hidden;
+      background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 50%, #5b21b6 100%);
+      box-shadow: 0 12px 32px rgba(124,58,237,.35), 0 4px 12px rgba(0,0,0,.1);
+      transition: all .3s cubic-bezier(.16,1,.3,1);
+    }
+    .co-submit::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+      transform: translateX(-100%); transition: transform .55s;
+    }
+    .co-submit:hover::before { transform: translateX(100%); }
+    .co-submit:hover { transform: translateY(-2px); box-shadow: 0 18px 42px rgba(124,58,237,.45); }
+    .co-submit:active { transform: translateY(0); }
+    .co-submit:disabled { opacity: .65; cursor: not-allowed; transform: none; }
+    .co-submit .arrow { transition: transform .25s; }
+    .co-submit:hover .arrow { transform: translateX(4px); }
+
+    /* ── Security strip ── */
+    .co-secure {
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1.25rem;
+      padding: .9rem 1rem; border-radius: 12px;
+      background: rgba(139,92,246,.05); border: 1px solid rgba(139,92,246,.08);
+      margin-top: 1rem;
+    }
+    .co-secure-item { display: flex; align-items: center; gap: .45rem; font-size: .73rem; font-weight: 600; color: #7c3aed; }
+    .co-secure-item i { font-size: .72rem; }
+
+    /* ── Order summary card ── */
+    .co-summary-sticky { position: sticky; top: 5.5rem; }
+
+    .co-moto-item {
+      display: flex; align-items: center; gap: .9rem; padding: .9rem 0;
+      border-bottom: 1px solid rgba(139,92,246,.06);
+    }
+    .co-moto-item:last-child { border-bottom: 0; padding-bottom: 0; }
+    .co-moto-img {
+      width: 56px; height: 44px; flex-shrink: 0; border-radius: 10px; overflow: hidden;
+      border: 1px solid #e8e4f8; background: #f5f3ff;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .co-moto-img img { width: 100%; height: 100%; object-fit: cover; }
+    .co-moto-name { font-size: .85rem; font-weight: 700; color: #0f172a; line-height: 1.3; }
+    .co-moto-brand { font-size: .7rem; font-weight: 600; color: #a78bfa; text-transform: uppercase; letter-spacing: .1em; margin-top: .1rem; }
+    .co-moto-price { margin-left: auto; font-size: .9rem; font-weight: 800; color: #0f172a; flex-shrink: 0; }
+
+    .co-total-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      padding: 1.1rem 0 .5rem; border-top: 1.5px solid rgba(139,92,246,.1); margin-top: .75rem;
+    }
+    .co-total-lbl { font-size: .8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: .06em; }
+    .co-total-val {
+      font-size: 1.75rem; font-weight: 900; letter-spacing: -.04em;
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .co-total-cur { font-size: .85rem; font-weight: 700; color: #a78bfa; margin-right: .3rem; }
+
+    /* ── Promise cards ── */
+    .co-promises { display: grid; grid-template-columns: 1fr 1fr; gap: .65rem; margin-top: 1.25rem; }
+    .co-promise {
+      display: flex; flex-direction: column; align-items: flex-start; gap: .45rem;
+      padding: .85rem; border-radius: 12px;
+      background: rgba(139,92,246,.04); border: 1px solid rgba(139,92,246,.08);
+    }
+    .co-promise-ico { color: #7c3aed; font-size: .9rem; }
+    .co-promise-txt { font-size: .72rem; font-weight: 700; color: #475569; line-height: 1.4; }
+
+    /* ── Note box ── */
+    .co-note {
+      display: flex; align-items: flex-start; gap: .65rem;
+      padding: .9rem 1rem; border-radius: 12px; margin-top: 1.1rem;
+      background: rgba(139,92,246,.04); border: 1px solid rgba(139,92,246,.1);
+      font-size: .76rem; color: #64748b; line-height: 1.6;
+    }
+    .co-note i { color: #a78bfa; margin-top: .1rem; flex-shrink: 0; }
+
+    /* ── Flash ── */
+    .co-flash-ok {
+      display: flex; align-items: center; gap: .75rem;
+      padding: .9rem 1.1rem; border-radius: 13px; margin-bottom: 1.5rem;
+      background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534;
+      font-size: .88rem; font-weight: 600;
+    }
+
+    /* ── Reveal animation ── */
+    .reveal { opacity: 0; transform: translateY(28px); transition: all .75s cubic-bezier(.16,1,.3,1); }
+    .reveal.active { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+{{-- Floating background --}}
+<div class="co-bg" aria-hidden="true"></div>
+<div class="orb orb-1" aria-hidden="true"></div>
+<div class="orb orb-2" aria-hidden="true"></div>
+<div class="orb orb-3" aria-hidden="true"></div>
+
+{{-- ── Navbar ── --}}
+@include('partials.navbar')
+
+<div class="co-wrap">
+
+  {{-- ── Page hero ── --}}
+  <div class="co-hero reveal">
+    <div class="co-hero-badge">
+      <i class="fa-solid fa-lock text-[10px]"></i>
+      Secure Order Enquiry
+    </div>
+    <h1>Complete Your Order</h1>
+    <p>Fill in your details and our team will confirm availability and get back to you.</p>
+  </div>
+
+  {{-- ── Progress steps ── --}}
+  <div class="co-steps reveal" style="transition-delay:.08s">
+    <div class="co-step done">
+      <div class="co-step-dot"><i class="fa-solid fa-check text-xs"></i></div>
+      <span class="co-step-lbl">Browse</span>
+    </div>
+    <div class="co-step done">
+      <div class="co-step-dot"><i class="fa-solid fa-check text-xs"></i></div>
+      <span class="co-step-lbl">Cart</span>
+    </div>
+    <div class="co-step active">
+      <div class="co-step-dot">3</div>
+      <span class="co-step-lbl">Checkout</span>
+    </div>
+    <div class="co-step">
+      <div class="co-step-dot">4</div>
+      <span class="co-step-lbl">Confirm</span>
+    </div>
+  </div>
+
+  {{-- Flash --}}
+  @if(session('success'))
+  <div class="co-flash-ok reveal">
+    <i class="fa-solid fa-circle-check"></i>
+    {{ session('success') }}
+  </div>
+  @endif
+
+  {{-- ── Main Grid ── --}}
+  <div class="co-grid">
+
+    {{-- ── Left: Order form ── --}}
+    <div class="reveal" style="transition-delay:.12s">
+      <div class="co-card">
+        <div class="co-card-head">
+          <div class="co-card-ico"><i class="fa-solid fa-user"></i></div>
+          <div>
+            <div class="co-card-title">Your Information</div>
+            <div class="co-card-sub">We'll use this to confirm your order</div>
+          </div>
         </div>
+        <div class="co-card-body">
+
+          <form method="POST" action="{{ route('cart.place-order') }}" id="checkoutForm">
+            @csrf
+
+            {{-- Name (full width) --}}
+            <div class="co-field">
+              <label class="co-label">Full Name <span class="req">*</span></label>
+              <div class="co-input-wrap">
+                <i class="fa-solid fa-user"></i>
+                <input type="text" name="name"
+                       value="{{ old('name', auth()->user()->name ?? '') }}"
+                       required placeholder="John Smith"
+                       class="co-input {{ $errors->has('name') ? 'is-err' : '' }}">
+              </div>
+              @error('name')
+                <p class="co-err"><i class="fa-solid fa-circle-exclamation text-xs"></i>{{ $message }}</p>
+              @enderror
+            </div>
+
+            {{-- Email + Phone --}}
+            <div class="co-grid-2">
+              <div class="co-field">
+                <label class="co-label">Email Address <span class="req">*</span></label>
+                <div class="co-input-wrap">
+                  <i class="fa-solid fa-envelope"></i>
+                  <input type="email" name="email"
+                         value="{{ old('email', auth()->user()->email ?? '') }}"
+                         required placeholder="you@example.com"
+                         class="co-input {{ $errors->has('email') ? 'is-err' : '' }}">
+                </div>
+                @error('email')
+                  <p class="co-err"><i class="fa-solid fa-circle-exclamation text-xs"></i>{{ $message }}</p>
+                @enderror
+              </div>
+
+              <div class="co-field">
+                <label class="co-label">Phone Number <span class="req">*</span></label>
+                <div class="co-input-wrap">
+                  <i class="fa-solid fa-phone"></i>
+                  <input type="tel" name="phone"
+                         value="{{ old('phone', auth()->user()->phone ?? '') }}"
+                         required placeholder="+20 1xx xxx xxxx"
+                         class="co-input {{ $errors->has('phone') ? 'is-err' : '' }}">
+                </div>
+                @error('phone')
+                  <p class="co-err"><i class="fa-solid fa-circle-exclamation text-xs"></i>{{ $message }}</p>
+                @enderror
+              </div>
+            </div>
+
+            {{-- Message --}}
+            <div class="co-field">
+              <label class="co-label">Additional Notes <span style="color:#94a3b8;font-weight:500">(optional)</span></label>
+              <div class="co-input-wrap" style="position:relative">
+                <i class="fa-solid fa-comment-dots" style="position:absolute;left:14px;top:14px;color:#a78bfa;font-size:13px;pointer-events:none;"></i>
+                <textarea name="message" rows="3"
+                          placeholder="Preferred delivery location, specific questions about the motorcycle…"
+                          class="co-input"
+                          style="padding-top:.85rem;padding-bottom:.85rem;padding-left:2.65rem;">{{ old('message') }}</textarea>
+              </div>
+              @error('message')
+                <p class="co-err"><i class="fa-solid fa-circle-exclamation text-xs"></i>{{ $message }}</p>
+              @enderror
+            </div>
+
+            {{-- Submit --}}
+            <div style="margin-top:1.5rem">
+              <button type="submit" id="submitBtn" class="co-submit">
+                <i class="fa-solid fa-motorcycle"></i>
+                <span id="submitTxt">Place Order Enquiry</span>
+                <i class="fa-solid fa-arrow-right text-xs arrow"></i>
+              </button>
+
+              {{-- Security strip --}}
+              <div class="co-secure">
+                <div class="co-secure-item"><i class="fa-solid fa-lock"></i> Secure Submission</div>
+                <div class="co-secure-item"><i class="fa-solid fa-shield-halved"></i> No Card Required</div>
+                <div class="co-secure-item"><i class="fa-solid fa-headset"></i> Team Confirms Within 24h</div>
+              </div>
+            </div>
+
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+    {{-- ── Right: Order summary ── --}}
+    <div class="co-summary-sticky reveal" style="transition-delay:.2s">
+
+      {{-- Summary card --}}
+      <div class="co-card" style="margin-bottom:1rem;">
+        <div class="co-card-head">
+          <div class="co-card-ico"><i class="fa-solid fa-receipt"></i></div>
+          <div>
+            <div class="co-card-title">Order Summary</div>
+            <div class="co-card-sub">{{ $cartItems->count() }} motorcycle{{ $cartItems->count() !== 1 ? 's' : '' }} selected</div>
+          </div>
+        </div>
+        <div class="co-card-body" style="padding-top:1rem;padding-bottom:1rem;">
+
+          {{-- Motorcycles --}}
+          @foreach($cartItems as $item)
+            @php $moto = $item['motorcycle']; @endphp
+            <div class="co-moto-item">
+              <div class="co-moto-img">
+                @if($moto->image_url)
+                  <img src="{{ $moto->image_url }}" alt="{{ $moto->model_name }}">
+                @else
+                  <i class="fa-solid fa-motorcycle" style="color:#c4b5fd;font-size:18px;"></i>
+                @endif
+              </div>
+              <div style="flex:1;min-width:0;">
+                <div class="co-moto-name">{{ $moto->model_name }}</div>
+                <div class="co-moto-brand">{{ $moto->brand?->name }}</div>
+              </div>
+              <div class="co-moto-price">
+                @if($moto->price)
+                  {{ $moto->currency ?: 'USD' }} {{ number_format($moto->price) }}
+                @else
+                  <span style="font-size:.75rem;color:#94a3b8;">On request</span>
+                @endif
+              </div>
+            </div>
+          @endforeach
+
+          {{-- Total --}}
+          @if($total > 0)
+          <div class="co-total-row">
+            <span class="co-total-lbl">Total</span>
+            <span class="co-total-val"><span class="co-total-cur">USD</span>{{ number_format($total) }}</span>
+          </div>
+          @endif
+
+          {{-- Note --}}
+          <div class="co-note">
+            <i class="fa-solid fa-circle-info"></i>
+            <span>No payment is taken online. This submits an order enquiry — our team will contact you to confirm availability and finalise everything.</span>
+          </div>
+
+        </div>
+      </div>
+
+      {{-- Promises --}}
+      <div class="co-card">
+        <div class="co-card-body" style="padding:1.25rem 1.4rem;">
+          <p style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#a78bfa;margin-bottom:.85rem;">Our Promise to You</p>
+          <div class="co-promises">
+            <div class="co-promise">
+              <i class="fa-solid fa-shield-halved co-promise-ico"></i>
+              <span class="co-promise-txt">Certified & Inspected Machines</span>
+            </div>
+            <div class="co-promise">
+              <i class="fa-solid fa-truck-fast co-promise-ico"></i>
+              <span class="co-promise-txt">Nationwide Delivery</span>
+            </div>
+            <div class="co-promise">
+              <i class="fa-solid fa-rotate-left co-promise-ico"></i>
+              <span class="co-promise-txt">Genuine Warranty</span>
+            </div>
+            <div class="co-promise">
+              <i class="fa-solid fa-headset co-promise-ico"></i>
+              <span class="co-promise-txt">24/7 Expert Support</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
     </div>
-</div>
-@endsection
+  </div>
+
+</div>{{-- /.co-wrap --}}
+
+@include('partials.footer')
+
+<script>
+  // ── Reveal on scroll ──────────────────────────────────────
+  var reveals = document.querySelectorAll('.reveal');
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('active'); obs.unobserve(e.target); }
+    });
+  }, { threshold: .06 });
+  reveals.forEach(function(el){ obs.observe(el); });
+
+  // ── Submit guard ──────────────────────────────────────────
+  var form = document.getElementById('checkoutForm');
+  var btn  = document.getElementById('submitBtn');
+  var txt  = document.getElementById('submitTxt');
+
+  form && form.addEventListener('submit', function(){
+    btn.disabled = true;
+    txt.textContent = 'Submitting…';
+    btn.style.opacity = '.8';
+  });
+</script>
+
+</body>
+</html>

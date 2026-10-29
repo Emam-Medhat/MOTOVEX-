@@ -41,6 +41,7 @@ Route::delete('/cart/remove/{motorcycle:slug}', [CartController::class, 'remove'
 Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 Route::post('/cart/checkout', [CartController::class, 'placeOrder'])->name('cart.place-order');
+Route::get('/cart/order-success', [CartController::class, 'orderSuccess'])->name('cart.order-success');
 
 // ─── Authentication ─────────────────────────────────────────────────────────────
 Route::middleware('guest')->group(function () {
@@ -63,6 +64,8 @@ Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->
 Route::middleware(['auth', 'active'])->prefix('account')->name('account.')->group(function () {
     Route::get('/', [AccountController::class, 'dashboard'])->name('dashboard');
     Route::get('/enquiries', [AccountController::class, 'enquiries'])->name('enquiries');
+    Route::get('/orders', [AccountController::class, 'orders'])->name('orders');
+    Route::get('/orders/{enquiry}', [AccountController::class, 'orderShow'])->name('orders.show');
     Route::get('/profile', [AccountController::class, 'editProfile'])->name('profile');
     Route::put('/profile', [AccountController::class, 'updateProfile'])->name('profile.update');
     Route::get('/security', [AccountController::class, 'editSecurity'])->name('security');
@@ -71,6 +74,7 @@ Route::middleware(['auth', 'active'])->prefix('account')->name('account.')->grou
 
 use App\Http\Controllers\Admin\PromotionController;
 use App\Http\Controllers\Admin\ShowroomController;
+use App\Http\Controllers\Admin\TestRideController as AdminTestRideController;
 
 // ─── Admin / Dashboard ──────────────────────────────────────────────────────────
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'active', 'role:admin,data_entry,sales_agent'])->group(function () {
@@ -102,6 +106,26 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'active', 'role:admi
         ->middleware('role:admin,sales_agent');
     Route::delete('enquiries/{enquiry}', [EnquiryController::class, 'destroy'])
         ->middleware('role:admin')->name('enquiries.destroy');
+
+    // Purchase Orders — admin + sales agent
+    Route::middleware('role:admin,sales_agent')->prefix('orders')->name('orders.')->group(function () {
+        Route::get('/',                                   [EnquiryController::class, 'ordersIndex'])->name('index');
+        Route::get('/{enquiry}',                          [EnquiryController::class, 'orderShow'])->name('show');
+        Route::patch('/{enquiry}/status',                 [EnquiryController::class, 'orderUpdateStatus'])->name('update-status');
+        Route::patch('/{enquiry}/payment',                [EnquiryController::class, 'orderVerifyPayment'])->name('verify-payment');
+    });
+    Route::delete('orders/{enquiry}', [EnquiryController::class, 'orderDestroy'])
+        ->middleware('role:admin')->name('orders.destroy');
+
+    // Test Ride Bookings – admin + sales agent (view & update); admin-only delete
+    Route::middleware('role:admin,sales_agent')->group(function () {
+        Route::get('test-rides',                               [AdminTestRideController::class, 'index'])->name('test-rides.index');
+        Route::get('test-rides/{testRide}',                    [AdminTestRideController::class, 'show'])->name('test-rides.show');
+        Route::put('test-rides/{testRide}',                    [AdminTestRideController::class, 'update'])->name('test-rides.update');
+        Route::patch('test-rides/{testRide}/status',           [AdminTestRideController::class, 'updateStatus'])->name('test-rides.update-status');
+    });
+    Route::delete('test-rides/{testRide}',                     [AdminTestRideController::class, 'destroy'])
+        ->middleware('role:admin')->name('test-rides.destroy');
 });
 
 // Convenience redirect: sends each account type to its own home.

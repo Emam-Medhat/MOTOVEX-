@@ -26,16 +26,17 @@ class DashboardController extends Controller
                 ['Motorcycles', Motorcycle::count(),                   'text-blue-400'],
                 ['Promotions',  Promotion::count(),                    'text-yellow-400'],
                 ['Enquiries',   Enquiry::count(),                      'text-purple-400'],
+                ['Test Rides',  \App\Models\TestRideRequest::count(),  'text-orange-400'],
             ];
 
-            $recentEnquiries = Enquiry::latest()->take(5)->get();
+            $recentEnquiries   = Enquiry::latest()->take(5)->get();
             $recentMotorcycles = Motorcycle::with('brand')->latest()->take(5)->get();
         } elseif ($user->isSalesAgent()) {
             $statCards = [
-                ['Total Enquiries', Enquiry::count(),                              'text-[#a3e635]'],
-                ['Pending',         Enquiry::where('status', 'pending')->count(),  'text-yellow-400'],
-                ['Test Rides',      Enquiry::where('enquiry_type', 'test_drive')->count(), 'text-blue-400'],
-                ['Completed',       Enquiry::where('status', 'completed')->count(),'text-green-400'],
+                ['Total Enquiries', Enquiry::count(),                                      'text-[#a3e635]'],
+                ['Pending',         Enquiry::where('status', 'pending')->count(),          'text-yellow-400'],
+                ['Test Rides',      \App\Models\TestRideRequest::count(),                  'text-blue-400'],
+                ['Completed',       Enquiry::where('status', 'completed')->count(),        'text-green-400'],
             ];
 
             $recentEnquiries = Enquiry::latest()->take(5)->get();

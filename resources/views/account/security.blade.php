@@ -1,68 +1,141 @@
 @extends('layouts.account')
+
 @section('title', 'Security')
 @section('heading', 'Security')
 
 @section('content')
-<div class="grid gap-6 lg:grid-cols-2">
-    <form method="POST" action="{{ route('account.security.update') }}"
-          class="space-y-5 rounded-xl border border-[#292F2C] bg-[#181C1D] p-6">
+
+  {{-- ─── Account details card ─── --}}
+  <div class="ac-card" style="margin-bottom:1.5rem;">
+    <div class="ac-card-header">
+      <div class="ac-card-title">
+        <i class="fa-solid fa-circle-info"></i>
+        Account Details
+        <small style="font-size:.72rem;color:#94a3b8;font-weight:400;margin-left:.25rem;">تفاصيل الحساب</small>
+      </div>
+    </div>
+    <div class="ac-card-body">
+      <div class="ac-info-list">
+        <div class="ac-info-row">
+          <span class="ac-info-row-label"><i class="fa-solid fa-envelope" style="margin-left:.4rem;color:#94a3b8;font-size:.8rem;"></i> Email Address</span>
+          <span class="ac-info-row-value">{{ auth()->user()->email }}</span>
+        </div>
+        <div class="ac-info-row">
+          <span class="ac-info-row-label"><i class="fa-solid fa-circle-dot" style="margin-left:.4rem;color:#94a3b8;font-size:.8rem;"></i> Account Status</span>
+          <span>
+            <span class="ac-badge completed">
+              <i class="fa-solid fa-circle-check"></i>
+              Active
+            </span>
+          </span>
+        </div>
+        <div class="ac-info-row">
+          <span class="ac-info-row-label"><i class="fa-solid fa-calendar" style="margin-left:.4rem;color:#94a3b8;font-size:.8rem;"></i> Member Since</span>
+          <span class="ac-info-row-value">{{ auth()->user()->created_at?->format('d F Y') ?? 'N/A' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{-- ─── Change password card ─── --}}
+  <div class="ac-card" style="margin-bottom:1.5rem;">
+    <div class="ac-card-header">
+      <div class="ac-card-title">
+        <i class="fa-solid fa-lock"></i>
+        Change Password
+        <small style="font-size:.72rem;color:#94a3b8;font-weight:400;margin-left:.25rem;">تغيير كلمة المرور</small>
+      </div>
+    </div>
+    <div class="ac-card-body">
+
+      <form method="POST" action="{{ route('account.security.update') }}">
         @csrf
         @method('PUT')
 
-        <h2 class="text-sm font-bold uppercase tracking-wider">Change password</h2>
-
-        <div>
-            <label class="mb-1.5 block text-xs font-medium text-[#A1A7A2]">Current password</label>
-            <input type="password" name="current_password" autocomplete="current-password"
-                   class="w-full rounded-lg border bg-[#0B0D0E] px-4 py-3 text-sm outline-none transition {{ $errors->has('current_password') ? 'border-[#EF6464]' : 'border-[#292F2C] focus:border-[#B6FF3B]' }}">
-            @error('current_password')<p class="mt-1 text-xs text-[#EF6464]">{{ $message }}</p>@enderror
+        {{-- Current password --}}
+        <div style="margin-bottom:1.2rem;">
+          <label for="current_password" class="ac-label">
+            Current Password <span style="color:#ef4444;">*</span>
+          </label>
+          <input
+            id="current_password"
+            type="password"
+            name="current_password"
+            autocomplete="current-password"
+            class="ac-input {{ $errors->has('current_password') ? 'is-error' : '' }}"
+            placeholder="Enter your current password"
+          />
+          @error('current_password')
+            <p class="ac-error-msg"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</p>
+          @enderror
         </div>
 
-        <div>
-            <label class="mb-1.5 block text-xs font-medium text-[#A1A7A2]">New password</label>
-            <input type="password" name="password" autocomplete="new-password"
-                   class="w-full rounded-lg border bg-[#0B0D0E] px-4 py-3 text-sm outline-none transition {{ $errors->has('password') ? 'border-[#EF6464]' : 'border-[#292F2C] focus:border-[#B6FF3B]' }}">
-            <p class="mt-1 text-[11px] text-[#707873]">Minimum 8 characters with letters and numbers.</p>
-            @error('password')<p class="mt-1 text-xs text-[#EF6464]">{{ $message }}</p>@enderror
+        {{-- New password + confirm --}}
+        <div class="ac-form-grid-2" style="margin-bottom:1.5rem;">
+          <div>
+            <label for="password" class="ac-label">
+              New Password <span style="color:#ef4444;">*</span>
+            </label>
+            <input
+              id="password"
+              type="password"
+              name="password"
+              autocomplete="new-password"
+              class="ac-input {{ $errors->has('password') ? 'is-error' : '' }}"
+              placeholder="Min. 8 characters"
+            />
+            @error('password')
+              <p class="ac-error-msg"><i class="fa-solid fa-circle-exclamation"></i> {{ $message }}</p>
+            @enderror
+          </div>
+          <div>
+            <label for="password_confirmation" class="ac-label">
+              Confirm New Password <span style="color:#ef4444;">*</span>
+            </label>
+            <input
+              id="password_confirmation"
+              type="password"
+              name="password_confirmation"
+              autocomplete="new-password"
+              class="ac-input"
+              placeholder="Repeat your new password"
+            />
+          </div>
         </div>
 
-        <div>
-            <label class="mb-1.5 block text-xs font-medium text-[#A1A7A2]">Confirm new password</label>
-            <input type="password" name="password_confirmation" autocomplete="new-password"
-                   class="w-full rounded-lg border border-[#292F2C] bg-[#0B0D0E] px-4 py-3 text-sm outline-none transition focus:border-[#B6FF3B]">
+        {{-- Password requirements hint --}}
+        <div style="display:flex;align-items:flex-start;gap:.65rem;padding:.9rem 1rem;border-radius:10px;background:#f7f6fd;border:1px solid #e8e7f2;margin-bottom:1.5rem;">
+          <i class="fa-solid fa-shield-halved" style="color:#7c3aed;margin-top:.1rem;font-size:.9rem;flex-shrink:0;"></i>
+          <div>
+            <div style="font-size:.82rem;font-weight:700;color:#172033;margin-bottom:.3rem;">Password requirements</div>
+            <ul style="font-size:.78rem;color:#64748b;margin:0;padding-left:1.1rem;display:flex;flex-direction:column;gap:.2rem;">
+              <li>At least 8 characters long</li>
+              <li>Contains at least one letter</li>
+              <li>Contains at least one number</li>
+            </ul>
+          </div>
         </div>
 
-        <div class="border-t border-[#292F2C] pt-5">
-            <button type="submit" class="btn-primary">Update Password</button>
-        </div>
-    </form>
+        <button type="submit" class="ac-btn-primary">
+          <i class="fa-solid fa-key"></i>
+          Update Password
+        </button>
 
-    <div class="space-y-4 rounded-xl border border-[#292F2C] bg-[#181C1D] p-6">
-        <h2 class="text-sm font-bold uppercase tracking-wider">Account details</h2>
-        <dl class="space-y-3 text-sm">
-            <div class="flex items-center justify-between gap-4">
-                <dt class="text-[#707873]">Email</dt>
-                <dd class="truncate font-medium">{{ auth()->user()->email }}</dd>
-            </div>
-            <div class="flex items-center justify-between gap-4">
-                <dt class="text-[#707873]">Account status</dt>
-                <dd>
-                    <span class="status-badge bg-[#45C486]/10 text-[#45C486]">Active</span>
-                </dd>
-            </div>
-            <div class="flex items-center justify-between gap-4">
-                <dt class="text-[#707873]">Member since</dt>
-                <dd class="font-medium">{{ auth()->user()->created_at->format('d M Y') }}</dd>
-            </div>
-        </dl>
+      </form>
 
-        <div class="rounded-lg border border-[#EF6464]/30 bg-[#EF6464]/5 p-4">
-            <p class="text-xs font-bold text-[#EF6464]">Delete account</p>
-            <p class="mt-1 text-[11px] leading-5 text-[#A1A7A2]">
-                Account deletion is handled by customer care so that active enquiries and test rides are not lost.
-                Contact us to request removal.
-            </p>
-        </div>
     </div>
-</div>
+  </div>
+
+  {{-- ─── Danger zone ─── --}}
+  <div class="ac-danger-zone">
+    <div class="ac-danger-title">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      Danger Zone
+    </div>
+    <p class="ac-danger-text">
+      Deleting your account is permanent and cannot be undone. All your enquiries, profile data, and preferences will be removed. If you wish to delete your account, please contact our support team directly at
+      <a href="{{ route('contact') }}" style="color:#dc2626;font-weight:700;text-decoration:underline;">support</a>.
+    </p>
+  </div>
+
 @endsection

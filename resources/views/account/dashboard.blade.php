@@ -1,55 +1,168 @@
 @extends('layouts.account')
+
 @section('title', 'Overview')
 @section('heading', 'Overview')
 
 @section('content')
-<div class="grid gap-4 sm:grid-cols-3">
-    @foreach([
-        ['Total enquiries', $stats['total']],
-        ['Awaiting contact', $stats['open']],
-        ['Test rides', $stats['test_rides']],
-    ] as [$label, $value])
-        <div class="rounded-xl border border-[#292F2C] bg-[#181C1D] p-5">
-            <p class="text-[10px] font-bold uppercase tracking-widest text-[#707873]">{{ $label }}</p>
-            <p class="mt-2 text-3xl font-black tabular-nums text-[#B6FF3B]">{{ $value }}</p>
-        </div>
-    @endforeach
-</div>
 
-<div class="mt-6 rounded-xl border border-[#292F2C] bg-[#181C1D]">
-    <div class="flex items-center justify-between border-b border-[#292F2C] px-5 py-4">
-        <h2 class="text-sm font-bold uppercase tracking-wider">Recent activity</h2>
-        <a href="{{ route('account.enquiries') }}" class="text-xs text-[#A1A7A2] transition hover:text-[#B6FF3B]">View all →</a>
+  {{-- ─── Welcome banner ─── --}}
+  <div class="ac-welcome">
+    <div>
+      <div class="ac-welcome-title">Welcome back, {{ auth()->user()->name }} 👋</div>
+      <div class="ac-welcome-sub">
+        Member since {{ auth()->user()->created_at?->format('F Y') ?? 'N/A' }}
+      </div>
     </div>
+    <i class="fa-solid fa-motorcycle ac-welcome-ico" aria-hidden="true"></i>
+  </div>
 
-    @if($enquiries->isEmpty())
-        <div class="px-5 py-12 text-center">
-            <p class="text-sm text-[#707873]">You haven't sent any enquiries yet.</p>
-            <a href="{{ route('motorcycles.index') }}" class="btn-primary mt-4">Browse Motorcycles</a>
+  {{-- ─── Stat cards ─── --}}
+  <div class="ac-stat-grid">
+    <div class="ac-stat">
+      <div class="ac-stat-ico">
+        <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+      </div>
+      <div>
+        <div class="ac-stat-num">{{ $stats['total'] }}</div>
+        <div class="ac-stat-label">Total Enquiries</div>
+      </div>
+    </div>
+    <div class="ac-stat">
+      <div class="ac-stat-ico">
+        <i class="fa-solid fa-clock" aria-hidden="true"></i>
+      </div>
+      <div>
+        <div class="ac-stat-num">{{ $stats['open'] }}</div>
+        <div class="ac-stat-label">Awaiting Contact</div>
+      </div>
+    </div>
+    <div class="ac-stat">
+      <div class="ac-stat-ico">
+        <i class="fa-solid fa-flag-checkered" aria-hidden="true"></i>
+      </div>
+      <div>
+        <div class="ac-stat-num">{{ $stats['test_rides'] }}</div>
+        <div class="ac-stat-label">Test Rides</div>
+      </div>
+    </div>
+  </div>
+
+  {{-- ─── Recent activity ─── --}}
+  <div class="ac-card" style="margin-bottom:1.5rem;">
+    <div class="ac-card-header">
+      <div class="ac-card-title">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        Recent Activity
+      </div>
+      @if($enquiries->isNotEmpty())
+        <a href="{{ route('account.enquiries') }}" class="ac-btn-ghost" style="padding:.5rem .95rem;font-size:.8rem;">
+          View all <i class="fa-solid fa-arrow-right" style="font-size:.68rem;"></i>
+        </a>
+      @endif
+    </div>
+    <div class="ac-card-body" style="padding:0;">
+      @if($enquiries->isEmpty())
+        <div class="ac-empty" style="margin:1.5rem;border-radius:12px;">
+          <div class="ac-empty-ico"><i class="fa-solid fa-envelope-open"></i></div>
+          <h3>No enquiries yet</h3>
+          <p>Browse our motorcycles and get in touch when something catches your eye.</p>
+          <a href="{{ route('motorcycles.index') }}" class="ac-btn-ghost" style="margin-top:1rem;">
+            Browse Motorcycles
+            <i class="fa-solid fa-arrow-right" style="font-size:.7rem;"></i>
+          </a>
         </div>
-    @else
-        <ul class="divide-y divide-[#292F2C]">
-            @foreach($enquiries as $enquiry)
-                <li class="flex items-start justify-between gap-4 px-5 py-4">
-                    <div class="min-w-0">
-                        <p class="truncate text-sm font-semibold">{{ $enquiry->subject }}</p>
-                        <p class="mt-0.5 text-xs text-[#707873]">
-                            {{ ucfirst(str_replace('_', ' ', $enquiry->enquiry_type)) }} ·
-                            {{ $enquiry->created_at->format('d M Y') }}
-                        </p>
-                    </div>
-                    <span @class([
-                        'status-badge shrink-0',
-                        'bg-[#F4B740]/10 text-[#F4B740]' => $enquiry->status === 'pending',
-                        'bg-[#B6FF3B]/10 text-[#B6FF3B]' => $enquiry->status === 'contacted',
-                        'bg-[#45C486]/10 text-[#45C486]' => $enquiry->status === 'completed',
-                        'bg-[#EF6464]/10 text-[#EF6464]' => $enquiry->status === 'cancelled',
-                    ])>
-                        {{ $enquiry->status }}
-                    </span>
-                </li>
-            @endforeach
-        </ul>
-    @endif
-</div>
+      @else
+        <div style="padding:0 1.5rem;">
+          @foreach($enquiries as $enquiry)
+            @php
+              $initial = strtoupper(substr($enquiry->name ?? 'E', 0, 1));
+              $statusColors = [
+                'pending'   => 'pending',
+                'contacted' => 'contacted',
+                'completed' => 'completed',
+                'cancelled' => 'cancelled',
+              ];
+              $badgeClass = $statusColors[$enquiry->status] ?? 'pending';
+              $statusLabels = [
+                'pending'   => 'Pending',
+                'contacted' => 'Contacted',
+                'completed' => 'Completed',
+                'cancelled' => 'Cancelled',
+              ];
+              $statusLabel = $statusLabels[$enquiry->status] ?? ucfirst($enquiry->status);
+              $typeLabel = match($enquiry->enquiry_type) {
+                'test_drive'  => 'Test Ride',
+                'general'     => 'General',
+                'purchase'    => 'Purchase',
+                'service'     => 'Service',
+                default       => ucfirst(str_replace('_', ' ', $enquiry->enquiry_type ?? 'General')),
+              };
+            @endphp
+            <div class="ac-activity-row">
+              <div class="ac-activity-avatar">{{ $initial }}</div>
+              <div style="flex:1;min-width:0;">
+                <div class="ac-activity-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                  {{ $enquiry->subject ?? 'Enquiry' }}
+                </div>
+                <div class="ac-activity-sub">{{ $enquiry->name }}</div>
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.4rem;flex-shrink:0;">
+                <span class="ac-type-tag">{{ $typeLabel }}</span>
+                <span class="ac-badge {{ $badgeClass }}">{{ $statusLabel }}</span>
+              </div>
+              <div class="ac-activity-meta" style="min-width:5rem;">
+                <div class="ac-activity-date">{{ $enquiry->created_at?->format('d M Y') }}</div>
+                @if($enquiry->id)
+                  <div style="font-size:.68rem;color:#94a3b8;margin-top:.15rem;">#{{ str_pad($enquiry->id, 5, '0', STR_PAD_LEFT) }}</div>
+                @endif
+              </div>
+            </div>
+          @endforeach
+        </div>
+      @endif
+    </div>
+  </div>
+
+  {{-- ─── Quick links ─── --}}
+  <div class="ac-card">
+    <div class="ac-card-header">
+      <div class="ac-card-title">
+        <i class="fa-solid fa-bolt"></i>
+        Quick Links
+      </div>
+    </div>
+    <div class="ac-card-body">
+      <div class="ac-quick-grid">
+        <a href="{{ route('motorcycles.index') }}" class="ac-quick-link">
+          <div class="ac-quick-link-ico"><i class="fa-solid fa-motorcycle"></i></div>
+          <div>
+            <div class="ac-quick-link-title">Browse Motorcycles</div>
+            <div class="ac-quick-link-sub">Explore our full catalogue</div>
+          </div>
+        </a>
+        <a href="{{ route('contact') }}" class="ac-quick-link">
+          <div class="ac-quick-link-ico"><i class="fa-solid fa-flag-checkered"></i></div>
+          <div>
+            <div class="ac-quick-link-title">Book a Test Ride</div>
+            <div class="ac-quick-link-sub">Schedule a ride today</div>
+          </div>
+        </a>
+        <a href="{{ route('account.profile') }}" class="ac-quick-link">
+          <div class="ac-quick-link-ico"><i class="fa-solid fa-user-pen"></i></div>
+          <div>
+            <div class="ac-quick-link-title">Update Profile</div>
+            <div class="ac-quick-link-sub">Edit your personal info</div>
+          </div>
+        </a>
+        <a href="{{ route('brands.index') }}" class="ac-quick-link">
+          <div class="ac-quick-link-ico"><i class="fa-solid fa-gem"></i></div>
+          <div>
+            <div class="ac-quick-link-title">Explore Brands</div>
+            <div class="ac-quick-link-sub">Discover premium brands</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
 @endsection

@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\TestRideRequest;
 use App\Http\Requests\StoreTestRideRequest;
+use App\Models\Showroom;
 use Illuminate\Http\Request;
 
 /**
- * Handles the homepage test-ride mini-form.
- * CSRF is handled by Laravel; basic rate limiting is applied at the route.
+ * Handles the public Test Ride booking form.
+ * Admin management lives in Admin\TestRideController.
  */
 class TestRideController extends Controller
 {
@@ -17,19 +18,27 @@ class TestRideController extends Controller
         $data = $request->validated();
         $data['ip_address'] = $request->ip();
 
-        TestRideRequest::create($data);
+        // Link to authenticated user if logged in
+        if (auth()->check()) {
+            $data['user_id'] = auth()->id();
+            // Pre-fill name/email from profile if not provided
+            $data['name']  = $data['name']  ?: auth()->user()->name;
+            $data['email'] = $data['email'] ?: auth()->user()->email;
+        }
 
-        // Support both AJAX (toast) and standard form posts (redirect).
+        $booking = TestRideRequest::create($data);
+
         if ($request->expectsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
             return response()->json([
-                'ok'      => true,
-                'message' => 'Request received. Our team will call you to confirm your test ride.',
+                'ok'        => true,
+                'reference' => $booking->booking_reference,
+                'message'   => 'Booking request received! Reference: ' . $booking->booking_reference . '. Our team will confirm your slot shortly.',
             ]);
         }
 
-        return redirect()->route('home')->with(
-            'success',
-            'Request received. Our team will call you to confirm your test ride.'
-        );
+        return redirect()->back()->with('booking_success', [
+            'reference' => $booking->booking_reference,
+            'message'   => 'Your test ride request has been received.',
+        ]);
     }
 }

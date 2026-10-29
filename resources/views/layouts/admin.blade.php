@@ -524,11 +524,27 @@
             <div class="nav-section">
                 <div class="nav-label">Management</div>
                 <nav class="sidebar-nav">
-                    <a href="{{ route('admin.users.index') }}"     class="{{ request()->routeIs('admin.users*')     ? 'active' : '' }}">
+                    <a href="{{ route('admin.users.index') }}"      class="{{ request()->routeIs('admin.users*')      ? 'active' : '' }}">
                         <i class="fa-solid fa-users"></i> Users
                     </a>
-                    <a href="{{ route('admin.enquiries.index') }}" class="{{ request()->routeIs('admin.enquiries*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.enquiries.index') }}"  class="{{ request()->routeIs('admin.enquiries*')  ? 'active' : '' }}">
                         <i class="fa-solid fa-envelope"></i> Enquiries
+                    </a>
+                </nav>
+            </div>
+            @endif
+
+            {{-- Test Rides — admin + sales agent --}}
+            @if(auth()->user()->isAdmin() || auth()->user()->isSalesAgent())
+            <div class="nav-section">
+                <div class="nav-label">Bookings</div>
+                <nav class="sidebar-nav">
+                    <a href="{{ route('admin.test-rides.index') }}" class="{{ request()->routeIs('admin.test-rides*') ? 'active' : '' }}">
+                        <i class="fa-solid fa-flag-checkered"></i> Test Rides
+                        @php $pending = \App\Models\TestRideRequest::where('status','pending')->count(); @endphp
+                        @if($pending > 0)
+                            <span style="margin-left:auto;min-width:18px;height:18px;border-radius:9px;background:#7c3aed;color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;padding:0 4px;">{{ $pending }}</span>
+                        @endif
                     </a>
                 </nav>
             </div>
