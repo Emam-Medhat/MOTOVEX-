@@ -1,0 +1,333 @@
+@import "tailwindcss";
+
+/* =====================================================================
+   APEX MOTO GROUP — design system
+   Dark, cinematic, sporty. Accent re-themes per brand at runtime via the
+   `--color-accent` variable (updated from JS). All glows use color-mix so a
+   single variable swap re-skins the whole page.
+   ===================================================================== */
+
+@theme {
+    /* Surfaces */
+    --color-apex-bg: #07090a;
+    --color-apex-surface: #0d1110;
+    --color-apex-card: #11181a;
+
+    /* Text */
+    --color-apex-text: #f4f7f5;
+    --color-apex-muted: #9aa3a0;
+    --color-apex-faint: #4b5350;
+
+    /* Accent (default electric green; overridden per brand by JS) */
+    --color-accent: #1ee05a;
+    --color-accent-soft: color-mix(in oklab, var(--color-accent) 16%, transparent);
+
+    /* Secondary warm highlight, used sparingly */
+    --color-warm: #f59e0b;
+
+    /* Type */
+    --font-sans: "Inter", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+    --font-display: "Orbitron", "Inter", ui-sans-serif, sans-serif;
+
+    /* Easings / durations (reference values for JS parity) */
+    --ease-apex: cubic-bezier(0.16, 1, 0.3, 1);
+    --dur-fast: 0.3s;
+    --dur-mid: 0.6s;
+    --dur-slow: 1s;
+
+    /* Motion fluid type ramps */
+    --text-hero: clamp(3.2rem, 13vw, 13rem);
+    --text-display: clamp(2.4rem, 7vw, 6rem);
+    --text-section: clamp(2rem, 5vw, 4rem);
+
+    /* AURA storefront palette (auth screens) */
+    --color-brand-50: #f5f3ff;
+    --color-brand-100: #ede9fe;
+    --color-brand-200: #ddd6fe;
+    --color-brand-300: #c4b5fd;
+    --color-brand-400: #a78bfa;
+    --color-brand-500: #8b5cf6;
+    --color-brand-600: #7c3aed;
+    --color-brand-700: #6d28d9;
+    --color-brand-800: #5b21b6;
+    --color-brand-900: #4c1d95;
+
+    --color-aura-purple: #6d54b7;
+    --color-aura-neon: #a855f7;
+    --color-aura-pink: #ec4899;
+    --color-aura-deep: #1e1b4b;
+
+    --font-cairo: "Cairo", ui-sans-serif, system-ui, sans-serif;
+
+    /* AURA motion */
+    --animate-fade-in: fadeIn 0.8s ease-out forwards;
+    --animate-slide-up: slideUp 0.7s ease-out forwards;
+    --animate-float: float 6s ease-in-out infinite;
+    --animate-pulse-soft: pulseSoft 3s ease-in-out infinite;
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-12px); }
+    }
+    @keyframes pulseSoft {
+        0%, 100% { opacity: 0.6; }
+        50% { opacity: 1; }
+    }
+}
+
+/* ----------------------------------------------------------------- */
+@layer base {
+    :root {
+        --accent-rgb: 30, 224, 90;
+        color-scheme: dark;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+        background-color: var(--color-apex-bg);
+        color: var(--color-apex-text);
+        font-family: var(--font-sans);
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        overflow-x: hidden;
+    }
+
+    /* Soft radial glows behind content (page-wide ambient) */
+    body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        background:
+            radial-gradient(60% 50% at 20% 0%, color-mix(in oklab, var(--color-accent) 8%, transparent), transparent 70%),
+            radial-gradient(50% 50% at 100% 100%, color-mix(in oklab, var(--color-accent) 6%, transparent), transparent 70%);
+        transition: background 0.8s var(--ease-apex);
+    }
+
+    /* Film grain overlay */
+    body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        opacity: 0.035;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    h1, h2, h3, .font-display {
+        font-family: var(--font-display);
+        letter-spacing: 0.02em;
+    }
+
+    ::selection {
+        background: color-mix(in oklab, var(--color-accent) 35%, transparent);
+        color: #fff;
+    }
+
+    /* Visible, accessible focus state */
+    :focus-visible {
+        outline: 2px solid var(--color-accent);
+        outline-offset: 3px;
+        border-radius: 2px;
+    }
+
+    /* Respect reduced motion globally */
+    @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        *, *::before, *::after {
+            animation-duration: 0.001ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.001ms !important;
+            scroll-behavior: auto !important;
+        }
+    }
+}
+
+/* ----------------------------------------------------------------- */
+@layer components {
+    /* Glass-morphism card */
+    .glass {
+        background: color-mix(in oklab, var(--color-apex-card) 55%, transparent);
+        backdrop-filter: blur(14px) saturate(140%);
+        -webkit-backdrop-filter: blur(14px) saturate(140%);
+        border: 1px solid color-mix(in oklab, white 8%, transparent);
+    }
+
+    .glass-hover {
+        transition: border-color var(--dur-mid) var(--ease-apex), background-color var(--dur-mid) var(--ease-apex), transform var(--dur-mid) var(--ease-apex);
+    }
+    .glass-hover:hover {
+        border-color: color-mix(in oklab, var(--color-accent) 45%, transparent);
+        background: color-mix(in oklab, var(--color-apex-card) 70%, transparent);
+    }
+
+    /* Accent text + glow utilities */
+    .text-accent { color: var(--color-accent); }
+    .bg-accent { background-color: var(--color-accent); }
+    .border-accent { border-color: var(--color-accent); }
+    .accent-glow { box-shadow: 0 0 80px color-mix(in oklab, var(--color-accent) 35%, transparent); }
+    .accent-text-glow { text-shadow: 0 0 40px color-mix(in oklab, var(--color-accent) 45%, transparent); }
+
+    /* Giant outlined model name behind the bike */
+    .text-outline {
+        -webkit-text-stroke: clamp(1px, 0.15vw, 2px) color-mix(in oklab, var(--color-accent) 40%, white 5%);
+        color: transparent;
+        font-family: var(--font-display);
+        font-weight: 900;
+        font-style: italic;
+        opacity: 0.15;
+    }
+
+    .text-hero-solid {
+        font-family: var(--font-display);
+        font-weight: 900;
+        font-style: italic;
+        letter-spacing: -0.04em;
+    }
+
+    /* Bottom tabs */
+    .hero-tab {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 1.25rem 1.5rem;
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.4s var(--ease-apex);
+        min-height: 80px;
+    }
+    .hero-tab.is-active {
+        background: var(--color-accent);
+        color: #000;
+    }
+    .hero-tab.is-active .eyebrow,
+    .hero-tab.is-active [data-hero-tab-brand] {
+        color: rgba(0,0,0,0.6);
+    }
+    .hero-tab:not(.is-active):hover {
+        background: rgba(255, 255, 255, 0.025);
+    }
+
+    /* Buttons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        font-family: var(--font-display);
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        padding: 1rem 2.2rem;
+        border-radius: 9999px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: transform var(--dur-fast) var(--ease-apex), color var(--dur-fast) var(--ease-apex), background-color var(--dur-fast) var(--ease-apex), border-color var(--dur-fast) var(--ease-apex);
+        will-change: transform;
+    }
+    .btn-primary {
+        background: var(--color-accent);
+        color: #04130a;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px color-mix(in oklab, var(--color-accent) 35%, transparent); }
+    .btn-ghost {
+        background: transparent;
+        color: var(--color-apex-text);
+        border: 1px solid color-mix(in oklab, white 22%, transparent);
+    }
+    .btn-ghost:hover { border-color: var(--color-accent); color: var(--color-accent); transform: translateY(-2px); }
+
+    /* Eyebrow label */
+    .eyebrow {
+        font-family: var(--font-display);
+        font-size: 0.68rem;
+        font-weight: 500;
+        letter-spacing: 0.42em;
+        text-transform: uppercase;
+        color: var(--color-accent);
+    }
+
+    /* Marquee */
+    .marquee-track {
+        display: flex;
+        width: max-content;
+        animation: marquee 38s linear infinite;
+    }
+    @keyframes marquee {
+        from { transform: translateX(0); }
+        to { transform: translateX(-50%); }
+    }
+
+    /* Vertical slide counter */
+    .slide-counter {
+        font-family: var(--font-display);
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* Pulsing hotspot pin */
+    .hotspot {
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 9999px;
+        background: var(--color-accent);
+        box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-accent) 60%, transparent);
+        animation: ping 2.4s var(--ease-apex) infinite;
+    }
+    @keyframes ping {
+        0% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-accent) 55%, transparent); }
+        70% { box-shadow: 0 0 0 16px transparent; }
+        100% { box-shadow: 0 0 0 0 transparent; }
+    }
+
+    /* Mask reveal (split-text lines) */
+    .mask-line { overflow: hidden; display: block; }
+    .mask-line > .line-inner { display: block; transform: translateY(110%); will-change: transform; }
+
+    /* Scroll cue */
+    .scroll-cue { animation: cue 2s var(--ease-apex) infinite; }
+    @keyframes cue { 0%,100% { transform: translateY(0); opacity: 0.4; } 50% { transform: translateY(8px); opacity: 1; } }
+
+    /* Spec tab underline */
+    .tab-underline { position: absolute; bottom: 0; height: 2px; background: var(--color-accent); transition: left 0.4s var(--ease-apex), width 0.4s var(--ease-apex); }
+
+    /* Preloader */
+    .preloader { transition: opacity 0.6s var(--ease-apex), visibility 0.6s var(--ease-apex); }
+    .preloader.is-done { opacity: 0; visibility: hidden; }
+
+    /* Header */
+    [data-header] { transition: transform 0.5s var(--ease-apex), background-color 0.4s var(--ease-apex), border-color 0.4s var(--ease-apex), backdrop-filter 0.4s var(--ease-apex); }
+    [data-header].is-scrolled { background: color-mix(in oklab, var(--color-apex-surface) 70%, transparent); backdrop-filter: blur(16px) saturate(140%); border-bottom-color: color-mix(in oklab, white 8%, transparent); }
+    [data-header].is-hidden { transform: translateY(-110%); }
+    @media (prefers-reduced-motion: reduce) { [data-header] { transition: none; } [data-header].is-hidden { transform: none; } }
+}
+
+/* ----------------------------------------------------------------- */
+@layer utilities {
+    .text-hero { font-size: var(--text-hero); line-height: 0.82; }
+    .text-display { font-size: var(--text-display); line-height: 0.9; }
+    .text-section { font-size: var(--text-section); line-height: 0.95; }
+
+    /* Reduced motion: disable parallax/autoplay-heavy classes */
+    @media (prefers-reduced-motion: reduce) {
+        .marquee-track { animation: none; }
+        .hotspot { animation: none; }
+        .scroll-cue { animation: none; }
+        .mask-line > .line-inner { transform: none; }
+    }
+}

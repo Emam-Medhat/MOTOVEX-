@@ -1,0 +1,240 @@
+FULL STACK ASSESSMENT 
+CONFIDENTIAL   
+IT DEPARTMENT 
+ALMANA GROUP 
+   
+ Page 1 of 8  
+ 
+ 
+ 
+Full-Stack Developer 
+Technical Assessment 
+ 
+ 
+Issued By: 
+Application & Development Team, Almana Group 
+ 
+FULL STACK ASSESSMENT 
+CONFIDENTIAL   
+IT DEPARTMENT 
+ALMANA GROUP 
+   
+ Page 2 of 8  
+ 
+Table of Contents 
+ 
+Introduction ........................................................................................................................................... 3 
+The Business Scenario .......................................................................................................................... 3 
+Assessment Requirements .................................................................................................................... 4 
+Public Website ................................................................................................................................... 4 
+Design / Figma Prototype ................................................................................................................. 4 
+Basic Administration / CMS ............................................................................................................ 5 
+Assessment Guidelines .......................................................................................................................... 6 
+1. Technology Stack .......................................................................................................................... 6 
+2. Original Design or Redesign, Both Are Accepted ...................................................................... 6 
+Option 1: Original Concept: ........................................................................................................ 6 
+Option 2: Redesign an Existing Website ..................................................................................... 6 
+3. Assets, References & Attribution ................................................................................................ 7 
+4. What We Are Evaluating ............................................................................................................. 7 
+Submission Date & Details ................................................................................................................... 8 
+Assessment Due Date ........................................................................................................................ 8 
+Submission Requirements ................................................................................................................ 8 
+ 
+ 
+ 
+FULL STACK ASSESSMENT 
+CONFIDENTIAL   
+IT DEPARTMENT 
+ALMANA GROUP 
+   
+ Page 3 of 8  
+ 
+Introduction 
+This assessment is designed to evaluate your ability to take a business idea from 
+concept and visualization through UI/UX design, frontend development, and the development 
+of administration portals and CMS solutions for websites (Backend development). 
+The objective is to understand how effectively you can translate business 
+requirements into a strong, modern, and engaging digital experience, while demonstrating 
+strong technical ability to implement the solution using clean, maintainable, and well
+structured code that follows recognized standards and best practices. 
+This assessment scope is intentionally kept focused, allowing you to spend your time 
+demonstrating your design thinking, creativity, visualization skills, technical implementation, 
+and overall development quality. (NOTE: Avoid Over Engineering and Unnecessary 
+Complexity) 
+The Business Scenario 
+You have been asked to design and develop the digital presence of a multi-brand 
+motorcycle group operating in the Middle East. 
+The company represents several motorcycle brands covering different market 
+segments, such as: 
+• Urban Mobility 
+• Adventure & Touring 
+• Performance 
+• Premium Motorcycles 
+The motorcycle group activities include motorcycle sales, customer enquiries, test 
+rides, promotions, financing, service and maintenance, parts & accessories, warranty support 
+and customer care. 
+The organization has physical showrooms and service centers and wants to establish a 
+strong digital presence where customers can discover the company, its brands, products and 
+services. 
+FULL STACK ASSESSMENT 
+CONFIDENTIAL   
+IT DEPARTMENT 
+ALMANA GROUP 
+   
+ Page 4 of 8  
+ 
+Each motorcycle brand may have its own identity and target audience, while 
+remaining part of the overall group. 
+This is intentionally a high-level business brief.  We are not defining the website 
+structure, content hierarchy, customer journey or visual direction for you. Making those 
+decisions is part of the assessment. 
+Assessment Requirements 
+Public Website 
+The minimum development requirement is one fully functional and responsive homepage. 
+You are welcome to develop additional pages or functionality if you believe they add 
+value to your concept, but this is not required. We would prefer to see one highly polished 
+homepage rather than several incomplete pages. You have freedom to determine: 
+• Information architecture 
+• Content and sections 
+• User journey 
+• Navigation 
+• Calls to action 
+• Visual identity 
+• Typography 
+• Colors 
+• Imagery 
+• Interactions and animations 
+The implemented homepage should be fully responsive, providing consistent and 
+user-friendly experience across desktop and mobile devices. 
+Design / Figma Prototype 
+If your complete vision extends beyond what you can reasonably implement during 
+the assessment, you are encouraged to present the full proposed experience in Figma; as we 
+understand that four days may not be sufficient to fully develop every aspect of a strong 
+digital concept. For example, you may: 
+FULL STACK ASSESSMENT 
+CONFIDENTIAL   
+IT DEPARTMENT 
+ALMANA GROUP 
+   
+ Page 5 of 8  
+ 
+• Design the complete concept in Figma 
+• fully develop the most important homepage experience  
+• demonstrate the remaining ideas through the prototype. 
+The working website should maintain the same overall visual direction and design 
+concept as your proposed design. We will consider both the implemented solution and your 
+proposed design vision. 
+Basic Administration / CMS 
+A small administration area should be included to demonstrate your backend 
+development, database design, and coding capabilities. 
+The objective is not to build a complex CMS or administration system. A focused 
+implementation that allows authorized users to log in and manage a limited amount of 
+website content is sufficient. 
+The system should consider at least two user roles: 
+• Admin Role: can access and manage content across all brands. 
+• Data Entry Role: can manage content only for the brand(s) assigned to them. 
+The exact implementation, content to be managed, and overall administration structure 
+are left to your technical judgment. But AGAIN, no need for complexity, just clean and well
+structured code.   
+We are primarily interested in seeing: 
+• Clean code and project structure 
+• Project structure and folder organization 
+• Authentication 
+• Role-based authorization and access control 
+• CRUD functionality 
+• Data validation 
+• Security awareness 
+• Separation of concerns 
+• Database planning and ERD 
+FULL STACK ASSESSMENT 
+CONFIDENTIAL   
+IT DEPARTMENT 
+ALMANA GROUP 
+   
+ Page 6 of 8  
+ 
+• Sensible database structure 
+• Maintainability 
+Please keep this part simple and focused so that most of your assessment time can be 
+spent on the public-facing experience. 
+Assessment Guidelines 
+1. Technology Stack 
+The required backend technology stack for this assessment is PHP / Laravel. If you 
+intend to use a different backend technology stack or framework, this must be requested in 
+advance and approved by the Application & Development Team before proceeding with the 
+assessment. 
+2. Original Design or Redesign, Both Are Accepted 
+You may approach the design in either of the following ways. 
+Option 1: Original Concept: 
+You may create your own fictional company, motorcycle brands, product information, visual 
+identity and complete digital concept. 
+Option 2: Redesign an Existing Website 
+You may select an existing global website related to the same or a similar business field and 
+propose your own redesign of it. This is completely acceptable for the purpose of this 
+assessment. 
+But, if you choose the redesign approach, you must clearly identify the original website 
+and explain that your submission is a redesign concept. 
+We still expect to see your own design thinking and improvements not simply 
+reproducing the existing website. 
+FULL STACK ASSESSMENT 
+CONFIDENTIAL   
+IT DEPARTMENT 
+ALMANA GROUP 
+   
+ Page 7 of 8  
+ 
+3. Assets, References & Attribution 
+You may use appropriate third-party resources such as: Stock photography, Product 
+imagery, Icons, Fonts, Illustrations, Open-source UI resources, Other design assets, AI
+generated assets, etc.  
+However, Any third-party resources used should be clearly referenced and attributed 
+where applicable. 
+Please include an Attribution / References section in your submission or README 
+containing the sources of external assets and design references used. 
+If you redesign or reference an existing company's website, brand, products, images, 
+or other materials, you must clearly identify and reference the original source. 
+Your submission must also clearly state that the redesign is created solely for 
+recruitment assessment and demonstration purposes and is not intended for commercial use. 
+All trademarks, brand names, copyrighted materials, and other intellectual property remain 
+the property of their respective owners. 
+You are responsible for clearly identifying any third-party materials used in your 
+submission and providing appropriate attribution where applicable. 
+Please identify where AI-generated imagery or content is used. 
+4. What We Are Evaluating 
+The focus of this assessment is the quality of the public-facing digital experience. We 
+will consider: 
+UI/UX & Visualization: Creativity, visual quality, information hierarchy, usability, brand 
+presentation and overall digital experience. 
+Frontend Implementation: How effectively your proposed design is translated into a 
+responsive and polished working website. 
+Code Quality: Code organization, readability, reusability, maintainability and adherence to 
+appropriate development practices. 
+FULL STACK ASSESSMENT 
+CONFIDENTIAL   
+IT DEPARTMENT 
+ALMANA GROUP 
+   
+ Page 8 of 8  
+ 
+Backend & Administration: A basic demonstration of authentication, authorization, CRUD, 
+validation and backend/application structure. 
+Attention to Detail: Responsive behavior, interactions, consistency, accessibility 
+considerations and overall polish. 
+Submission Date & Details 
+Assessment Due Date  
+OCT 12, 2026 
+Submission Requirements 
+At the end of the assessment, please provide: 
+• Source code repository 
+• Instructions for setting up and running the project 
+• Working/deployed website (URL), where possible 
+• Figma design/prototype, if used 
+• Admin/CMS test credentials, where applicable 
+• Brief explanation of your technical approach and technology choices 
+• Any assumptions made during the assessment 
+• A short video demo presenting the implemented solution and its main features 
+Note: After reviewing your submission, you may be requested to provide to have another 
+online session to demonstrate your solution. 
+ 
+ 
+Wish You All the Best !! 
