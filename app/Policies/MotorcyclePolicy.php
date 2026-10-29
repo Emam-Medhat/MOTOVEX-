@@ -35,6 +35,11 @@ class MotorcyclePolicy
         return $user->canManageBrand($motorcycle->brand);
     }
 
+    public function delete(User $user, Motorcycle $motorcycle): bool
+    {
+        return $user->isAdmin();
+    }
+
     public function deleteAny(User $user): bool
     {
         return $user->isAdmin() || $user->isDataEntry();

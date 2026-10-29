@@ -22,6 +22,7 @@ class Brand extends Model
         'segment',
         'tagline',
         'accent_color',
+        'sort_order',
         'is_published',
     ];
 

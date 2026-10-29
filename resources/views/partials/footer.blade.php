@@ -4,7 +4,7 @@
      Compact height version.
      ===================================================================== --}}
 <footer dir="ltr" class="w-full border-t border-slate-200 bg-white pt-10 pb-6 text-xs text-slate-600 sm:pt-12">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-8 xl:px-10">
         
         {{-- Links Grid (Top) --}}
         <div class="grid grid-cols-2 gap-8 border-b border-slate-200 pb-8 md:grid-cols-4 xl:gap-12">

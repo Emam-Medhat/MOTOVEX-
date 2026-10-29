@@ -33,8 +33,8 @@
             @foreach($promotions as $promo)
             <tr>
                 <td>
-                    <strong style="display:block;font-size:13px;color:#f0edfb">{{ $promo->title }}</strong>
-                    <span style="font-size:11px;color:#6e6888">{{ Str::limit($promo->description, 50) }}</span>
+                    <strong style="display:block;font-size:13px;color:var(--text)">{{ $promo->title }}</strong>
+                    <span style="font-size:11px;color:var(--muted)">{{ Str::limit($promo->description, 50) }}</span>
                 </td>
                 <td>{{ $promo->brand ? $promo->brand->name : 'Global' }}</td>
                 <td style="font-size:11px">
@@ -46,13 +46,18 @@
                         {{ $promo->is_active ? 'Active' : 'Inactive' }}
                     </span>
                 </td>
-                <td>
-                    <div class="td-actions">
-                        <a href="{{ route('admin.promotions.edit', $promo) }}" class="tbl-link">Edit</a>
+                <td style="text-align:right">
+                    <div class="td-actions" style="gap:6px;justify-content:flex-end">
+                        <a href="{{ route('admin.promotions.edit', $promo) }}" class="admin-btn-sm btn-edit-alt">
+                            <i class="fa-solid fa-pen-to-square"></i> Edit
+                        </a>
                         <form method="POST" action="{{ route('admin.promotions.destroy', $promo) }}"
-                              onsubmit="return confirm('Delete this promotion?')">
+                              onsubmit="return confirm('Delete this promotion?')"
+                              style="display:inline">
                             @csrf @method('DELETE')
-                            <button class="tbl-link-danger">Delete</button>
+                            <button class="admin-btn-sm btn-delete-alt">
+                                <i class="fa-solid fa-trash-can"></i> Delete
+                            </button>
                         </form>
                     </div>
                 </td>

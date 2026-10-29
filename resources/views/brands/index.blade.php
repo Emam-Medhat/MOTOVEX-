@@ -33,327 +33,788 @@
     }
   </script>
   <style>
+    /* ---------------------------------------------------------------
+       MOTOVEX — Brands directory. Page-scoped design tokens (.mvx-*)
+       Palette: white + very light lavender surfaces, deep charcoal ink,
+       restrained MOTOVEX purple accents. No page-level style bleed.
+       --------------------------------------------------------------- */
+    :root {
+      --mvx-bg:            #ffffff;
+      --mvx-lav:           #f7f6fd;
+      --mvx-lav-2:         #f0edfa;
+      --mvx-surface:       #ffffff;
+      --mvx-ink:           #172033;
+      --mvx-ink-2:         #3f4a5c;
+      --mvx-muted:         #64748b;
+      --mvx-line:          #e8e7f2;
+      --mvx-line-2:        #dcd9ee;
+      --mvx-primary:       #7c3aed;
+      --mvx-primary-d:     #6d28d9;
+      --mvx-primary-soft:  #f3e8ff;
+      --mvx-radius:        18px;
+      --mvx-shadow-sm:     0 1px 2px rgba(23, 32, 51, .04);
+      --mvx-shadow-lg:     0 22px 44px -22px rgba(124, 58, 237, .30);
+    }
+
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
       font-family: 'Plus Jakarta Sans', 'Noto Kufi Arabic', sans-serif;
-      background: #ffffff;
-      color: #0f172a;
+      background: var(--mvx-bg);
+      color: var(--mvx-ink);
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
+    .is-hidden { display: none !important; }
 
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #f1f5f9; }
-    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #8b5cf6, #6d28d9); border-radius: 20px; }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--mvx-lav); }
+    ::-webkit-scrollbar-thumb { background: #cdc6ea; border-radius: 20px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--mvx-primary); }
 
-    .hero-bg {
-      background:
-        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139, 92, 246, 0.12), transparent 55%),
-        radial-gradient(ellipse 50% 40% at 90% 60%, rgba(99, 102, 241, 0.05), transparent),
-        #f8faff;
+    .mvx-wrap {
+      width: 100%;
+      max-width: 80rem;
+      margin-inline: auto;
+      padding-inline: 1.15rem;
     }
+    @media (min-width: 640px)  { .mvx-wrap { padding-inline: 1.5rem; } }
+    @media (min-width: 1024px) { .mvx-wrap { padding-inline: 2rem; } }
 
-    .glass {
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(16px);
-      border: 1px solid rgba(139, 92, 246, 0.12);
-    }
-
-    .glass-strong {
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(139, 92, 246, 0.15);
-    }
-
-    .text-gradient {
-      background: linear-gradient(135deg, #6d28d9 0%, #8b5cf6 50%, #a78bfa 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
-      box-shadow: 0 8px 28px rgba(139, 92, 246, 0.35);
-      color: #ffffff;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .btn-primary:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 14px 40px rgba(139, 92, 246, 0.5);
-    }
-
-    .brand-card {
-      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    /* ---------------- Header ---------------- */
+    .mvx-head {
       position: relative;
-      overflow: hidden;
-      background: #ffffff;
-      border: 1px solid #e9eaf5;
+      border-bottom: 1px solid var(--mvx-line);
+      background:
+        radial-gradient(110% 120% at 100% 0%, rgba(124, 58, 237, .07), transparent 58%),
+        linear-gradient(180deg, #fbfaff 0%, #ffffff 100%);
+      padding-block: 2.25rem 2rem;
     }
-    .brand-card::before {
-      content: '';
+    @media (min-width: 768px) { .mvx-head { padding-block: 3rem 2.5rem; } }
+
+    .mvx-crumbs {
+      display: flex;
+      align-items: center;
+      gap: .45rem;
+      font-size: .78rem;
+      color: var(--mvx-muted);
+      margin-bottom: 1.1rem;
+    }
+    .mvx-crumbs a { color: var(--mvx-muted); text-decoration: none; transition: color .2s; }
+    .mvx-crumbs a:hover { color: var(--mvx-primary-d); }
+    .mvx-crumbs .sep { opacity: .5; font-size: .6rem; }
+    .mvx-crumbs [aria-current] { color: var(--mvx-ink); font-weight: 700; }
+
+    .mvx-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      border-radius: 999px;
+      border: 1px solid #e2d8fb;
+      background: var(--mvx-primary-soft);
+      color: var(--mvx-primary-d);
+      padding: .4rem .85rem;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .01em;
+    }
+
+    .mvx-head-grid {
+      display: grid;
+      gap: 1.5rem;
+      align-items: end;
+    }
+    @media (min-width: 900px) {
+      .mvx-head-grid { grid-template-columns: minmax(0, 1fr) minmax(320px, 400px); gap: 2rem; }
+    }
+
+    .mvx-title {
+      font-size: clamp(1.85rem, 3.4vw, 2.7rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -.02em;
+      color: var(--mvx-ink);
+      margin-top: .9rem;
+    }
+    .mvx-title em { font-style: normal; color: var(--mvx-primary-d); }
+
+    .mvx-sub {
+      margin-top: .7rem;
+      max-width: 34rem;
+      font-size: .98rem;
+      line-height: 1.8;
+      color: var(--mvx-muted);
+    }
+
+    /* ---------------- Search ---------------- */
+    .mvx-search { position: relative; }
+    .mvx-search input {
+      width: 100%;
+      padding-block: .95rem;
+      padding-inline-start: 3.05rem;
+      padding-inline-end: 1.1rem;
+      border-radius: 14px;
+      border: 1px solid var(--mvx-line-2);
+      background: #ffffff;
+      color: var(--mvx-ink);
+      font-size: .95rem;
+      font-family: inherit;
+      box-shadow: var(--mvx-shadow-sm);
+      transition: border-color .2s, box-shadow .2s, background .2s;
+    }
+    .mvx-search input::placeholder { color: #9aa3b2; }
+    .mvx-search input:focus {
+      outline: none;
+      border-color: var(--mvx-primary);
+      box-shadow: 0 0 0 4px rgba(124, 58, 237, .14);
+    }
+    .mvx-search .mvx-search-ico {
       position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(139,92,246,0.06), transparent 60%);
-      opacity: 0;
-      transition: opacity 0.5s ease;
+      inset-inline-start: 1.05rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--mvx-muted);
+      font-size: .95rem;
+      pointer-events: none;
     }
-    .brand-card:hover::before {
-      opacity: 1;
-    }
-    .brand-card:hover {
-      transform: translateY(-12px) scale(1.02);
-      border-color: rgba(139, 92, 246, 0.35);
-      box-shadow: 0 25px 50px -12px rgba(139, 92, 246, 0.18);
-    }
-
-    .brand-card .logo-area {
-      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .brand-card:hover .logo-area {
-      transform: scale(1.08);
+    .mvx-search-hint {
+      margin-top: .55rem;
+      font-size: .74rem;
+      color: #94a3b8;
+      padding-inline-start: .25rem;
     }
 
-    .reveal {
-      opacity: 0;
-      transform: translateY(40px);
-      transition: all 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    /* ---------------- Sticky toolbar ---------------- */
+    .mvx-toolbar {
+      position: sticky;
+      top: 4rem;
+      z-index: 40;
+      background: rgba(255, 255, 255, .93);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--mvx-line);
     }
-    .reveal.active {
-      opacity: 1;
-      transform: translateY(0);
+    .mvx-toolbar-inner {
+      display: flex;
+      align-items: center;
+      gap: .85rem;
+      padding-block: .85rem;
     }
+    .mvx-chips {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    @media (max-width: 699px) {
+      .mvx-chips {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: none;
+        padding-bottom: 2px;
+      }
+      .mvx-chips::-webkit-scrollbar { display: none; }
+    }
+    @media (min-width: 700px) { .mvx-chips { flex-wrap: wrap; } }
 
-    .fade-up {
-      animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      opacity: 0;
-    }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(35px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .filter-btn {
-      color: #64748b;
-      border: 1px solid #e2e8f0;
-    }
-    .filter-btn:hover {
-      color: #0f172a;
-      border-color: #cbd5e1;
-    }
-    .filter-btn.active {
-      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
-      color: white;
-      border-color: transparent;
-    }
-
-    .nav-link { color: #64748b; }
-    .nav-link:hover { color: #0f172a; }
-    .nav-link.active-nav { color: #7c3aed; font-weight: 700; }
-
-    .header-wrap {
-      background: rgba(255,255,255,0.92);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid #e9eaf5;
-      box-shadow: 0 1px 12px rgba(139,92,246,0.07);
-    }
-
-    .tag-pill {
-      background: #f5f3ff;
-      color: #6d28d9;
-    }
-
-    .sort-select {
+    .mvx-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      padding: .5rem .9rem;
+      border-radius: 999px;
+      border: 1px solid var(--mvx-line-2);
       background: #ffffff;
-      border: 1px solid #e2e8f0;
-      color: #0f172a;
+      color: var(--mvx-ink-2);
+      font-family: inherit;
+      font-size: .84rem;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: background .2s, color .2s, border-color .2s;
     }
-    .sort-select:focus { border-color: #8b5cf6; outline: none; }
+    .mvx-chip:hover { background: var(--mvx-lav); color: var(--mvx-ink); }
+    .mvx-chip:focus-visible { outline: 2px solid var(--mvx-primary); outline-offset: 2px; }
+    .mvx-chip.is-active {
+      background: var(--mvx-primary-soft);
+      border-color: #d9c9fb;
+      color: var(--mvx-primary-d);
+    }
+    .mvx-chip-n {
+      display: inline-grid;
+      place-items: center;
+      min-width: 1.35rem;
+      height: 1.35rem;
+      padding-inline: .32rem;
+      border-radius: 999px;
+      background: #eef0f6;
+      color: var(--mvx-ink-2);
+      font-size: .68rem;
+      font-weight: 700;
+    }
+    .mvx-chip.is-active .mvx-chip-n { background: #e5d6ff; color: var(--mvx-primary-d); }
 
-    .search-input {
+    .mvx-sort {
+      position: relative;
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .mvx-sort label { font-size: .78rem; color: var(--mvx-muted); }
+    .mvx-select {
+      appearance: none;
+      -webkit-appearance: none;
+      border: 1px solid var(--mvx-line-2);
       background: #ffffff;
-      border: 1px solid #e2e8f0;
-      color: #0f172a;
+      color: var(--mvx-ink);
+      font-family: inherit;
+      font-size: .82rem;
+      font-weight: 600;
+      padding: .55rem 2.1rem .55rem .85rem;
+      border-radius: 11px;
+      cursor: pointer;
+      transition: border-color .2s, box-shadow .2s;
     }
-    .search-input::placeholder { color: #94a3b8; }
-    .search-input:focus { border-color: #8b5cf6; outline: none; }
+    .mvx-select:focus { outline: none; border-color: var(--mvx-primary); box-shadow: 0 0 0 3px rgba(124, 58, 237, .14); }
+    .mvx-sort i {
+      position: absolute;
+      inset-inline-end: .8rem;
+      color: var(--mvx-muted);
+      font-size: .65rem;
+      pointer-events: none;
+    }
 
-    .cta-section {
-      background: linear-gradient(135deg, #faf5ff 0%, #f0ebff 100%);
-      border: 1px solid rgba(139, 92, 246, 0.2);
+    /* ---------------- Results ---------------- */
+    .mvx-results { padding-block: 2rem 3rem; background: #ffffff; }
+    .mvx-count {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      font-size: .84rem;
+      color: var(--mvx-muted);
+      margin-bottom: 1.4rem;
     }
+    .mvx-count b { color: var(--mvx-ink); font-weight: 700; }
+
+    .mvx-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.35rem;
+    }
+    @media (min-width: 560px)  { .mvx-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (min-width: 1280px) { .mvx-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.6rem; } }
+
+    /* ---------------- Brand card ---------------- */
+    .mvx-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      background: var(--mvx-surface);
+      border: 1px solid var(--mvx-line);
+      border-radius: var(--mvx-radius);
+      overflow: hidden;
+      box-shadow: var(--mvx-shadow-sm);
+      transition: transform .35s cubic-bezier(.16, 1, .3, 1), box-shadow .35s, border-color .35s;
+      animation: mvxRise .55s cubic-bezier(.16, 1, .3, 1) backwards;
+    }
+    @keyframes mvxRise { from { opacity: 0; transform: translateY(16px); } }
+    @media (prefers-reduced-motion: reduce) { .mvx-card { animation: none; } }
+
+    .mvx-card:hover {
+      transform: translateY(-6px);
+      border-color: #ded7f5;
+      box-shadow: var(--mvx-shadow-lg);
+    }
+    .mvx-card:focus-within { border-color: #ded7f5; box-shadow: var(--mvx-shadow-lg); }
+
+    .mvx-logo {
+      position: relative;
+      height: 13rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--mvx-line);
+      background:
+        radial-gradient(85% 85% at 50% 18%, #ffffff 0%, var(--mvx-lav) 58%, var(--mvx-lav-2) 100%);
+      overflow: hidden;
+    }
+    .mvx-logo-img {
+      display: block;
+      max-height: 7.25rem;
+      max-width: 78%;
+      object-fit: contain;
+      transition: transform .45s cubic-bezier(.16, 1, .3, 1);
+    }
+    .mvx-card:hover .mvx-logo-img { transform: scale(1.05); }
+
+    /* Text-based brand mark — used when no logo asset exists (or it fails to load). */
+    .mvx-mark {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: .7rem;
+      text-align: center;
+      max-width: 100%;
+    }
+    .mvx-mono {
+      display: grid;
+      place-items: center;
+      width: 4.25rem;
+      height: 4.25rem;
+      border-radius: 16px;
+      background: #ffffff;
+      border: 1px solid var(--mvx-line-2);
+      color: var(--mvx-primary-d);
+      font-size: 1.75rem;
+      font-weight: 800;
+      line-height: 1;
+      box-shadow: 0 8px 20px -12px rgba(23, 32, 51, .35);
+      transition: transform .45s cubic-bezier(.16, 1, .3, 1);
+    }
+    .mvx-card:hover .mvx-mono { transform: scale(1.05); }
+    .mvx-word {
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: .26em;
+      color: var(--mvx-ink);
+      text-transform: uppercase;
+      word-break: break-word;
+    }
+    .mvx-logo.is-plain .mvx-mark { display: flex; }
+    .mvx-logo.is-plain .mvx-logo-img { display: none; }
+
+    .mvx-body {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      padding: 1.3rem 1.35rem 1.4rem;
+    }
+    .mvx-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: .75rem;
+      margin-bottom: .6rem;
+    }
+    .mvx-seg {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      padding: .3rem .6rem;
+      border-radius: 8px;
+      background: var(--mvx-primary-soft);
+      color: var(--mvx-primary-d);
+      font-size: .7rem;
+      font-weight: 700;
+      white-space: nowrap;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .mvx-models {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      padding: .3rem .62rem;
+      border-radius: 8px;
+      border: 1px solid var(--mvx-line);
+      background: #f8f9fc;
+      color: var(--mvx-ink-2);
+      font-size: .72rem;
+      font-weight: 700;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+    .mvx-models i { color: var(--mvx-primary); font-size: .68rem; }
+
+    .mvx-name {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -.01em;
+      color: var(--mvx-ink);
+      line-height: 1.2;
+    }
+    .mvx-tagline {
+      margin-top: .3rem;
+      font-size: .82rem;
+      font-weight: 600;
+      font-style: italic;
+      color: var(--mvx-primary-d);
+      opacity: .85;
+    }
+    .mvx-country {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      margin-top: .5rem;
+      font-size: .8rem;
+      color: var(--mvx-muted);
+    }
+    .mvx-country i { font-size: .72rem; color: #a3aec0; }
+
+    .mvx-desc {
+      margin-top: .75rem;
+      font-size: .88rem;
+      line-height: 1.75;
+      color: var(--mvx-muted);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .mvx-divider {
+      margin-top: 1.15rem;
+      padding-top: 1.15rem;
+      border-top: 1px solid var(--mvx-line);
+    }
+    .mvx-cta {
+      margin-top: auto;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: .55rem;
+      width: 100%;
+      padding: .82rem 1.1rem;
+      border-radius: 12px;
+      background: var(--mvx-ink);
+      color: #ffffff;
+      font-size: .88rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background .25s, box-shadow .25s;
+    }
+    .mvx-card:hover .mvx-cta,
+    .mvx-cta:hover { background: var(--mvx-primary-d); box-shadow: 0 12px 26px -14px rgba(109, 40, 217, .75); }
+    .mvx-cta i { font-size: .72rem; }
+
+    /* ---------------- Empty states ---------------- */
+    .mvx-empty {
+      text-align: center;
+      padding: 3.5rem 1.25rem;
+      border: 1px dashed var(--mvx-line-2);
+      border-radius: var(--mvx-radius);
+      background: var(--mvx-lav);
+    }
+    .mvx-empty .mvx-empty-ico {
+      display: grid;
+      place-items: center;
+      width: 3.4rem;
+      height: 3.4rem;
+      margin: 0 auto 1rem;
+      border-radius: 14px;
+      background: #ffffff;
+      border: 1px solid var(--mvx-line-2);
+      color: var(--mvx-primary-d);
+      font-size: 1.3rem;
+    }
+    .mvx-empty h3 { font-size: 1.15rem; font-weight: 800; color: var(--mvx-ink); }
+    .mvx-empty p { margin-top: .45rem; font-size: .88rem; color: var(--mvx-muted); }
+    .mvx-btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      margin-top: 1.35rem;
+      padding: .7rem 1.25rem;
+      border-radius: 11px;
+      border: 1px solid var(--mvx-line-2);
+      background: #ffffff;
+      color: var(--mvx-ink);
+      font-size: .85rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: border-color .2s, color .2s, box-shadow .2s;
+    }
+    .mvx-btn-ghost:hover { border-color: var(--mvx-primary); color: var(--mvx-primary-d); box-shadow: 0 8px 20px -14px rgba(124, 58, 237, .8); }
+
+    .mvx-pager { margin-top: 2.25rem; display: flex; justify-content: center; }
+
+    /* ---------------- CTA band ---------------- */
+    .mvx-cta-band { padding-block: 3rem 4rem; background: var(--mvx-bg); }
+    .mvx-cta-box {
+      position: relative;
+      border-radius: 22px;
+      border: 1px solid var(--mvx-line);
+      background: linear-gradient(180deg, #faf8ff 0%, #f3effb 100%);
+      padding: 2.6rem 1.4rem;
+      text-align: center;
+    }
+    .mvx-cta-box h2 { font-size: clamp(1.35rem, 2.4vw, 1.85rem); font-weight: 800; letter-spacing: -.01em; color: var(--mvx-ink); }
+    .mvx-cta-box p { margin: .7rem auto 0; max-width: 30rem; font-size: .92rem; line-height: 1.8; color: var(--mvx-muted); }
+    .mvx-btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: .55rem;
+      margin-top: 1.7rem;
+      padding: .85rem 1.7rem;
+      border-radius: 13px;
+      background: var(--mvx-primary);
+      color: #ffffff;
+      font-size: .88rem;
+      font-weight: 700;
+      text-decoration: none;
+      box-shadow: 0 14px 30px -16px rgba(124, 58, 237, .9);
+      transition: background .25s, transform .25s, box-shadow .25s;
+    }
+    .mvx-btn-primary:hover { background: var(--mvx-primary-d); transform: translateY(-2px); box-shadow: 0 18px 36px -16px rgba(109, 40, 217, .95); }
   </style>
 </head>
 <body>
 
   @include('partials.navbar')
 
-  <!-- Hero -->
-  <section class="hero-bg relative pt-28 pb-16 overflow-hidden">
-    <div class="absolute top-20 left-1/4 w-72 h-72 bg-brand-500/10 rounded-full blur-[100px] pointer-events-none"></div>
+  @php
+    /*
+     |--------------------------------------------------------------------------
+     | Real, database-derived presentation values (no invented data)
+     |--------------------------------------------------------------------------
+     | - $brands comes from BrandController@index: published brands with a
+     |   published-motorcycle count, filtered by ?search= and paginated.
+     | - Segment chips are built from the segments actually present.
+     | - Logos are resolved only when the underlying asset truly exists on
+     |   disk; otherwise we render a text-based brand mark instead of a
+     |   broken <img>. (Root cause of the broken AURUM logo: brands.logo_url
+     |   stores /images/bikes/aurum-logo.svg but no such file exists.)
+     */
+    $totalBrands = $brands->total();
 
-    <div class="relative mx-auto max-w-7xl px-5 sm:px-8 text-center">
-      <div class="inline-flex items-center gap-2 rounded-full bg-brand-50 border border-brand-200 px-4 py-1.5 text-xs font-semibold text-brand-700 fade-up mb-6">
-        <i class="fa-solid fa-gem"></i>
-        ماركات عالمية مختارة بعناية
-      </div>
+    $segments = $brands->pluck('segment')
+        ->map(fn ($s) => trim((string) $s))
+        ->filter()
+        ->countBy()
+        ->sortKeys();
 
-      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 fade-up" style="animation-delay: 0.1s">
-        اكتشف <span class="text-gradient">الماركات</span>
-      </h1>
-      <p class="mt-5 text-slate-500 text-lg max-w-xl mx-auto fade-up" style="animation-delay: 0.2s">
-        مجموعة من أفضل الماركات العالمية في عالم الدراجات النارية الفاخرة
-      </p>
+    $resolveLogo = function ($brand) {
+        $logo = trim((string) $brand->logo_url);
+        if ($logo === '') {
+            return null;
+        }
+        // Remote URLs: keep as-is (the <img> carries an onerror safety net).
+        if (preg_match('#^https?://#i', $logo)) {
+            return $logo;
+        }
+        // Local path: only render it if the file genuinely exists.
+        $relative = ltrim($logo, '/');
+        return is_file(public_path($relative)) ? asset($relative) : null;
+    };
 
-      <!-- Search -->
-      <div class="mt-10 max-w-md mx-auto fade-up" style="animation-delay: 0.3s">
-        <div class="relative">
-          <input id="brandSearch" type="text" placeholder="ابحث عن ماركة..."
-                 class="search-input w-full rounded-2xl py-4 pr-5 pl-12 text-sm transition" />
-          <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+    $meaningfulDescription = function ($brand) {
+        $desc = trim(preg_replace('/\s+/u', ' ', (string) $brand->description));
+        if ($desc === '' || mb_strlen($desc) < 24) {
+            return null;
+        }
+        if (mb_strtolower($desc) === mb_strtolower(trim((string) $brand->name))) {
+            return null;
+        }
+        return \Illuminate\Support\Str::limit($desc, 150);
+    };
+  @endphp
+
+  {{-- ============================= HEADER ============================= --}}
+  <section class="mvx-head">
+    <div class="mvx-wrap">
+
+      <nav class="mvx-crumbs" aria-label="Breadcrumb">
+        <a href="{{ route('home') }}">الرئيسية</a>
+        <i class="fa-solid fa-chevron-left sep" aria-hidden="true"></i>
+        <span aria-current="page">الماركات</span>
+      </nav>
+
+      <div class="mvx-head-grid">
+        <div>
+          <span class="mvx-badge">
+            <i class="fa-solid fa-gem" aria-hidden="true"></i>
+            ماركات عالمية مختارة بعناية
+          </span>
+
+          <h1 class="mvx-title">اكتشف <em>الماركات</em></h1>
+
+          <p class="mvx-sub">
+            تصفح الماركات المتوفرة لدينا، وتعرّف على سياراتها النارية وموديلاتها المتاحة الآن.
+          </p>
+        </div>
+
+        <div>
+          <form class="mvx-search" method="GET" action="{{ route('brands.index') }}" role="search">
+            <label for="brandSearch" class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">بحث في الماركات</label>
+            <i class="fa-solid fa-magnifying-glass mvx-search-ico" aria-hidden="true"></i>
+            <input id="brandSearch" type="search" name="search"
+                   value="{{ request('search') }}"
+                   placeholder="ابحث باسم الماركة أو بلد المنشأ..."
+                   autocomplete="off" />
+          </form>
+          <p class="mvx-search-hint">اضغط Enter للبحث في كل الماركات</p>
         </div>
       </div>
+
     </div>
   </section>
 
-  <!-- Filters -->
-  <section class="sticky top-[70px] z-40 bg-white/95 backdrop-blur-xl border-b border-slate-100 shadow-sm">
-    <div class="mx-auto max-w-7xl px-5 sm:px-8 py-4">
-      <div class="flex flex-wrap items-center justify-center gap-3" id="filters">
-        <button class="filter-btn active rounded-full px-5 py-2 text-sm font-semibold transition" data-filter="all">
-          الكل
-        </button>
-        <button class="filter-btn rounded-full px-5 py-2 text-sm font-semibold transition" data-filter="premium">
-          بريميوم
-        </button>
-        <button class="filter-btn rounded-full px-5 py-2 text-sm font-semibold transition" data-filter="sport">
-          رياضي
-        </button>
-        <button class="filter-btn rounded-full px-5 py-2 text-sm font-semibold transition" data-filter="classic">
-          كلاسيك
-        </button>
-        <button class="filter-btn rounded-full px-5 py-2 text-sm font-semibold transition" data-filter="adventure">
-          مغامرات
-        </button>
-      </div>
-    </div>
-  </section>
+  {{-- ============================ TOOLBAR ============================ --}}
+  @if($brands->isNotEmpty())
+  <section class="mvx-toolbar">
+    <div class="mvx-wrap">
+      <div class="mvx-toolbar-inner">
 
-  <!-- Brands Grid -->
-  <section class="py-16 bg-white">
-    <div class="mx-auto max-w-7xl px-5 sm:px-8">
-
-      <div class="flex items-center justify-between mb-10">
-        <p class="text-sm text-slate-500">
-          عرض <span id="brandCount" class="text-slate-900 font-semibold">{{ $brands->count() }}</span> ماركات
-        </p>
-        <select class="sort-select rounded-xl px-4 py-2 text-sm">
-          <option>الأحدث</option>
-          <option>الأكثر شهرة</option>
-          <option>أبجدي</option>
-        </select>
-      </div>
-
-      <div id="brandsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-
-        @forelse($brands as $index => $brand)
-        <article
-          class="brand-card reveal rounded-3xl p-1 group"
-          data-category="{{ strtolower($brand->category ?? 'all') }}"
-          data-name="{{ strtolower($brand->name) }}"
-          style="transition-delay: {{ ($index % 3) * 0.08 }}s"
-        >
-          <div class="rounded-[1.35rem] overflow-hidden">
-
-            <!-- Logo Area -->
-            <div class="logo-area relative h-48 flex items-center justify-center"
-                 style="background: linear-gradient(135deg, {{ $brand->bg_from ?? '#f5f3ff' }}, {{ $brand->bg_to ?? '#ede9fe' }})">
-
-              <div class="absolute inset-0 opacity-30"
-                   style="background: radial-gradient(circle at 50% 50%, rgba(139,92,246,0.15), transparent 70%)"></div>
-
-              @if($brand->logo_url)
-                <img src="{{ $brand->logo_url }}" alt="{{ $brand->name }}"
-                     class="relative max-h-24 max-w-[75%] object-contain drop-shadow-md" />
-              @else
-                <div class="relative text-center">
-                  <div class="text-5xl font-black tracking-tight text-brand-700">
-                    {{ strtoupper(substr($brand->name, 0, 1)) }}
-                  </div>
-                  <div class="mt-1 text-xl font-extrabold tracking-[0.3em] text-brand-600">
-                    {{ strtoupper($brand->name) }}
-                  </div>
-                </div>
-              @endif
-
-              @if($brand->badge)
-                <span class="absolute top-4 right-4 rounded-full bg-brand-600 text-white px-3 py-1 text-[10px] font-bold shadow">
-                  {{ $brand->badge }}
-                </span>
-              @endif
-            </div>
-
-            <!-- Card Body -->
-            <div class="p-6 bg-white">
-              <div class="flex items-start justify-between gap-3">
-                <div>
-                  <h3 class="text-xl font-bold text-slate-900">{{ $brand->name }}</h3>
-                  <p class="mt-1 text-sm text-slate-500">{{ $brand->description ?? 'ماركة متميزة في عالم الدراجات' }}</p>
-                </div>
-                <span class="tag-pill rounded-lg px-2.5 py-1 text-xs font-semibold whitespace-nowrap">
-                  {{ $brand->motorcycles_count ?? $brand->motorcycles()->count() }} موديل
-                </span>
-              </div>
-
-              @if($brand->tags)
-              <div class="mt-5 flex flex-wrap items-center gap-2 text-xs text-slate-500">
-                @foreach(explode(',', $brand->tags) as $tag)
-                  <span class="rounded-full bg-slate-100 px-2.5 py-1">{{ trim($tag) }}</span>
-                @endforeach
-              </div>
-              @endif
-
-              <a href="{{ route('brands.show', $brand->slug) }}"
-                 class="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-slate-50 border border-slate-200 py-3 text-sm font-semibold text-slate-700 hover:bg-brand-600 hover:text-white hover:border-transparent transition group-hover:bg-brand-600 group-hover:text-white group-hover:border-transparent">
-                استكشف الموديلات
-                <i class="fa-solid fa-arrow-left text-xs"></i>
-              </a>
-            </div>
-
-          </div>
-        </article>
-        @empty
-        <div class="col-span-3 text-center py-20">
-          <div class="text-5xl mb-4 opacity-30">🏍️</div>
-          <h3 class="text-xl font-bold text-slate-700">لا توجد ماركات حتى الآن</h3>
-          <p class="mt-2 text-slate-400">تابعنا قريباً لإضافة ماركات جديدة</p>
+        <div class="mvx-chips" id="brandFilters" role="group" aria-label="تصفية حسب الفئة">
+          <button type="button" class="mvx-chip is-active" data-segment="all" aria-pressed="true">
+            الكل
+            <span class="mvx-chip-n">{{ $brands->count() }}</span>
+          </button>
+          @foreach($segments as $segment => $segmentCount)
+            <button type="button" class="mvx-chip" data-segment="{{ mb_strtolower($segment) }}" aria-pressed="false">
+              {{ $segment }}
+              <span class="mvx-chip-n">{{ $segmentCount }}</span>
+            </button>
+          @endforeach
         </div>
-        @endforelse
+
+        <div class="mvx-sort">
+          <label for="brandSort">ترتيب:</label>
+          <select id="brandSort" class="mvx-select">
+            <option value="newest">الأحدث</option>
+            <option value="models">الأكثر موديلات</option>
+            <option value="az">أبجدي (أ–ي)</option>
+            <option value="za">أبجدي (ي–أ)</option>
+          </select>
+          <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+        </div>
 
       </div>
-
-      <!-- Empty search state -->
-      <div id="emptyState" class="hidden text-center py-20">
-        <div class="text-5xl mb-4 opacity-30">🔍</div>
-        <h3 class="text-xl font-bold text-slate-700">مفيش ماركات مطابقة</h3>
-        <p class="mt-2 text-slate-400">جرب تبحث بكلمات مختلفة</p>
-      </div>
-
     </div>
   </section>
+  @endif
 
-  <!-- CTA -->
-  <section class="py-20 bg-slate-50">
-    <div class="mx-auto max-w-7xl px-5 sm:px-8">
-      <div class="reveal cta-section rounded-3xl p-12 text-center relative overflow-hidden">
-        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-32 bg-brand-300/20 blur-[80px] pointer-events-none"></div>
-        <div class="relative">
-          <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900">مش لاقي الماركة اللي بتدور عليها؟</h2>
-          <p class="mt-4 text-slate-500 max-w-md mx-auto">كلمنا وقولنا إيه اللي محتاجه، وهنساعدك نلاقيه.</p>
-          <a href="{{ route('contact') }}" class="btn-primary mt-8 inline-flex items-center gap-2 rounded-2xl px-8 py-4 text-sm font-bold">
-            تواصل معنا
-            <i class="fa-solid fa-arrow-left text-xs"></i>
+  {{-- ============================ RESULTS ============================ --}}
+  <section class="mvx-results">
+    <div class="mvx-wrap">
+
+      @if($brands->isEmpty())
+        <div class="mvx-empty">
+          <div class="mvx-empty-ico"><i class="fa-solid fa-motorcycle" aria-hidden="true"></i></div>
+          <h3>لا توجد ماركات منشورة حتى الآن</h3>
+          <p>تابعنا قريبًا، نعمل على إضافة ماركات جديدة.</p>
+          <a class="mvx-btn-ghost" href="{{ route('motorcycles.index') }}">
+            تصفح كل الدراجات
+            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
           </a>
         </div>
+      @else
+        <p class="mvx-count">
+          عرض
+          <b id="brandCount">{{ $brands->count() }}</b>
+          من <b>{{ $totalBrands }}</b> ماركة
+        </p>
+
+        <div class="mvx-grid" id="brandsGrid">
+          @foreach($brands as $index => $brand)
+            @php
+              $logo = $resolveLogo($brand);
+              $desc = $meaningfulDescription($brand);
+              $searchIndex = mb_strtolower(trim(implode(' ', array_filter([
+                  $brand->name,
+                  $brand->segment,
+                  $brand->country,
+                  $brand->tagline,
+                  $brand->description,
+              ]))));
+            @endphp
+
+            <article class="mvx-card"
+                     style="animation-delay: {{ min($index, 6) * 0.06 }}s"
+                     data-name="{{ mb_strtolower($brand->name) }}"
+                     data-segment="{{ mb_strtolower(trim((string) $brand->segment)) }}"
+                     data-models="{{ (int) $brand->motorcycles_count }}"
+                     data-created="{{ optional($brand->created_at)->timestamp ?? 0 }}"
+                     data-search="{{ $searchIndex }}">
+
+              {{-- Logo well: real asset → image; otherwise (or on failure) a clean text mark --}}
+              <div class="mvx-logo {{ $logo ? '' : 'is-plain' }}">
+                @if($logo)
+                  <img class="mvx-logo-img" src="{{ $logo }}" alt="{{ $brand->name }}" loading="lazy"
+                       onerror="this.closest('.mvx-logo').classList.add('is-plain')" />
+                @endif
+                <div class="mvx-mark" aria-hidden="true">
+                  <span class="mvx-mono">{{ mb_strtoupper(mb_substr($brand->name, 0, 1)) }}</span>
+                  <span class="mvx-word">{{ mb_strtoupper($brand->name) }}</span>
+                </div>
+              </div>
+
+              <div class="mvx-body">
+
+                <div class="mvx-card-top">
+                  @if(filled($brand->segment))
+                    <span class="mvx-seg">{{ $brand->segment }}</span>
+                  @else
+                    <span></span>
+                  @endif
+
+                  <span class="mvx-models">
+                    <i class="fa-solid fa-motorcycle" aria-hidden="true"></i>
+                    {{ (int) $brand->motorcycles_count }} موديل
+                  </span>
+                </div>
+
+                <h3 class="mvx-name">{{ $brand->name }}</h3>
+
+                @if(filled($brand->tagline))
+                  <p class="mvx-tagline">{{ $brand->tagline }}</p>
+                @endif
+
+                @if(filled($brand->country))
+                  <p class="mvx-country">
+                    <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+                    {{ $brand->country }}
+                  </p>
+                @endif
+
+                @if($desc)
+                  <p class="mvx-desc">{{ $desc }}</p>
+                @endif
+
+                <div class="mvx-divider">
+                  <a class="mvx-cta" href="{{ route('brands.show', $brand->slug) }}">
+                    استكشف الموديلات
+                    <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                  </a>
+                </div>
+
+              </div>
+            </article>
+          @endforeach
+        </div>
+
+        {{-- Client-side no-match state --}}
+        <div class="mvx-empty is-hidden" id="brandsEmpty">
+          <div class="mvx-empty-ico"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></div>
+          <h3>لا توجد ماركات مطابقة</h3>
+          <p>جرّب كلمة بحث أخرى أو أعد ضبط الفلاتر.</p>
+          <a class="mvx-btn-ghost" href="{{ route('brands.index') }}">
+            إعادة ضبط الفلاتر
+            <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
+          </a>
+        </div>
+
+        @if($brands->hasPages())
+          <div class="mvx-pager">{{ $brands->links() }}</div>
+        @endif
+      @endif
+
+    </div>
+  </section>
+
+  {{-- ============================== CTA ============================== --}}
+  <section class="mvx-cta-band">
+    <div class="mvx-wrap">
+      <div class="mvx-cta-box">
+        <h2>لم تجد الماركة التي تبحث عنها؟</h2>
+        <p>أخبرنا بما تحتاجه وسنساعدك في الوصول إليه من خلال شبكة موردينا.</p>
+        <a class="mvx-btn-primary" href="{{ route('contact') }}">
+          تواصل معنا
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+        </a>
       </div>
     </div>
   </section>
@@ -361,65 +822,67 @@
   @include('partials.footer')
 
   <script>
-    // Reveal on scroll
-    const reveals = document.querySelectorAll('.reveal');
-    const revealOnScroll = () => {
-      reveals.forEach(el => {
-        if (el.getBoundingClientRect().top < window.innerHeight - 80) {
-          el.classList.add('active');
-        }
-      });
-    };
-    window.addEventListener('scroll', revealOnScroll);
-    revealOnScroll();
+    (function () {
+      var grid    = document.getElementById('brandsGrid');
+      var empty   = document.getElementById('brandsEmpty');
+      var search  = document.getElementById('brandSearch');
+      var sort    = document.getElementById('brandSort');
+      var countEl = document.getElementById('brandCount');
+      if (!grid) { return; }
 
-    // Filter
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    const cards = document.querySelectorAll('.brand-card');
-    const brandCountEl = document.getElementById('brandCount');
-    const emptyState = document.getElementById('emptyState');
-    const brandsGrid = document.getElementById('brandsGrid');
+      var cards = Array.prototype.slice.call(grid.querySelectorAll('.mvx-card'));
+      var chips = Array.prototype.slice.call(document.querySelectorAll('.mvx-chip'));
+      var activeSegment = 'all';
 
-    function updateCount() {
-      const visible = [...cards].filter(c => !c.classList.contains('hidden')).length;
-      brandCountEl.textContent = visible;
-      emptyState.classList.toggle('hidden', visible > 0);
-      brandsGrid.classList.toggle('hidden', visible === 0);
-    }
+      function applyFilters() {
+        var q = (search && search.value ? search.value : '').trim().toLowerCase();
+        var visible = 0;
 
-    filterBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        filterBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const filter = btn.dataset.filter;
-        cards.forEach(card => {
-          if (filter === 'all' || card.dataset.category.includes(filter)) {
-            card.classList.remove('hidden');
-          } else {
-            card.classList.add('hidden');
-          }
+        cards.forEach(function (card) {
+          var segment = card.getAttribute('data-segment') || '';
+          var haystack = card.getAttribute('data-search') || '';
+          var matchesSegment = activeSegment === 'all' || (segment !== '' && segment.indexOf(activeSegment) !== -1);
+          var matchesQuery = q === '' || haystack.indexOf(q) !== -1;
+          var show = matchesSegment && matchesQuery;
+
+          card.classList.toggle('is-hidden', !show);
+          if (show) { visible++; }
         });
-        updateCount();
-      });
-    });
 
-    // Search
-    document.getElementById('brandSearch').addEventListener('input', (e) => {
-      const q = e.target.value.trim().toLowerCase();
-      cards.forEach(card => {
-        const name = card.dataset.name;
-        const text = card.textContent.toLowerCase();
-        if (q === '' || name.includes(q) || text.includes(q)) {
-          card.classList.remove('hidden');
-        } else {
-          card.classList.add('hidden');
-        }
-      });
-      if (q) {
-        filterBtns.forEach(b => b.classList.remove('active'));
+        if (countEl) { countEl.textContent = visible; }
+        if (empty) { empty.classList.toggle('is-hidden', visible > 0); }
+        grid.classList.toggle('is-hidden', visible === 0);
       }
-      updateCount();
-    });
+
+      function applySort(key) {
+        var comparators = {
+          newest: function (a, b) { return (+b.getAttribute('data-created')) - (+a.getAttribute('data-created')); },
+          models: function (a, b) { return (+b.getAttribute('data-models')) - (+a.getAttribute('data-models')); },
+          az:     function (a, b) { return (a.getAttribute('data-name') || '').localeCompare(b.getAttribute('data-name') || '', 'ar'); },
+          za:     function (a, b) { return (b.getAttribute('data-name') || '').localeCompare(a.getAttribute('data-name') || '', 'ar'); }
+        }[key];
+
+        if (!comparators) { return; }
+        cards.sort(comparators).forEach(function (card) { grid.appendChild(card); });
+      }
+
+      chips.forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          activeSegment = chip.getAttribute('data-segment') || 'all';
+          chips.forEach(function (other) {
+            var isActive = other === chip;
+            other.classList.toggle('is-active', isActive);
+            other.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+          });
+          applyFilters();
+        });
+      });
+
+      if (search) { search.addEventListener('input', applyFilters); }
+      if (sort)   { sort.addEventListener('change', function () { applySort(sort.value); }); }
+
+      applyFilters();
+    })();
   </script>
 
 </body>

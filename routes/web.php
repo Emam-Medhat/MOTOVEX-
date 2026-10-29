@@ -95,6 +95,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'active', 'role:admi
         ->middleware('role:admin')->name('users.toggle-active');
 
     // Enquiries – admin (full) + sales agent (view & update status)
+    Route::get('enquiries/export', [EnquiryController::class, 'export'])
+        ->middleware('role:admin,sales_agent')->name('enquiries.export');
     Route::resource('enquiries', EnquiryController::class)
         ->only(['index', 'show', 'update'])
         ->middleware('role:admin,sales_agent');

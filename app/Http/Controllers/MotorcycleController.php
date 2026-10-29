@@ -13,7 +13,8 @@ class MotorcycleController extends Controller
     {
         $validated = $request->validate([
             'search'   => ['nullable', 'string', 'max:100'],
-            'brand'    => ['nullable', 'integer', 'exists:brands,id'],
+            'brand'    => ['nullable', 'array'],
+            'brand.*'  => ['integer', 'exists:brands,id'],
             'category' => ['nullable', 'string', 'max:50'],
             'min_cc'   => ['nullable', 'numeric', 'min:0'],
             'max_cc'   => ['nullable', 'numeric', 'min:0'],
@@ -23,7 +24,7 @@ class MotorcycleController extends Controller
         $query = Motorcycle::with('brand')->published();
 
         if (! empty($validated['brand'])) {
-            $query->where('brand_id', $validated['brand']);
+            $query->whereIn('brand_id', (array) $validated['brand']);
         }
 
         if (! empty($validated['category'])) {

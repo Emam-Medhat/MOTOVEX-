@@ -138,6 +138,16 @@ class MotorcycleController extends Controller
         return redirect()->route('admin.motorcycles.index')->with('success', 'Motorcycle updated successfully.');
     }
 
+    public function destroy(Motorcycle $motorcycle)
+    {
+        $this->authorize('delete', $motorcycle);
+
+        $motorcycle->delete();
+
+        return redirect()->route('admin.motorcycles.index')
+            ->with('success', '"' . $motorcycle->model_name . '" has been deleted successfully.');
+    }
+
     public function bulkDestroy(Request $request)
     {
         $this->authorize('deleteAny', Motorcycle::class);

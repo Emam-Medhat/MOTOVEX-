@@ -54,11 +54,11 @@
             <tr>
                 <td>
                     <div style="display:flex;align-items:center;gap:10px">
-                        <div style="width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#9b5cff,#ed5bb7);display:grid;place-items:center;font-weight:700;font-size:12px;flex-shrink:0">
+                        <div style="width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#8b5cf6,#6d28d9);display:grid;place-items:center;font-weight:700;font-size:12px;flex-shrink:0;color:#fff">
                             {{ strtoupper(substr($user->name, 0, 1)) }}
                         </div>
                         <div>
-                            <strong style="font-size:13px;color:#f0edfb">{{ $user->name }}</strong>
+                            <strong style="font-size:13px;color:var(--text)">{{ $user->name }}</strong>
                             @if($user->id === auth()->id())
                                 <span class="badge badge-muted" style="margin-left:5px;padding:2px 7px;font-size:9px">You</span>
                             @endif
@@ -81,20 +81,32 @@
                 </td>
                 <td style="font-size:11px">{{ $user->created_at->format('d M Y') }}</td>
                 <td>
-                    <div class="td-actions">
-                        <a href="{{ route('admin.users.show', $user) }}" class="tbl-link-muted">View</a>
-                        <a href="{{ route('admin.users.edit', $user) }}" class="tbl-link">Edit</a>
+                    <div class="td-actions" style="gap:6px;justify-content:flex-end">
+                        <a href="{{ route('admin.users.show', $user) }}" class="admin-btn-sm btn-view-alt">
+                            <i class="fa-solid fa-eye"></i> View
+                        </a>
+                        <a href="{{ route('admin.users.edit', $user) }}" class="admin-btn-sm btn-edit-alt">
+                            <i class="fa-solid fa-pen-to-square"></i> Edit
+                        </a>
+                        
                         @if($user->id !== auth()->id())
-                        <form method="POST" action="{{ route('admin.users.toggle-active', $user) }}">
+                        <form method="POST" action="{{ route('admin.users.toggle-active', $user) }}" style="display:inline">
                             @csrf @method('PATCH')
-                            <button class="tbl-link" style="background:none;border:0;padding:0;{{ $user->is_active ? 'color:#fde68a' : 'color:#86efac' }}">
-                                {{ $user->is_active ? 'Suspend' : 'Reactivate' }}
+                            <button class="admin-btn-sm {{ $user->is_active ? 'btn-suspend-alt' : 'btn-success-alt' }}">
+                                @if($user->is_active)
+                                    <i class="fa-solid fa-user-slash"></i> Suspend
+                                @else
+                                    <i class="fa-solid fa-user-check"></i> Reactivate
+                                @endif
                             </button>
                         </form>
-                        <form method="POST" action="{{ route('admin.users.destroy', $user) }}"
-                              onsubmit="return confirm('Delete {{ addslashes($user->name) }}?')">
+                        
+                        <form method="POST" action="{{ route('admin.users.destroy', $user) }}" 
+                              onsubmit="return confirm('Delete {{ addslashes($user->name) }}?')" style="display:inline">
                             @csrf @method('DELETE')
-                            <button class="tbl-link-danger">Delete</button>
+                            <button class="admin-btn-sm btn-delete-alt">
+                                <i class="fa-solid fa-trash-can"></i> Delete
+                            </button>
                         </form>
                         @endif
                     </div>
