@@ -1,196 +1,33 @@
-import os, textwrap, zipfile
-base="/mnt/data/motodesign"
-os.makedirs(base, exist_ok=True)
-files={
-"index.html": r'''<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MotoDesign — Dominar 400</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <main class="showcase">
-    <nav class="topbar">
-      <button class="menu-toggle" aria-label="Open menu"><span></span><span></span><span></span></button>
-      <a href="#" class="nav-link left-link">ALL MOTORCYCLE</a>
-      <a href="#rides" class="nav-link left-link">EXPLORE RIDES</a>
-      <a href="#test-ride" class="nav-link left-link">TEST RIDE</a>
-      <a href="#" class="brand"><span class="brand-mark">✳</span> MotoDesign.</a>
-      <a href="#specs" class="nav-link right-link">SPECIFICATIONS</a>
-      <a href="#enquire" class="nav-link right-link">ENQUIRE NOW</a>
-      <a href="#test-ride" class="nav-link right-link">TEST RIDE</a>
-      <button class="bag" aria-label="Saved motorcycles">♧<i></i></button>
-    </nav>
-
-    <div class="side-social">
-      <a href="#" aria-label="Facebook">f</a><a href="#" aria-label="X">X</a>
-      <a href="#" aria-label="Instagram">◎</a><a href="#" aria-label="LinkedIn">in</a>
-    </div>
-
-    <section class="hero" id="rides">
-      <div class="model-title"><span>DOMINAR</span><strong>400</strong></div>
-      <div class="hero-copy">
-        <h1>FUELLED BY YOUR<br><em>CONVICTION.</em></h1>
-        <h2>LIQUID COOLED ENGINE</h2>
-        <p>Get, set, vroom with this power cruiser. Enjoy higher power and torque with<br class="desktop-break">
-        overhead camshaft, liquid cooled and fuel injected engine. Max Power: 29.4 kW<br class="desktop-break">
-        (40 PS) @ 8800 rpm | Max Torque: 35 Nm @ 6500 rpm.</p>
-      </div>
-      <div class="touring-note">
-        <h3>NOW COMES WITH TOURING<br>READY <em>ACCESSORIES.</em></h3>
-      </div>
-      <div class="bike-stage">
-        <div class="bike-glow"></div>
-        <img id="heroBike" src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=1500&q=90" alt="Motorcycle on a dark background">
-      </div>
-      <div class="feature-callout">
-        <span class="callout-line"></span><b>WIND VISOR.</b>
-        <p>Allow fresh air to enter the vehicle<br>while keeping rain and wind out.</p>
-      </div>
-      <div class="slide-number"><span class="up">⌃</span><b>01</b><span>02</span><span>03</span><span class="down">⌄</span></div>
-      <div class="hero-arrows">
-        <button id="prevBike" aria-label="Previous motorcycle">‹</button>
-        <button id="nextBike" aria-label="Next motorcycle">›</button>
-      </div>
-    </section>
-
-    <section class="bottom-strip" id="specs">
-      <button class="model-tile active" data-panel="model"><span class="chevron">⌃</span><strong>DOMINAR 400</strong><span class="chevron bottom">⌄</span></button>
-      <button class="info-tile" data-panel="performance"><strong>PERFORMANCE</strong><span>29.4 kW (40 PS)<br>Power, DOHC Liquid<br>cooled engine</span></button>
-      <button class="info-tile" data-panel="design"><strong>DESIGN</strong><span>Dominate road<br>trips</span></button>
-      <button class="info-tile" data-panel="technology"><strong>TECHNOLOGY</strong><span>Loaded with touring<br>accessories, USD forks,<br>Perimeter frame</span></button>
-      <button class="info-tile" data-panel="safety"><strong>SAFETY</strong><span>Dual Channel ABS,<br>Full LED headlamp</span></button>
-      <button class="video-tile" id="videoTile" aria-label="Play motorcycle video">
-        <img src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=600&q=85" alt="Motorcycle touring">
-        <span class="play">▶</span>
-      </button>
-    </section>
-    <div class="toast-message" id="toastMessage" role="status"></div>
-  </main>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="script.js"></script>
-</body>
-</html>
-''',
-"style.css": r'''*{box-sizing:border-box} :root{--green:#00a51b;--bg:#15171b;--muted:#777a80}
-html,body{margin:0;min-height:100%;background:#22252a;color:#f1f1f2;font-family:Montserrat,Arial,sans-serif}
-body{padding:12px}
-.showcase{position:relative;min-height:calc(100vh - 24px);height:min(900px,calc(100vh - 24px));min-height:730px;overflow:hidden;border:2px solid #303238;background:radial-gradient(ellipse at 57% 48%,#303238 0,#1b1d22 30%,#14161a 70%);padding:0 5.2%}
-.topbar{height:72px;display:flex;align-items:center;justify-content:space-between;gap:clamp(10px,2vw,34px);position:relative;z-index:10}
-.nav-link{color:#d4d4d6;text-decoration:none;font:500 11px 'Barlow Condensed',sans-serif;letter-spacing:1.25px;white-space:nowrap;transition:color .2s}.nav-link:hover{color:var(--green)}
-.menu-toggle{width:29px;background:none;border:0;padding:5px 0;display:flex;flex-direction:column;gap:5px;flex-shrink:0}.menu-toggle span{height:1px;width:25px;background:#ddd;display:block}.menu-toggle span:nth-child(2){width:19px}
-.brand{position:absolute;left:50%;transform:translateX(-50%);color:#eee;text-decoration:none;font-size:11px;font-weight:600;white-space:nowrap}.brand-mark{display:inline-grid;place-items:center;width:21px;height:21px;border-radius:50%;background:#079c4b;color:#111;font-size:14px;margin-right:5px}
-.bag{margin-left:5px;background:var(--green);border:0;color:white;font-size:24px;width:60px;height:60px;position:absolute;right:-5.2%;top:0}.bag i{position:absolute;width:10px;height:10px;background:#e22324;border-radius:50%;right:15px;top:22px}
-.side-social{position:absolute;left:2.3%;top:37%;display:flex;flex-direction:column;gap:22px;z-index:4}.side-social a{font-size:11px;color:#74767a;text-decoration:none;font-weight:700}
-.hero{height:calc(100% - 196px);min-height:490px;position:relative}
-.model-title{position:absolute;left:2%;top:7%;z-index:3;color:#6b6c71;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:700;line-height:.73;transform:skew(-13deg);letter-spacing:1px}.model-title span{display:block;font-size:clamp(35px,4vw,57px);letter-spacing:2px}.model-title strong{display:block;font-size:clamp(60px,7vw,94px);padding-left:27%;font-weight:700}
-.hero-copy{position:absolute;left:3%;bottom:7%;z-index:3}.hero-copy h1{font-size:clamp(17px,1.55vw,22px);font-style:italic;font-weight:800;line-height:1.15;margin:0 0 24px;letter-spacing:-.5px}.hero-copy em,.touring-note em{font-style:normal;color:var(--green)}.hero-copy h2{font-size:10px;letter-spacing:.5px;font-style:italic;margin-bottom:11px}.hero-copy p{font-size:10px;line-height:1.55;color:#8a8c91;margin:0;max-width:470px}
-.bike-stage{position:absolute;left:23%;right:18%;top:16%;bottom:16%;display:flex;align-items:center;justify-content:center}.bike-glow{position:absolute;inset:15% 5%;border-radius:50%;background:radial-gradient(ellipse,rgba(120,123,130,.23),transparent 65%);filter:blur(12px)}
-.bike-stage img{position:relative;width:100%;height:100%;object-fit:contain;filter:brightness(.83) contrast(1.12) saturate(1.13);mix-blend-mode:screen;mask-image:radial-gradient(ellipse at center,black 42%,rgba(0,0,0,.82) 59%,transparent 76%);transition:opacity .25s,transform .4s}
-.touring-note{position:absolute;right:5%;top:6%;z-index:3}.touring-note h3{font-size:12px;font-weight:700;font-style:italic;line-height:1.45}
-.feature-callout{position:absolute;right:4%;top:25%;font-size:10px;color:#c8c9cc;z-index:3}.feature-callout b{font-size:10px;font-weight:500;letter-spacing:.4px}.feature-callout p{font-size:10px;color:#85878d;line-height:1.4;font-style:italic;margin-top:8px}.callout-line{position:absolute;width:82px;height:28px;border-top:1px solid #aaa;transform:skewY(-24deg);right:100%;top:0;margin-right:10px}.callout-line:before{content:"";position:absolute;left:0;top:-4px;width:5px;height:5px;border-left:1px solid #aaa;border-top:1px solid #aaa;transform:rotate(-45deg)}
-.slide-number{position:absolute;right:-1.5%;top:40%;display:flex;flex-direction:column;align-items:center;gap:4px;color:#51535a;font-family:'Barlow Condensed',sans-serif;font-size:29px;line-height:1.05}.slide-number b{font-size:48px;font-weight:400;color:#f1f1f1}.slide-number .up,.slide-number .down{font-size:25px;color:#ddd}
-.hero-arrows{position:absolute;right:0;bottom:8%;display:flex;gap:10px}.hero-arrows button{width:48px;height:48px;border-radius:50%;border:0;background:#292b31;color:#eee;font-size:34px;font-weight:200;line-height:1;transition:background .2s}.hero-arrows button:hover{background:var(--green)}
-.bottom-strip{position:absolute;left:5.2%;right:5.2%;bottom:0;height:124px;display:grid;grid-template-columns:1.15fr 1.12fr 1.12fr 1.12fr 1.12fr 1.12fr;gap:2px;z-index:5}
-.bottom-strip button{border:0;text-align:left;color:#eee;min-width:0}.model-tile{background:var(--green);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:9px 5px 10px}.model-tile strong{font:600 25px 'Barlow Condensed',sans-serif;letter-spacing:1px}.chevron{font-size:26px;line-height:18px}.chevron.bottom{color:#71cf7a}.info-tile{background:linear-gradient(135deg,#252830,#1d2026);padding:20px 20px;display:flex;flex-direction:column;gap:13px;transition:background .25s}.info-tile:nth-child(3),.info-tile:nth-child(5){background:linear-gradient(130deg,#29312d,#1d2026)}.info-tile strong{font:500 19px 'Barlow Condensed',sans-serif;letter-spacing:.6px}.info-tile span{font-size:11px;line-height:1.35;color:#d2d3d5}.info-tile:hover,.info-tile.selected{background:#30343a}.video-tile{position:relative;overflow:hidden;padding:0;background:#16181c}.video-tile img{width:100%;height:100%;object-fit:cover;filter:brightness(.6)}.play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border:1px solid #eee;border-radius:50%;width:35px;height:35px;display:grid;place-items:center;font-size:12px;padding-left:2px}
-.toast-message{position:absolute;left:50%;bottom:145px;transform:translateX(-50%);background:#0c9d24;color:white;padding:10px 16px;font-size:12px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:20}.toast-message.show{opacity:1}
-@media(max-width:1000px){.showcase{padding:0 3%;height:auto;min-height:850px}.topbar{gap:12px}.nav-link{font-size:9px;letter-spacing:.6px}.brand{top:74px}.bag{right:-3%;width:45px;height:52px}.hero{height:680px}.model-title{top:9%;left:0}.bike-stage{left:10%;right:8%;top:20%;bottom:22%}.hero-copy{bottom:4%;left:0}.touring-note{right:1%;top:4%}.feature-callout{right:0;top:31%}.slide-number{right:0}.bottom-strip{position:relative;left:auto;right:auto;grid-template-columns:repeat(3,1fr);height:auto;margin:0 -3%;}.bottom-strip button{min-height:105px}.video-tile{min-height:105px}.info-tile{padding:15px}.side-social{left:1%;top:30%}}
-@media(max-width:650px){body{padding:0}.showcase{min-height:100vh;height:auto;padding:0 18px;border:0}.topbar{height:65px;justify-content:flex-start}.topbar .left-link,.topbar .right-link{display:none}.brand{position:static;transform:none;margin-left:auto;margin-right:54px}.bag{right:-18px;width:48px;height:48px}.hero{height:690px}.model-title{top:8%;left:0}.model-title span{font-size:35px}.model-title strong{font-size:64px}.bike-stage{left:-7%;right:-7%;top:23%;bottom:30%}.touring-note{top:8%;right:0}.touring-note h3{font-size:9px}.feature-callout{display:none}.slide-number{right:-8px;top:43%;font-size:20px}.slide-number b{font-size:35px}.hero-copy{left:0;bottom:5%}.hero-copy h1{font-size:19px;margin-bottom:16px}.hero-copy p{font-size:9px;max-width:310px}.desktop-break{display:none}.hero-arrows{right:0;bottom:3%}.hero-arrows button{width:38px;height:38px;font-size:27px}.side-social{left:4px;top:33%;gap:17px}.bottom-strip{grid-template-columns:repeat(2,minmax(0,1fr));margin:0 -18px}.bottom-strip button{min-height:110px}.model-tile strong{font-size:22px}.info-tile strong{font-size:17px}.info-tile span{font-size:10px}.video-tile{min-height:110px}}
-'''
-,
-"script.js": r'''const bikes = [
-  {name:"DOMINAR 400", image:"https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=1500&q=90"},
-  {name:"TOURING 400", image:"https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=1500&q=90"},
-  {name:"ROADSTER 400", image:"https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=1500&q=90"}
-];
-let current = 0;
-const heroBike = document.getElementById("heroBike");
-const modelTitle = document.querySelector(".model-tile strong");
-const numberItems = document.querySelectorAll(".slide-number span:not(.up):not(.down)");
-const currentNumber = document.querySelector(".slide-number b");
-const toast = document.getElementById("toastMessage");
-
-function showToast(message) {
-  toast.textContent = message;
-  toast.classList.add("show");
-  window.clearTimeout(showToast.timer);
-  showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 1800);
-}
-function setBike(index) {
-  current = (index + bikes.length) % bikes.length;
-  heroBike.style.opacity = "0.2";
-  window.setTimeout(() => {
-    heroBike.src = bikes[current].image;
-    heroBike.alt = bikes[current].name;
-    modelTitle.textContent = bikes[current].name;
-    currentNumber.textContent = String(current + 1).padStart(2, "0");
-    numberItems.forEach((item, i) => {
-      item.style.color = i === current ? "#f1f1f1" : "#51535a";
-    });
-    heroBike.style.opacity = "1";
-  }, 160);
-}
-document.getElementById("nextBike").addEventListener("click", () => setBike(current + 1));
-document.getElementById("prevBike").addEventListener("click", () => setBike(current - 1));
-
-document.querySelectorAll(".info-tile").forEach(tile => {
-  tile.addEventListener("click", () => {
-    document.querySelectorAll(".info-tile").forEach(item => item.classList.remove("selected"));
-    tile.classList.add("selected");
-    showToast(tile.querySelector("strong").textContent + " — details selected");
-  });
-});
-document.querySelector(".menu-toggle").addEventListener("click", () => showToast("Menu opened — explore motorcycles"));
-document.querySelector(".bag").addEventListener("click", () => showToast("Your saved motorcycles are empty"));
-document.getElementById("videoTile").addEventListener("click", () => showToast("Demo video preview"));
-document.querySelectorAll('a[href^="#"]').forEach(link => {
-  link.addEventListener("click", event => {
-    const target = link.getAttribute("href");
-    if (target === "#" || !document.querySelector(target)) {
-      event.preventDefault();
-      showToast("MotoDesign — motorcycle showcase");
-    }
-  });
-});
-'''
-}
-for name, content in files.items():
-    with open(os.path.join(base,name),"w",encoding="utf-8") as f: f.write(content)
-zip_path="/mnt/data/motodesign-template.zip"
-with zipfile.ZipFile(zip_path,"w",zipfile.ZIP_DEFLATED) as z:
-    for name in files: z.write(os.path.join(base,name), arcname="motodesign/"+name)
-print(zip_path, os.path.getsize(zip_path))
-
-
-*{box-sizing:border-box} :root{--green:#00a51b;--bg:#15171b;--muted:#777a80}
-html,body{margin:0;min-height:100%;background:#22252a;color:#f1f1f2;font-family:Montserrat,Arial,sans-serif}
-body{padding:12px}
-.showcase{position:relative;min-height:calc(100vh - 24px);height:min(900px,calc(100vh - 24px));min-height:730px;overflow:hidden;border:2px solid #303238;background:radial-gradient(ellipse at 57% 48%,#303238 0,#1b1d22 30%,#14161a 70%);padding:0 5.2%}
-.topbar{height:72px;display:flex;align-items:center;justify-content:space-between;gap:clamp(10px,2vw,34px);position:relative;z-index:10}
-.nav-link{color:#d4d4d6;text-decoration:none;font:500 11px 'Barlow Condensed',sans-serif;letter-spacing:1.25px;white-space:nowrap;transition:color .2s}.nav-link:hover{color:var(--green)}
-.menu-toggle{width:29px;background:none;border:0;padding:5px 0;display:flex;flex-direction:column;gap:5px;flex-shrink:0}.menu-toggle span{height:1px;width:25px;background:#ddd;display:block}.menu-toggle span:nth-child(2){width:19px}
-.brand{position:absolute;left:50%;transform:translateX(-50%);color:#eee;text-decoration:none;font-size:11px;font-weight:600;white-space:nowrap}.brand-mark{display:inline-grid;place-items:center;width:21px;height:21px;border-radius:50%;background:#079c4b;color:#111;font-size:14px;margin-right:5px}
-.bag{margin-left:5px;background:var(--green);border:0;color:white;font-size:24px;width:60px;height:60px;position:absolute;right:-5.2%;top:0}.bag i{position:absolute;width:10px;height:10px;background:#e22324;border-radius:50%;right:15px;top:22px}
-.side-social{position:absolute;left:2.3%;top:37%;display:flex;flex-direction:column;gap:22px;z-index:4}.side-social a{font-size:11px;color:#74767a;text-decoration:none;font-weight:700}
-.hero{height:calc(100% - 196px);min-height:490px;position:relative}
-.model-title{position:absolute;left:2%;top:7%;z-index:3;color:#6b6c71;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:700;line-height:.73;transform:skew(-13deg);letter-spacing:1px}.model-title span{display:block;font-size:clamp(35px,4vw,57px);letter-spacing:2px}.model-title strong{display:block;font-size:clamp(60px,7vw,94px);padding-left:27%;font-weight:700}
-.hero-copy{position:absolute;left:3%;bottom:7%;z-index:3}.hero-copy h1{font-size:clamp(17px,1.55vw,22px);font-style:italic;font-weight:800;line-height:1.15;margin:0 0 24px;letter-spacing:-.5px}.hero-copy em,.touring-note em{font-style:normal;color:var(--green)}.hero-copy h2{font-size:10px;letter-spacing:.5px;font-style:italic;margin-bottom:11px}.hero-copy p{font-size:10px;line-height:1.55;color:#8a8c91;margin:0;max-width:470px}
-.bike-stage{position:absolute;left:23%;right:18%;top:16%;bottom:16%;display:flex;align-items:center;justify-content:center}.bike-glow{position:absolute;inset:15% 5%;border-radius:50%;background:radial-gradient(ellipse,rgba(120,123,130,.23),transparent 65%);filter:blur(12px)}
-.bike-stage img{position:relative;width:100%;height:100%;object-fit:contain;filter:brightness(.83) contrast(1.12) saturate(1.13);mix-blend-mode:screen;mask-image:radial-gradient(ellipse at center,black 42%,rgba(0,0,0,.82) 59%,transparent 76%);transition:opacity .25s,transform .4s}
-.touring-note{position:absolute;right:5%;top:6%;z-index:3}.touring-note h3{font-size:12px;font-weight:700;font-style:italic;line-height:1.45}
-.feature-callout{position:absolute;right:4%;top:25%;font-size:10px;color:#c8c9cc;z-index:3}.feature-callout b{font-size:10px;font-weight:500;letter-spacing:.4px}.feature-callout p{font-size:10px;color:#85878d;line-height:1.4;font-style:italic;margin-top:8px}.callout-line{position:absolute;width:82px;height:28px;border-top:1px solid #aaa;transform:skewY(-24deg);right:100%;top:0;margin-right:10px}.callout-line:before{content:"";position:absolute;left:0;top:-4px;width:5px;height:5px;border-left:1px solid #aaa;border-top:1px solid #aaa;transform:rotate(-45deg)}
-.slide-number{position:absolute;right:-1.5%;top:40%;display:flex;flex-direction:column;align-items:center;gap:4px;color:#51535a;font-family:'Barlow Condensed',sans-serif;font-size:29px;line-height:1.05}.slide-number b{font-size:48px;font-weight:400;color:#f1f1f1}.slide-number .up,.slide-number .down{font-size:25px;color:#ddd}
-.hero-arrows{position:absolute;right:0;bottom:8%;display:flex;gap:10px}.hero-arrows button{width:48px;height:48px;border-radius:50%;border:0;background:#292b31;color:#eee;font-size:34px;font-weight:200;line-height:1;transition:background .2s}.hero-arrows button:hover{background:var(--green)}
-.bottom-strip{position:absolute;left:5.2%;right:5.2%;bottom:0;height:124px;display:grid;grid-template-columns:1.15fr 1.12fr 1.12fr 1.12fr 1.12fr 1.12fr;gap:2px;z-index:5}
-.bottom-strip button{border:0;text-align:left;color:#eee;min-width:0}.model-tile{background:var(--green);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:9px 5px 10px}.model-tile strong{font:600 25px 'Barlow Condensed',sans-serif;letter-spacing:1px}.chevron{font-size:26px;line-height:18px}.chevron.bottom{color:#71cf7a}.info-tile{background:linear-gradient(135deg,#252830,#1d2026);padding:20px 20px;display:flex;flex-direction:column;gap:13px;transition:background .25s}.info-tile:nth-child(3),.info-tile:nth-child(5){background:linear-gradient(130deg,#29312d,#1d2026)}.info-tile strong{font:500 19px 'Barlow Condensed',sans-serif;letter-spacing:.6px}.info-tile span{font-size:11px;line-height:1.35;color:#d2d3d5}.info-tile:hover,.info-tile.selected{background:#30343a}.video-tile{position:relative;overflow:hidden;padding:0;background:#16181c}.video-tile img{width:100%;height:100%;object-fit:cover;filter:brightness(.6)}.play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border:1px solid #eee;border-radius:50%;width:35px;height:35px;display:grid;place-items:center;font-size:12px;padding-left:2px}
-.toast-message{position:absolute;left:50%;bottom:145px;transform:translateX(-50%);background:#0c9d24;color:white;padding:10px 16px;font-size:12px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:20}.toast-message.show{opacity:1}
-@media(max-width:1000px){.showcase{padding:0 3%;height:auto;min-height:850px}.topbar{gap:12px}.nav-link{font-size:9px;letter-spacing:.6px}.brand{top:74px}.bag{right:-3%;width:45px;height:52px}.hero{height:680px}.model-title{top:9%;left:0}.bike-stage{left:10%;right:8%;top:20%;bottom:22%}.hero-copy{bottom:4%;left:0}.touring-note{right:1%;top:4%}.feature-callout{right:0;top:31%}.slide-number{right:0}.bottom-strip{position:relative;left:auto;right:auto;grid-template-columns:repeat(3,1fr);height:auto;margin:0 -3%;}.bottom-strip button{min-height:105px}.video-tile{min-height:105px}.info-tile{padding:15px}.side-social{left:1%;top:30%}}
-@media(max-width:650px){body{padding:0}.showcase{min-height:100vh;height:auto;padding:0 18px;border:0}.topbar{height:65px;justify-content:flex-start}.topbar .left-link,.topbar .right-link{display:none}.brand{position:static;transform:none;margin-left:auto;margin-right:54px}.bag{right:-18px;width:48px;height:48px}.hero{height:690px}.model-title{top:8%;left:0}.model-title span{font-size:35px}.model-title strong{font-size:64px}.bike-stage{left:-7%;right:-7%;top:23%;bottom:30%}.touring-note{top:8%;right:0}.touring-note h3{font-size:9px}.feature-callout{display:none}.slide-number{right:-8px;top:43%;font-size:20px}.slide-number b{font-size:35px}.hero-copy{left:0;bottom:5%}.hero-copy h1{font-size:19px;margin-bottom:16px}.hero-copy p{font-size:9px;max-width:310px}.desktop-break{display:none}.hero-arrows{right:0;bottom:3%}.hero-arrows button{width:38px;height:38px;font-size:27px}.side-social{left:4px;top:33%;gap:17px}.bottom-strip{grid-template-columns:repeat(2,minmax(0,1fr));margin:0 -18px}.bottom-strip button{min-height:110px}.model-tile strong{font-size:22px}.info-tile strong{font-size:17px}.info-tile span{font-size:10px}.video-tile{min-height:110px}}
-
-
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+>
+    <testsuites>
+        <testsuite name="Unit">
+            <directory suffix="Test.php">./tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Feature">
+            <directory suffix="Test.php">./tests/Feature</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory suffix=".php">./app</directory>
+        </include>
+    </source>
+    <php>
+        <env name="APP_ENV" value="testing"/>
+        <env name="APP_MAINTENANCE_DRIVER" value="file"/>
+        <env name="BCRYPT_ROUNDS" value="4"/>
+        <env name="CACHE_STORE" value="array"/>
+        <env name="DB_CONNECTION" value="sqlite"/>
+        <env name="DB_DATABASE" value=":memory:"/>
+        <env name="MAIL_MAILER" value="array"/>
+        <env name="PULSE_ENABLED" value="false"/>
+        <env name="QUEUE_CONNECTION" value="sync"/>
+        <env name="SESSION_DRIVER" value="array"/>
+        <env name="TELESCOPE_ENABLED" value="false"/>
+    </php>
+</phpunit>

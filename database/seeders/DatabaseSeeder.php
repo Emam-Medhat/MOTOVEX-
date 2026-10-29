@@ -17,6 +17,9 @@ class DatabaseSeeder extends Seeder
             EnquirySeeder::class,
             PromotionSeeder::class,
             ShowroomSeeder::class,
+            // Real-world sport & racing motorcycles (safe to re-run)
+            RacingBrandSeeder::class,
+            RacingMotorcycleSeeder::class,
         ]);
     }
 }

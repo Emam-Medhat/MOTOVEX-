@@ -53,9 +53,25 @@ class Motorcycle extends Model
     // Return uploaded image if available, otherwise fall back to image_url
     public function getImageUrlAttribute($value): ?string
     {
+        // Uploaded file via admin panel — served from storage
         if ($this->attributes['image_path'] ?? null) {
             return asset('storage/' . $this->attributes['image_path']);
         }
+
+        if (! $value) {
+            return null;
+        }
+
+        // Already absolute URL (external) — return as-is
+        if (str_starts_with($value, 'http://') || str_starts_with($value, 'https://')) {
+            return $value;
+        }
+
+        // Relative path starting with / — build absolute URL using asset()
+        if (str_starts_with($value, '/')) {
+            return asset(ltrim($value, '/'));
+        }
+
         return $value;
     }
 
