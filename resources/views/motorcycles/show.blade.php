@@ -14,7 +14,7 @@
                 extend: {
                     fontFamily: { sans: ['Plus Jakarta Sans','sans-serif'] },
                     colors: {
-                        brand: { 50:'#f5f3ff', 100:'#ede9fe', 200:'#ddd6fe', 400:'#a78bfa', 500:'#8b5cf6', 600:'#7c3aed', 700:'#6d28d9' }
+                        brand: { 50:'#f5f3ff', 100:'#ede9fe', 200:'#ddd6fe', 300:'#c4b5fd', 400:'#a78bfa', 500:'#8b5cf6', 600:'#7c3aed', 700:'#6d28d9', 800:'#5b21b6', 900:'#4c1d95' }
                     }
                 }
             }
@@ -34,58 +34,7 @@
 </head>
 <body class="bg-slate-50 text-slate-900">
 
-{{-- Announcement bar --}}
-<div class="bg-gradient-to-r from-brand-700 via-brand-600 to-indigo-600 py-2.5 text-center text-xs font-semibold text-white">
-    <i class="fa-solid fa-motorcycle mr-2"></i>
-    2026 Collection Available Now · Free Test Rides · Certified Inspections
-</div>
-
-{{-- Sticky header --}}
-<header class="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-xl shadow-sm">
-    <div class="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
-        <a href="{{ route('home') }}" class="flex shrink-0 items-center gap-3 group">
-            <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 text-lg text-white shadow-md shadow-brand-500/25 group-hover:scale-105 transition-transform duration-300">
-                <i class="fa-solid fa-motorcycle"></i>
-            </span>
-            <div>
-                <strong class="block text-xl font-extrabold tracking-tight text-slate-900">MOTOVEX</strong>
-                <small class="text-[9px] font-bold uppercase tracking-[0.2em] text-brand-600">Premium Motorcycles</small>
-            </div>
-        </a>
-
-        <nav class="ml-8 hidden items-center gap-7 text-sm font-medium text-slate-500 lg:flex">
-            <a href="{{ route('home') }}" class="hover:text-slate-900 transition">Home</a>
-            <a href="{{ route('motorcycles.index') }}" class="text-brand-600 font-semibold">Shop</a>
-            <a href="{{ route('brands.index') }}" class="hover:text-slate-900 transition">Brands</a>
-            <a href="{{ route('services') }}" class="hover:text-slate-900 transition">Services</a>
-            <a href="{{ route('contact') }}" class="hover:text-slate-900 transition">Contact</a>
-        </nav>
-
-        <div class="ml-auto flex items-center gap-3">
-            @auth
-                <a href="{{ route('account.dashboard') }}" class="hidden sm:inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-700 hover:border-brand-300 transition">
-                    <i class="fa-solid fa-user"></i> Account
-                </a>
-            @else
-                <a href="{{ route('login') }}" class="hidden sm:inline-flex items-center gap-2 rounded-full bg-brand-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-brand-500 transition shadow-md shadow-brand-500/20">
-                    Sign In
-                </a>
-            @endauth
-            <button id="menuButton" class="flex h-10 w-10 items-center justify-center rounded-full hover:bg-slate-100 lg:hidden text-slate-600">
-                <i class="fa-solid fa-bars"></i>
-            </button>
-        </div>
-    </div>
-    <nav id="mobileMenu" class="hidden border-t border-slate-100 bg-white px-5 py-4 text-sm text-slate-600 lg:hidden">
-        <div class="flex flex-wrap gap-5">
-            <a href="{{ route('home') }}">Home</a>
-            <a href="{{ route('motorcycles.index') }}">Shop</a>
-            <a href="{{ route('brands.index') }}">Brands</a>
-            <a href="{{ route('services') }}">Services</a>
-            <a href="{{ route('contact') }}">Contact</a>
-        </div>
-    </nav>
-</header>
+@include('partials.navbar')
 
 {{-- Hero section with bike image background --}}
 <section class="hero-bg">
@@ -352,65 +301,7 @@
     @endif
 </main>
 
-{{-- Footer (dark bg-slate-900 with 4 columns) --}}
-<footer class="border-t border-slate-200 bg-slate-900 text-slate-300 mt-16">
-    <div class="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-12 sm:px-6 md:grid-cols-2 lg:grid-cols-4 lg:px-8">
-        <div>
-            <a href="{{ route('home') }}" class="inline-flex items-center gap-3">
-                <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 text-white">
-                    <i class="fa-solid fa-motorcycle"></i>
-                </span>
-                <div>
-                    <strong class="block text-xl font-extrabold text-white">MOTOVEX</strong>
-                    <small class="text-[9px] uppercase tracking-[0.2em] text-brand-400">Premium Motorcycles</small>
-                </div>
-            </a>
-            <p class="mt-4 max-w-xs text-sm leading-relaxed text-slate-400">Premium motorcycle dealership with certified inspections, genuine parts, and expert support.</p>
-            <div class="mt-5 flex gap-2">
-                @foreach(['fa-facebook-f','fa-instagram','fa-youtube'] as $icon)
-                <a href="#" class="flex h-9 w-9 items-center justify-center rounded-full bg-white/5 hover:bg-brand-600 transition">
-                    <i class="fa-brands {{ $icon }}"></i>
-                </a>
-                @endforeach
-            </div>
-        </div>
-        <div>
-            <h3 class="mb-4 text-xs font-bold uppercase tracking-wider text-white">Quick Links</h3>
-            <ul class="space-y-2.5 text-sm text-slate-400">
-                <li><a href="{{ route('home') }}" class="hover:text-white transition">Home</a></li>
-                <li><a href="{{ route('motorcycles.index') }}" class="hover:text-white transition">Shop</a></li>
-                <li><a href="{{ route('services') }}" class="hover:text-white transition">Services</a></li>
-                <li><a href="{{ route('contact') }}" class="hover:text-white transition">Contact</a></li>
-            </ul>
-        </div>
-        <div>
-            <h3 class="mb-4 text-xs font-bold uppercase tracking-wider text-white">Top Brands</h3>
-            <ul class="space-y-2.5 text-sm text-slate-400">
-                @foreach($footerBrands ?? [] as $fb)
-                <li><a href="{{ route('brands.show', $fb->slug) }}" class="hover:text-white transition">{{ $fb->name }}</a></li>
-                @endforeach
-            </ul>
-        </div>
-        <div>
-            <h3 class="mb-3 text-xs font-bold uppercase tracking-wider text-white">Newsletter</h3>
-            <p class="mb-4 text-sm text-slate-400">Get updates on new arrivals and exclusive offers.</p>
-            <form class="flex gap-2">
-                <input type="email" required placeholder="Your email"
-                       class="min-w-0 flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-white outline-none placeholder:text-slate-500 focus:border-brand-500" />
-                <button type="submit" class="rounded-lg bg-brand-600 px-4 text-sm font-bold text-white hover:bg-brand-500 transition">Go</button>
-            </form>
-        </div>
-    </div>
-    <div class="border-t border-white/10">
-        <div class="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-5 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-            <span>© {{ date('Y') }} MOTOVEX Premium Motorcycle Group. All rights reserved.</span>
-            <div class="flex gap-5">
-                <a href="#" class="hover:text-white transition">Privacy</a>
-                <a href="#" class="hover:text-white transition">Terms</a>
-            </div>
-        </div>
-    </div>
-</footer>
+@include('partials.footer')
 
 {{-- Test ride modal --}}
 <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm" role="dialog" aria-modal="true">
@@ -520,10 +411,6 @@
     modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
     document.getElementById('preferredDate').min = new Date().toISOString().slice(0, 10);
-
-    document.getElementById('menuButton').addEventListener('click', () => {
-        document.getElementById('mobileMenu').classList.toggle('hidden');
-    });
 
     @if(session('success'))
         toast("{{ session('success') }}");

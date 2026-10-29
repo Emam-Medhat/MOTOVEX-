@@ -1,79 +1,77 @@
-<footer class="bg-[#0c0c0d] py-12 text-white relative overflow-hidden">
-    {{-- Decorative Background Elements --}}
-    <div class="absolute -left-20 -top-20 h-48 w-48 rounded-full bg-[#ff9aa9]/5 blur-3xl"></div>
-    <div class="absolute -right-20 -bottom-20 h-48 w-48 rounded-full bg-[#ff9aa9]/5 blur-3xl"></div>
-
-    <div class="mx-auto max-w-7xl px-5 lg:px-8 relative z-10">
-        <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-            {{-- Brand Column --}}
-            <div class="reveal-on-scroll">
-                <a href="{{ route('home') }}" class="text-2xl font-black tracking-tighter uppercase">
-                    RIDE<span class="text-[#ff9aa9]">AXIS</span>
+{{-- =====================================================================
+     UNIFIED SITE FOOTER — shared across every public page.
+     Refined layout: Links Grid first, Contact Cards at bottom.
+     Compact height version.
+     ===================================================================== --}}
+<footer dir="ltr" class="w-full border-t border-slate-200 bg-white pt-10 pb-6 text-xs text-slate-600 sm:pt-12">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        
+        {{-- Links Grid (Top) --}}
+        <div class="grid grid-cols-2 gap-8 border-b border-slate-200 pb-8 md:grid-cols-4 xl:gap-12">
+            <div class="col-span-2 md:col-span-1">
+                <a href="{{ route('home') }}" class="mb-3 flex items-center gap-2">
+                    <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-sm text-white">
+                        <i class="fa-solid fa-motorcycle"></i>
+                    </span>
+                    <strong class="text-base font-extrabold text-slate-900">MOTOVEX</strong>
                 </a>
-                <p class="mt-4 text-sm leading-relaxed text-gray-400">
-                    Discover performance, precision, and character across our collection of premium motorcycles. Built for the next ride.
-                </p>
-                <div class="mt-4 flex gap-3">
-                    @foreach([
-                        ['fab fa-facebook-f', '#'],
-                        ['fab fa-twitter', '#'],
-                        ['fab fa-instagram', '#'],
-                        ['fab fa-youtube', '#']
-                    ] as [$icon, $link])
-                    <a href="{{ $link }}" class="flex h-9 w-9 items-center justify-center rounded-full border border-gray-800 transition-all duration-300 hover:bg-[#ff9aa9] hover:border-[#ff9aa9] group">
-                        <i class="{{ $icon }} text-sm group-hover:scale-110 transition-transform"></i>
-                    </a>
-                    @endforeach
-                </div>
+                <p class="max-w-sm leading-relaxed text-slate-500">Premium motorcycle dealership with certified inspections and expert support.</p>
             </div>
-
-            {{-- Quick Links Column --}}
-            <div class="reveal-on-scroll">
-                <h4 class="text-sm font-bold uppercase tracking-widest text-white">Quick Links</h4>
-                <ul class="mt-4 space-y-3 text-gray-400 text-sm">
-                    <li><a href="{{ route('home') }}" class="transition hover:text-[#ff9aa9] hover:translate-x-1 inline-block">About Us</a></li>
-                    <li><a href="{{ route('contact') }}" class="transition hover:text-[#ff9aa9] hover:translate-x-1 inline-block">Contact Us</a></li>
-                    <li><a href="{{ route('motorcycles.index') }}" class="transition hover:text-[#ff9aa9] hover:translate-x-1 inline-block">Shop</a></li>
-                    <li><a href="#" class="transition hover:text-[#ff9aa9] hover:translate-x-1 inline-block">Latest Blogs</a></li>
+            <div>
+                <h4 class="mb-3 text-xs font-bold uppercase tracking-wider text-slate-900">Explore</h4>
+                <ul class="space-y-2 text-slate-500">
+                    <li><a href="{{ route('motorcycles.index') }}" class="transition hover:text-brand-600">All Motorcycles</a></li>
+                    <li><a href="{{ route('brands.index') }}" class="transition hover:text-brand-600">Our Brands</a></li>
+                    <li><a href="{{ route('services') }}" class="transition hover:text-brand-600">Services</a></li>
+                    <li><a href="{{ route('contact') }}" class="transition hover:text-brand-600">Contact</a></li>
                 </ul>
             </div>
-
-            {{-- Categories / Brands Column --}}
-            <div class="reveal-on-scroll">
-                <h4 class="text-sm font-bold uppercase tracking-widest text-white">Top Brands</h4>
-                <ul class="mt-4 space-y-3 text-gray-400 text-sm">
-                    @foreach($footerBrands as $brand)
-                    <li><a href="{{ route('brands.show', $brand->slug) }}" class="transition hover:text-[#ff9aa9] hover:translate-x-1 inline-block">{{ $brand->name }}</a></li>
-                    @endforeach
-                    @if($footerBrands->isEmpty())
-                        <li><a href="#" class="transition hover:text-[#ff9aa9] hover:translate-x-1 inline-block">Motor Bikes</a></li>
-                        <li><a href="#" class="transition hover:text-[#ff9aa9] hover:translate-x-1 inline-block">Electric Bikes</a></li>
-                        <li><a href="#" class="transition hover:text-[#ff9aa9] hover:translate-x-1 inline-block">Accessories</a></li>
-                    @endif
+            <div>
+                <h4 class="mb-3 text-xs font-bold uppercase tracking-wider text-slate-900">Account</h4>
+                <ul class="space-y-2 text-slate-500">
+                    <li><a href="{{ route('login') }}" class="transition hover:text-brand-600">Login</a></li>
+                    <li><a href="{{ route('register') }}" class="transition hover:text-brand-600">Register</a></li>
+                    <li><a href="{{ route('account.dashboard') }}" class="transition hover:text-brand-600">My Account</a></li>
+                    <li><a href="{{ route('account.enquiries') }}" class="transition hover:text-brand-600">My Enquiries</a></li>
                 </ul>
             </div>
-
-            {{-- Newsletter Column --}}
-            <div class="reveal-on-scroll">
-                <h4 class="text-sm font-bold uppercase tracking-widest text-white">Newsletter</h4>
-                <p class="mt-4 text-sm text-gray-400">Subscribe to get the latest updates, offers and technical insights.</p>
-                <form class="mt-4 flex flex-col gap-3">
-                    <input type="email" placeholder="Email Address" 
-                           class="w-full rounded-full bg-white/5 border border-white/10 px-5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#ff9aa9] transition-all">
-                    <button type="submit" class="w-full rounded-full bg-[#ff9aa9] px-5 py-2.5 text-xs font-black uppercase tracking-widest text-white transition-all hover:bg-white hover:text-black active:scale-95">
-                        Subscribe
-                    </button>
-                </form>
+            <div>
+                <h4 class="mb-3 text-xs font-bold uppercase tracking-wider text-slate-900">Top Brands</h4>
+                <ul class="space-y-2 text-slate-500">
+                    @foreach($footerBrands ?? [] as $fb)
+                    <li><a href="{{ route('brands.show', $fb->slug) }}" class="transition hover:text-brand-600">{{ $fb->name }}</a></li>
+                    @endforeach
+                </ul>
             </div>
         </div>
 
-        {{-- Bottom Copyright Bar --}}
-        <div class="mt-10 border-t border-gray-900 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-gray-500">
-            <p>&copy; {{ date('Y') }} RIDEAXIS. All Rights Reserved.</p>
-            <div class="flex gap-6">
-                <a href="#" class="hover:text-white transition">Privacy Policy</a>
-                <a href="#" class="hover:text-white transition">Terms of Service</a>
-                <a href="#" class="hover:text-white transition">Cookies Settings</a>
+        {{-- Contact Cards (Bottom) --}}
+        <div class="grid grid-cols-1 gap-4 py-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
+            @foreach([
+                ['fa-location-dot','Our Showroom','123 Motorway Street, Cairo, Egypt'],
+                ['fa-envelope','Mail Us','info@motovex-group.com'],
+                ['fa-phone','Direct Line','+20 (012) 3456 7890'],
+                ['fa-motorcycle','MOTOVEX Group','Official Authorized Distributor'],
+            ] as [$icon,$title,$text])
+            <div class="flex items-center gap-3.5 rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-brand-200">
+                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-lg font-bold text-brand-600">
+                    <i class="fa-solid {{ $icon }}"></i>
+                </div>
+                <div class="min-w-0">
+                    <h4 class="text-xs font-bold text-slate-900">{{ $title }}</h4>
+                    <p class="mt-0.5 truncate text-[10px] text-slate-500">{{ $text }}</p>
+                </div>
+            </div>
+            @endforeach
+        </div>
+
+        {{-- Copyright Bar --}}
+        <div class="flex flex-col items-center justify-between gap-3 border-t border-slate-200 pt-6 text-center text-slate-400 sm:flex-row sm:text-left">
+            <span>© {{ date('Y') }} MOTOVEX Premium Motorcycle Group. All rights reserved.</span>
+            <div class="flex flex-wrap justify-center gap-5">
+                <a href="#" class="transition hover:text-slate-700">Privacy</a>
+                <a href="#" class="transition hover:text-slate-700">Terms</a>
+                <a href="#" class="transition hover:text-slate-700">Cookies</a>
             </div>
         </div>
     </div>
