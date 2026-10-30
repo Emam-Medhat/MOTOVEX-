@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Promotion;
 use App\Models\Brand;
+use App\Models\Motorcycle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class PromotionController extends Controller
 {
@@ -35,15 +37,19 @@ class PromotionController extends Controller
     public function create()
     {
         $brands = $this->authorizedBrands();
-        return view('admin.promotions.create', compact('brands'));
+        $motorcycles = Motorcycle::orderBy('model_name')->get(['id', 'model_name']);
+        return view('admin.promotions.create', compact('brands', 'motorcycles'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'brand_id'    => ['nullable', 'exists:brands,id'],
+            'motorcycle_id' => ['nullable', 'exists:motorcycles,id'],
             'title'       => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
+            'discount_type'  => ['nullable', Rule::in(['percentage', 'fixed'])],
+            'discount_value' => ['nullable', 'numeric', 'min:0'],
             'image_url'   => ['nullable', 'url'],
             'start_date'  => ['nullable', 'date'],
             'end_date'    => ['nullable', 'date', 'after_or_equal:start_date'],
@@ -57,6 +63,7 @@ class PromotionController extends Controller
 
         $validated['slug'] = Str::slug($validated['title']) . '-' . Str::random(5);
         $validated['is_active'] = $request->has('is_active');
+        $this->normalizeDiscount($validated);
 
         Promotion::create($validated);
 
@@ -71,15 +78,19 @@ class PromotionController extends Controller
     public function edit(Promotion $promotion)
     {
         $brands = $this->authorizedBrands();
-        return view('admin.promotions.edit', compact('promotion', 'brands'));
+        $motorcycles = Motorcycle::orderBy('model_name')->get(['id', 'model_name']);
+        return view('admin.promotions.edit', compact('promotion', 'brands', 'motorcycles'));
     }
 
     public function update(Request $request, Promotion $promotion)
     {
         $validated = $request->validate([
             'brand_id'    => ['nullable', 'exists:brands,id'],
+            'motorcycle_id' => ['nullable', 'exists:motorcycles,id'],
             'title'       => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
+            'discount_type'  => ['nullable', Rule::in(['percentage', 'fixed'])],
+            'discount_value' => ['nullable', 'numeric', 'min:0'],
             'image_url'   => ['nullable', 'url'],
             'start_date'  => ['nullable', 'date'],
             'end_date'    => ['nullable', 'date', 'after_or_equal:start_date'],
@@ -87,6 +98,7 @@ class PromotionController extends Controller
         ]);
 
         $validated['is_active'] = $request->has('is_active');
+        $this->normalizeDiscount($validated);
         $promotion->update($validated);
 
         return redirect()->route('admin.promotions.index')->with('success', 'Promotion updated successfully.');
@@ -105,5 +117,19 @@ class PromotionController extends Controller
             return Brand::orderBy('name')->get();
         }
         return $user->assignedBrands()->orderBy('name')->get();
+    }
+
+    /**
+     * Keep discount data consistent: a value requires a type and vice versa.
+     * Discount values are only ever what the admin explicitly entered.
+     *
+     * @param  array<string, mixed>  $validated
+     */
+    private function normalizeDiscount(array &$validated): void
+    {
+        if (empty($validated['discount_type']) || ! isset($validated['discount_value']) || $validated['discount_value'] === '') {
+            $validated['discount_type']  = null;
+            $validated['discount_value'] = null;
+        }
     }
 }

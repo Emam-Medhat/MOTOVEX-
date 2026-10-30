@@ -49,6 +49,28 @@ class LoginController extends Controller
             ]);
         }
 
+        // Pending merchants cannot access any dashboard until approved.
+        if ($request->user()->isPendingMerchant()) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('login')->withErrors([
+                'email' => 'Your merchant account is awaiting administrator approval. You will be notified once approved.',
+            ]);
+        }
+
+        // Rejected merchants are permanently blocked.
+        if ($request->user()->isRejectedMerchant()) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('login')->withErrors([
+                'email' => 'Your merchant application has been rejected. Please contact support for more information.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey($request));
         $request->session()->regenerate();
 

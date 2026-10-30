@@ -93,7 +93,7 @@ class RequestController extends Controller
                         ->where('owned.created_by', $user->id))));
         }
 
-        $this->applyFilters($query, $filters, $user, 't.motorcycle_id', "'test_ride'", 't.created_at', 't.name', 't.email', 't.booking_reference', 'm.model_name');
+        $this->applyFilters($query, $filters, $user, 't.motorcycle_id', "'test_ride'", 't.created_at', 't.name', 't.email', 't.booking_reference', 't.booking_reference', 'm.model_name');
         if (! empty($filters['date_from'])) {
             $query->whereDate('t.preferred_date', '>=', $filters['date_from']);
         }

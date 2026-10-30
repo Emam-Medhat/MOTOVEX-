@@ -17,7 +17,16 @@
   </div>
 
   {{-- ─── Stat cards ─── --}}
-  <div class="ac-stat-grid">
+  <div class="ac-stat-grid" style="grid-template-columns:repeat(2,1fr)">
+    <div class="ac-stat">
+      <div class="ac-stat-ico">
+        <i class="fa-solid fa-receipt" aria-hidden="true"></i>
+      </div>
+      <div>
+        <div class="ac-stat-num">{{ $stats['orders'] }}</div>
+        <div class="ac-stat-label">My Orders</div>
+      </div>
+    </div>
     <div class="ac-stat">
       <div class="ac-stat-ico">
         <i class="fa-solid fa-envelope" aria-hidden="true"></i>
@@ -46,6 +55,55 @@
       </div>
     </div>
   </div>
+
+  {{-- ─── Recent Orders ─── --}}
+  @if($recentOrders->isNotEmpty())
+  <div class="ac-card" style="margin-bottom:1.5rem;">
+    <div class="ac-card-header">
+      <div class="ac-card-title">
+        <i class="fa-solid fa-receipt"></i>
+        Recent Orders
+      </div>
+      <a href="{{ route('account.orders') }}" class="ac-btn-ghost" style="padding:.5rem .95rem;font-size:.8rem;">
+        View all <i class="fa-solid fa-arrow-right" style="font-size:.68rem;"></i>
+      </a>
+    </div>
+    <div class="ac-card-body" style="padding:0;">
+      <div class="ac-table-wrap">
+        <table class="ac-table">
+          <thead>
+            <tr>
+              <th>Reference</th>
+              <th>Items</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th style="text-align:right">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach($recentOrders as $order)
+              @php
+                $sc = ['pending'=>'pending','confirmed'=>'contacted','processing'=>'contacted','completed'=>'completed','cancelled'=>'cancelled'][$order->status] ?? 'pending';
+              @endphp
+              <tr>
+                <td style="font-family:monospace;font-size:.78rem;font-weight:700;color:var(--ac-primary-d)">{{ $order->order_reference }}</td>
+                <td><span class="ac-type-tag"><i class="fa-solid fa-box"></i> {{ $order->items_count }}</span></td>
+                <td style="font-weight:800;font-size:.88rem;color:var(--ac-primary)">{{ $order->currency }} {{ number_format((float) $order->total_amount, 2) }}</td>
+                <td><span class="ac-badge {{ $sc }}">{{ ucfirst($order->status) }}</span></td>
+                <td style="font-size:.78rem;color:var(--ac-muted)">{{ $order->created_at?->format('d M Y') }}</td>
+                <td style="text-align:right">
+                  <a href="{{ route('account.orders.show', $order) }}" class="ac-btn-ghost" style="padding:.4rem .8rem;font-size:.76rem;">View</a>
+                </td>
+              </tr>
+            @endforeach
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  @endif
+
 
   {{-- ─── Recent activity ─── --}}
   <div class="ac-card" style="margin-bottom:1.5rem;">

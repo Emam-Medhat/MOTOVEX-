@@ -1,5 +1,5 @@
-@extends('layouts.admin')
-@section('title', 'Assign Users — ' . $brand->name)
+﻿@extends('layouts.admin')
+@section('title', 'Assign Users â€” ' . $brand->name)
 
 @section('styles')
 <style>
@@ -17,7 +17,7 @@
         display: block;
     }
 
-    /* ── Breadcrumb ── */
+    /* â”€â”€ Breadcrumb â”€â”€ */
     .assign-crumbs {
         display: flex; align-items: center; flex-wrap: wrap; gap: 7px;
         font-size: 12.5px; color: var(--p-sub); margin-bottom: 14px;
@@ -27,7 +27,7 @@
     .assign-crumbs i { font-size: 8px; color: #CBD5E1; }
     .assign-crumbs .is-current { color: var(--p-ink); font-weight: 600; }
 
-    /* ── Page header ── */
+    /* â”€â”€ Page header â”€â”€ */
     .assign-header {
         display: flex; align-items: flex-start; justify-content: space-between;
         gap: 24px; flex-wrap: wrap; margin-bottom: 22px;
@@ -55,7 +55,7 @@
         color: var(--p-sub); margin-top: 5px;
     }
 
-    /* ── Validation ── */
+    /* â”€â”€ Validation â”€â”€ */
     .assign-error {
         display: flex; align-items: flex-start; gap: 9px;
         padding: 11px 14px; border-radius: 10px; margin-bottom: 16px;
@@ -63,7 +63,7 @@
     }
     .assign-error i { margin-top: 2px; flex-shrink: 0; }
 
-    /* ── Content card ── */
+    /* â”€â”€ Content card â”€â”€ */
     .assign-card {
         background: #fff; border: 1px solid var(--p-border); border-radius: 16px;
         overflow: hidden; box-shadow: 0 1px 2px rgba(16, 24, 40, .04);
@@ -105,7 +105,7 @@
     .assign-selectall:hover { border-color: var(--p-soft-border); background: var(--p-soft); }
     .assign-selectall input { width: 16px; height: 16px; margin: 0; accent-color: var(--p-purple); cursor: pointer; }
 
-    /* ── User list ── */
+    /* â”€â”€ User list â”€â”€ */
     .assign-list {
         display: flex; flex-direction: column; gap: 10px;
         padding: 16px 24px 16px;
@@ -158,7 +158,7 @@
     }
     .assign-noresults.show { display: block; }
 
-    /* ── Empty state ── */
+    /* â”€â”€ Empty state â”€â”€ */
     .assign-empty { padding: 64px 24px; text-align: center; }
     .assign-empty-icon {
         width: 56px; height: 56px; border-radius: 14px; margin: 0 auto 18px;
@@ -169,7 +169,7 @@
     .assign-empty h4 { margin: 0; font-size: 16px; font-weight: 700; color: var(--p-ink); }
     .assign-empty p { margin: 8px 0 20px; font-size: 13px; color: var(--p-sub); }
 
-    /* ── Footer actions ── */
+    /* â”€â”€ Footer actions â”€â”€ */
     .assign-foot {
         display: flex; align-items: center; justify-content: space-between;
         gap: 16px; flex-wrap: wrap;
@@ -217,13 +217,13 @@
     {{-- Breadcrumb --}}
     <nav class="assign-crumbs" aria-label="Breadcrumb">
         <a href="{{ route('admin.dashboard') }}">Admin</a>
-        <i class="fa-solid fa-chevron-right"></i>
+        <i class="bi bi-chevron-right"></i>
         <a href="{{ route('admin.brands.index') }}">Catalogue</a>
-        <i class="fa-solid fa-chevron-right"></i>
+        <i class="bi bi-chevron-right"></i>
         <a href="{{ route('admin.brands.index') }}">Brands</a>
-        <i class="fa-solid fa-chevron-right"></i>
+        <i class="bi bi-chevron-right"></i>
         <a href="{{ route('admin.brands.show', $brand) }}">{{ $brand->name }}</a>
-        <i class="fa-solid fa-chevron-right"></i>
+        <i class="bi bi-chevron-right"></i>
         <span class="is-current">Assign Users</span>
     </nav>
 
@@ -231,7 +231,7 @@
     <header class="assign-header">
         <div class="assign-header-main">
             <span class="assign-brand-badge">
-                <i class="fa-regular fa-copyright"></i> {{ $brand->name }}
+                <i class="bi bi-patch-check"></i> {{ $brand->name }}
             </span>
             <h1 class="assign-title">Assign Users</h1>
             <p class="assign-subtitle">
@@ -248,7 +248,7 @@
 
     @if($errors->any())
         <div class="assign-error">
-            <i class="fa-solid fa-circle-exclamation"></i>
+            <i class="bi bi-exclamation-circle-fill"></i>
             <span>{{ $errors->first() }}</span>
         </div>
     @endif
@@ -260,11 +260,11 @@
 
             @if($users->isEmpty())
                 <div class="assign-empty">
-                    <div class="assign-empty-icon"><i class="fa-solid fa-users"></i></div>
+                    <div class="assign-empty-icon"><i class="bi bi-people-fill"></i></div>
                     <h4>No Data Entry users</h4>
-                    <p>Create users with the “Data Entry” role before assigning them to this brand.</p>
+                    <p>Create users with the â€œData Entryâ€ role before assigning them to this brand.</p>
                     <a href="{{ route('admin.users.create') }}" class="btn-assign-save">
-                        <i class="fa-solid fa-user-plus"></i> Create New User
+                        <i class="bi bi-person-plus-fill"></i> Create New User
                     </a>
                 </div>
             @else
@@ -280,8 +280,8 @@
 
                     <div class="assign-tools">
                         <div class="assign-search">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                            <input type="text" id="userSearch" placeholder="Search by name or email…"
+                            <i class="bi bi-search"></i>
+                            <input type="text" id="userSearch" placeholder="Search by name or emailâ€¦"
                                    autocomplete="off" aria-label="Search team members">
                         </div>
 
@@ -316,7 +316,7 @@
                             </div>
 
                             <span class="row-flag">
-                                <i class="fa-solid fa-circle-check"></i> Assigned
+                                <i class="bi bi-check-circle-fill"></i> Assigned
                             </span>
                         </div>
                     @endforeach
@@ -333,7 +333,7 @@
                 <div class="assign-foot-actions">
                     <a href="{{ route('admin.brands.show', $brand) }}" class="btn-assign-cancel">Cancel</a>
                     <button type="submit" class="btn-assign-save">
-                        <i class="fa-solid fa-check"></i> Save Assignments
+                        <i class="bi bi-check-lg"></i> Save Assignments
                     </button>
                 </div>
             </div>
@@ -391,7 +391,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Select all — applies only to the users currently visible after filtering
+    // Select all â€” applies only to the users currently visible after filtering
     selectAll?.addEventListener('change', function () {
         const shouldCheck = this.checked;
         visibleRows().forEach((row) => {
@@ -403,7 +403,7 @@ document.addEventListener('DOMContentLoaded', function () {
         refresh();
     });
 
-    // Search — filters the visible list only; never changes selections
+    // Search â€” filters the visible list only; never changes selections
     searchInput?.addEventListener('input', function () {
         const query = this.value.toLowerCase().trim();
         rows.forEach((row) => {
@@ -419,3 +419,4 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 @endsection
+

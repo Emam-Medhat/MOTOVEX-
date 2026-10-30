@@ -70,14 +70,18 @@ class ServiceSeeder extends Seeder
                 'icon'        => 'headset',
                 'description' => 'Dedicated support in your language, available across the region — from first question to long after purchase.',
                 'cta_label'   => 'Contact us',
-                'cta_route'   => route('contact'),
+                'cta_route'   => '/contact',
                 'sort_order'  => 6,
                 'is_active'   => true,
             ],
         ];
 
-        foreach ($services as $service) {
-            Service::create($service);
+        foreach ($services as $data) {
+            // updateOrCreate prevents duplicates on repeated seeder runs.
+            Service::updateOrCreate(
+                ['slug' => $data['slug']],
+                $data
+            );
         }
     }
 }

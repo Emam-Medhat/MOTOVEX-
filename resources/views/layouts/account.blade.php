@@ -747,6 +747,16 @@
        class="ac-tab {{ request()->routeIs('account.security') ? 'is-active' : '' }}">
       <i class="fa-solid fa-shield"></i> Security
     </a>
+    @if(auth()->user()->isApprovedMerchant())
+    <a href="{{ route('account.spare-parts.index') }}"
+       class="ac-tab {{ request()->routeIs('account.spare-parts*') ? 'is-active' : '' }}">
+      <i class="fa-solid fa-gears"></i> Spare Parts
+    </a>
+    <a href="{{ route('account.merchant-orders.index') }}"
+       class="ac-tab {{ request()->routeIs('account.merchant-orders*') ? 'is-active' : '' }}">
+      <i class="fa-solid fa-boxes-stacked"></i> Spare Parts Orders
+    </a>
+    @endif
     <form method="POST" action="{{ route('logout') }}" class="ac-signout-form">
       @csrf
       <button type="submit" class="ac-tab is-signout-tab">
@@ -784,7 +794,7 @@
             <small style="font-size:.68rem;color:#94a3b8;margin-right:auto;margin-left:.25rem;font-weight:400;">الرئيسية</small>
           </a>
           <a href="{{ route('account.orders') }}"
-             class="ac-nav-item {{ request()->routeIs('account.orders*') ? 'is-active' : '' }}">
+             class="ac-nav-item {{ request()->routeIs('account.orders', 'account.orders.show') ? 'is-active' : '' }}">
             <i class="fa-solid fa-receipt"></i>
             <span>My Orders</span>
             <small style="font-size:.68rem;color:#94a3b8;margin-right:auto;margin-left:.25rem;font-weight:400;">طلباتي</small>
@@ -807,6 +817,22 @@
             <span>Security</span>
             <small style="font-size:.68rem;color:#94a3b8;margin-right:auto;margin-left:.25rem;font-weight:400;">الأمان</small>
           </a>
+
+          @if(auth()->user()->isApprovedMerchant())
+          <div class="ac-nav-divider"></div>
+          <a href="{{ route('account.spare-parts.index') }}"
+             class="ac-nav-item {{ request()->routeIs('account.spare-parts*') ? 'is-active' : '' }}">
+            <i class="fa-solid fa-gears"></i>
+            <span>My Spare Parts</span>
+            <small style="font-size:.68rem;color:#94a3b8;margin-right:auto;margin-left:.25rem;font-weight:400;">قطع الغيار</small>
+          </a>
+          <a href="{{ route('account.merchant-orders.index') }}"
+             class="ac-nav-item {{ request()->routeIs('account.merchant-orders*') ? 'is-active' : '' }}">
+            <i class="fa-solid fa-boxes-stacked"></i>
+            <span>Spare Parts Orders</span>
+            <small style="font-size:.68rem;color:#94a3b8;margin-right:auto;margin-left:.25rem;font-weight:400;">طلبات القطع</small>
+          </a>
+          @endif
 
           <div class="ac-nav-divider"></div>
 

@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 @section('title', $motorcycle->model_name)
 
 @section('styles')
@@ -111,7 +111,7 @@
 @section('content')
 
 @if(session('success'))
-<div class="flash-success" style="margin-bottom:18px"><i class="fa-solid fa-circle-check"></i>{{ session('success') }}</div>
+<div class="flash-success" style="margin-bottom:18px"><i class="bi bi-check-circle-fill"></i>{{ session('success') }}</div>
 @endif
 
 {{-- ── Page header ── --}}
@@ -120,7 +120,7 @@
         <a href="{{ route('admin.motorcycles.index') }}"
            style="font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:6px;margin-bottom:6px;transition:color .15s;"
            onmouseover="this.style.color='var(--purple)'" onmouseout="this.style.color='var(--muted)'">
-            <i class="fa-solid fa-arrow-left" style="font-size:10px"></i> Back to Motorcycles
+            <i class="bi bi-arrow-left" style="font-size:10px"></i> Back to Motorcycles
         </a>
         <h1>{{ $motorcycle->model_name }}</h1>
         <p style="font-size:12px;color:var(--muted);margin-top:3px">
@@ -129,15 +129,15 @@
     </div>
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
         <a href="{{ route('motorcycles.show', $motorcycle->slug) }}" target="_blank" class="btn-ghost">
-            <i class="fa-solid fa-arrow-up-right-from-square"></i> View on Site
+            <i class="bi bi-arrow-up-right-square"></i> View on Site
         </a>
         <a href="{{ route('admin.motorcycles.edit', $motorcycle) }}" class="btn-primary">
-            <i class="fa-solid fa-pen-to-square"></i> Edit Motorcycle
+            <i class="bi bi-pencil-square"></i> Edit Motorcycle
         </a>
         @can('delete', $motorcycle)
         <button type="button" class="btn-danger" id="show-delete-btn"
                 data-name="{{ $motorcycle->model_name }}">
-            <i class="fa-solid fa-trash-can"></i> Delete
+            <i class="bi bi-trash3"></i> Delete
         </button>
         <form id="show-delete-form" method="POST"
               action="{{ route('admin.motorcycles.destroy', $motorcycle) }}"
@@ -188,11 +188,11 @@
                      onclick="openLightbox(this.src)">
                 {{-- Zoom hint --}}
                 <div style="position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.5);color:#fff;font-size:10px;font-weight:600;padding:4px 9px;border-radius:20px;pointer-events:none;display:flex;align-items:center;gap:5px;">
-                    <i class="fa-solid fa-magnifying-glass-plus" style="font-size:9px;"></i> Click to zoom
+                    <i class="bi bi-zoom-in" style="font-size:9px;"></i> Click to zoom
                 </div>
             @else
                 <div style="width:100%;height:100%;display:grid;place-items:center;flex-direction:column;gap:10px;">
-                    <i class="fa-solid fa-motorcycle" style="font-size:56px;color:#cbd5e1;"></i>
+                    <i class="bi bi-bicycle" style="font-size:56px;color:#cbd5e1;"></i>
                     <p style="font-size:12px;color:#94a3b8;margin-top:8px;">No image available</p>
                 </div>
             @endif
@@ -208,7 +208,7 @@
             @endforeach
             {{-- Fill empty slots up to 4 --}}
             @for($j = count($allImgs); $j < 4 && $j < 4; $j++)
-            <div class="g-thumb-empty"><i class="fa-regular fa-image"></i></div>
+            <div class="g-thumb-empty"><i class="bi bi-image"></i></div>
             @endfor
         </div>
         @elseif(count($allImgs) === 0)
@@ -218,7 +218,7 @@
         {{-- Photo count ── --}}
         @if(count($allImgs) > 0)
         <p style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center;">
-            <i class="fa-solid fa-images" style="margin-right:4px;color:var(--purple);"></i>
+            <i class="bi bi-images" style="margin-right:4px;color:var(--purple);"></i>
             {{ count($allImgs) }} photo{{ count($allImgs) !== 1 ? 's' : '' }}
         </p>
         @endif
@@ -246,27 +246,27 @@
             {{-- Specs grid ── --}}
             <dl class="spec-grid">
                 <div class="spec-item">
-                    <dt><i class="fa-solid fa-tag" style="color:var(--purple);margin-right:4px;"></i>Price</dt>
+                    <dt><i class="bi bi-tag-fill" style="color:var(--purple);margin-right:4px;"></i>Price</dt>
                     <dd style="color:var(--purple);">{{ $motorcycle->price ? (($motorcycle->currency ?: 'USD') . ' ' . number_format($motorcycle->price)) : '—' }}</dd>
                 </div>
                 <div class="spec-item">
-                    <dt><i class="fa-regular fa-calendar" style="color:var(--purple);margin-right:4px;"></i>Year</dt>
+                    <dt><i class="bi bi-calendar3" style="color:var(--purple);margin-right:4px;"></i>Year</dt>
                     <dd>{{ $motorcycle->year ?: '—' }}</dd>
                 </div>
                 <div class="spec-item">
-                    <dt><i class="fa-solid fa-motorcycle" style="color:var(--purple);margin-right:4px;"></i>Category</dt>
+                    <dt><i class="bi bi-bicycle" style="color:var(--purple);margin-right:4px;"></i>Category</dt>
                     <dd>{{ $motorcycle->category ? ucfirst($motorcycle->category) : '—' }}</dd>
                 </div>
                 <div class="spec-item">
-                    <dt><i class="fa-solid fa-gauge-high" style="color:var(--purple);margin-right:4px;"></i>Engine (CC)</dt>
+                    <dt><i class="bi bi-speedometer2" style="color:var(--purple);margin-right:4px;"></i>Engine (CC)</dt>
                     <dd>{{ $motorcycle->engine_capacity ? number_format($motorcycle->engine_capacity) . ' cc' : '—' }}</dd>
                 </div>
                 <div class="spec-item">
-                    <dt><i class="fa-solid fa-circle-check" style="color:var(--purple);margin-right:4px;"></i>Availability</dt>
+                    <dt><i class="bi bi-check-circle-fill" style="color:var(--purple);margin-right:4px;"></i>Availability</dt>
                     <dd>{{ ucfirst($motorcycle->availability_status ?? 'available') }}</dd>
                 </div>
                 <div class="spec-item">
-                    <dt><i class="fa-solid fa-shield-halved" style="color:var(--purple);margin-right:4px;"></i>Condition</dt>
+                    <dt><i class="bi bi-shield-fill-check" style="color:var(--purple);margin-right:4px;"></i>Condition</dt>
                     <dd>{{ ucfirst($motorcycle->condition ?? 'new') }}</dd>
                 </div>
                 @if($motorcycle->horsepower)
@@ -329,7 +329,7 @@
 {{-- Lightbox ── --}}
 <div id="lightbox" role="dialog" aria-modal="true" onclick="if(event.target===this)closeLightbox()">
     <button id="lightbox-close" onclick="closeLightbox()" aria-label="Close">
-        <i class="fa-solid fa-xmark"></i>
+        <i class="bi bi-x-lg"></i>
     </button>
     <img id="lightbox-img" src="" alt="Full size photo">
 </div>
@@ -372,7 +372,7 @@ document.addEventListener('keydown', function(e){
             <div style="background:#fff;border-radius:18px;padding:28px 28px 24px;width:100%;max-width:400px;box-shadow:0 25px 60px rgba(0,0,0,.18)">
                 <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:18px">
                     <div style="flex-shrink:0;width:42px;height:42px;border-radius:12px;background:#FEF2F2;border:1px solid #FECACA;display:grid;place-items:center">
-                        <i class="fa-solid fa-triangle-exclamation" style="color:#DC2626;font-size:16px"></i>
+                        <i class="bi bi-exclamation-triangle-fill" style="color:#DC2626;font-size:16px"></i>
                     </div>
                     <div>
                         <p style="font-size:15px;font-weight:700;color:#111;margin:0 0 4px">Delete Motorcycle</p>
@@ -389,7 +389,7 @@ document.addEventListener('keydown', function(e){
                     </button>
                     <button id="sdm-confirm" type="button"
                             style="height:38px;padding:0 18px;font-size:13px;font-weight:600;border-radius:10px;border:none;background:#DC2626;color:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
-                        <i class="fa-solid fa-trash-can"></i> Yes, Delete
+                        <i class="bi bi-trash3"></i> Yes, Delete
                     </button>
                 </div>
             </div>
@@ -405,7 +405,7 @@ document.addEventListener('keydown', function(e){
     modal.querySelector('#sdm-backdrop').addEventListener('click', closeModal);
     modal.querySelector('#sdm-confirm').addEventListener('click', function () {
         this.disabled = true;
-        this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Deleting…';
+        this.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Deleting…';
         form.submit();
     });
     document.addEventListener('keydown', function(e){
@@ -414,3 +414,4 @@ document.addEventListener('keydown', function(e){
 })();
 </script>
 @endsection
+

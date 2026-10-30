@@ -1,71 +1,75 @@
-﻿@extends('layouts.admin')
+@extends('layouts.admin')
 @section('title', 'Edit ' . $brand->name)
 
 @section('content')
 <div class="page-header">
     <div>
-        <a href="{{ route('admin.brands.index') }}"
-           style="font-size:12px;color:#6e6888;display:inline-flex;align-items:center;gap:6px;margin-bottom:6px"
-           onmouseover="this.style.color='#d4cfea'" onmouseout="this.style.color='#6e6888'">
-            <i class="fa-solid fa-arrow-left" style="font-size:10px"></i> Back to Brands
+        <a href="{{ route('admin.brands.index') }}" class="text-decoration-none text-muted small d-inline-flex align-items-center gap-2 mb-2">
+            <i class="bi bi-arrow-left"></i> Back to Brands
         </a>
-        <h1>{{ $brand->name }}</h1>
+        <h1>Edit Brand</h1>
+        <p>Updating details for <strong>{{ $brand->name }}</strong></p>
     </div>
 </div>
 
-<div>
-    <div class="admin-panel">
-        <form method="POST" action="{{ route('admin.brands.update', $brand) }}" style="display:flex;flex-direction:column;gap:16px">
-            @csrf @method('PUT')
+<div class="panel border-0 shadow-sm p-4">
+    <form method="POST" action="{{ route('admin.brands.update', $brand) }}">
+        @csrf @method('PUT')
 
-            <div>
+        <div class="row g-4">
+            <div class="col-md-12">
                 <label class="form-label">Brand Name *</label>
                 <input type="text" name="name" value="{{ old('name', $brand->name) }}"
-                       class="form-input {{ $errors->has('name') ? 'is-invalid' : '' }}">
-                @error('name')<p class="form-error">{{ $message }}</p>@enderror
+                       class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}">
+                @error('name')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
             </div>
 
-            <div>
+            <div class="col-md-12">
                 <label class="form-label">Description *</label>
                 <textarea name="description" rows="4"
-                          class="form-textarea {{ $errors->has('description') ? 'is-invalid' : '' }}">{{ old('description', $brand->description) }}</textarea>
-                @error('description')<p class="form-error">{{ $message }}</p>@enderror
+                          class="form-control {{ $errors->has('description') ? 'is-invalid' : '' }}">{{ old('description', $brand->description) }}</textarea>
+                @error('description')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
             </div>
 
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-                <div>
-                    <label class="form-label">Country</label>
-                    <input type="text" name="country" value="{{ old('country', $brand->country) }}"
-                           class="form-input">
-                </div>
-                <div>
-                    <label class="form-label">Website URL</label>
-                    <input type="url" name="website_url" value="{{ old('website_url', $brand->website_url) }}"
-                           class="form-input">
-                </div>
+            <div class="col-md-6">
+                <label class="form-label">Country</label>
+                <input type="text" name="country" value="{{ old('country', $brand->country) }}"
+                       class="form-control">
             </div>
 
-            <div>
+            <div class="col-md-6">
+                <label class="form-label">Website URL</label>
+                <input type="url" name="website_url" value="{{ old('website_url', $brand->website_url) }}"
+                       class="form-control">
+            </div>
+
+            <div class="col-md-12">
                 <label class="form-label">Logo URL</label>
                 <input type="url" name="logo_url" value="{{ old('logo_url', $brand->logo_url) }}"
-                       class="form-input">
+                       class="form-control">
             </div>
 
-            <div style="display:flex;align-items:center;gap:9px">
-                <input type="hidden" name="is_published" value="0">
-                <input type="checkbox" id="is_published" name="is_published" value="1"
-                       {{ old('is_published', $brand->is_published) ? 'checked' : '' }}
-                       style="width:16px;height:16px;accent-color:#9b5cff;cursor:pointer">
-                <label for="is_published" style="font-size:13px;color:#c8c3da;cursor:pointer">Published</label>
+            <div class="col-md-12 mt-4">
+                <div class="form-check form-switch d-flex align-items-center gap-2">
+                    <input type="hidden" name="is_published" value="0">
+                    <input type="checkbox" id="is_published" name="is_published" value="1"
+                           class="form-check-input" style="width: 40px; height: 20px;"
+                           {{ old('is_published', $brand->is_published) ? 'checked' : '' }}>
+                    <label class="form-check-label fw-bold ms-2" for="is_published">
+                        <i class="bi bi-eye me-1 text-primary"></i> Published (visible on site)
+                    </label>
+                </div>
             </div>
+        </div>
 
-            <div style="display:flex;gap:12px;padding-top:16px;border-top:1px solid var(--line)">
-                <button type="submit" class="btn-primary">
-                    <i class="fa-solid fa-check"></i> Save Changes
-                </button>
-                <a href="{{ route('admin.brands.index') }}" class="btn-ghost">Cancel</a>
-            </div>
-        </form>
-    </div>
+        <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn-primary-alt">
+                <i class="bi bi-check-lg"></i> Save Changes
+            </button>
+            <a href="{{ route('admin.brands.index') }}" class="btn btn-light" style="border-radius: 8px; font-weight: 600;">
+                Cancel
+            </a>
+        </div>
+    </form>
 </div>
 @endsection

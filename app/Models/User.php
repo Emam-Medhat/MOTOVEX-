@@ -28,13 +28,17 @@ class User extends Authenticatable
         'password',
         'is_active',
         'newsletter_opted_in',
+        'account_status',
+        'approved_at',
+        'approved_by',
     ];
 
     /**
-     * Newly instantiated accounts are active unless explicitly suspended.
+     * Newly instantiated accounts are active unless explicitly set otherwise.
      */
     protected $attributes = [
-        'is_active' => true,
+        'is_active'      => true,
+        'account_status' => 'active',
     ];
 
     /**
@@ -55,9 +59,10 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'is_active' => 'boolean',
+            'email_verified_at'  => 'datetime',
+            'approved_at'        => 'datetime',
+            'password'           => 'hashed',
+            'is_active'          => 'boolean',
             'newsletter_opted_in' => 'boolean',
         ];
     }
@@ -128,6 +133,65 @@ class User extends Authenticatable
     public function isCustomer(): bool
     {
         return $this->hasRole('customer');
+    }
+
+    public function isMerchant(): bool
+    {
+        return $this->hasRole('merchant');
+    }
+
+    // ── Account Status Helpers ─────────────────────────────────────────────────
+
+    public function isAccountActive(): bool
+    {
+        return $this->account_status === 'active';
+    }
+
+    public function isAccountPending(): bool
+    {
+        return $this->account_status === 'pending';
+    }
+
+    public function isAccountRejected(): bool
+    {
+        return $this->account_status === 'rejected';
+    }
+
+    /**
+     * A merchant is considered approved when their account_status is 'active'.
+     */
+    public function isApprovedMerchant(): bool
+    {
+        return $this->isMerchant() && $this->isAccountActive();
+    }
+
+    /**
+     * A merchant is pending approval.
+     */
+    public function isPendingMerchant(): bool
+    {
+        return $this->isMerchant() && $this->isAccountPending();
+    }
+
+    /**
+     * A merchant was rejected.
+     */
+    public function isRejectedMerchant(): bool
+    {
+        return $this->isMerchant() && $this->isAccountRejected();
+    }
+
+    // ── Scopes ─────────────────────────────────────────────────────────────────
+
+    public function scopePendingMerchants($query)
+    {
+        return $query->whereHas('roles', fn ($q) => $q->where('slug', 'merchant'))
+                     ->where('account_status', 'pending');
+    }
+
+    public function scopeByStatus($query, string $status)
+    {
+        return $query->where('account_status', $status);
     }
 
     /**

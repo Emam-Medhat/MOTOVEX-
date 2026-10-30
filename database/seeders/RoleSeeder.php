@@ -14,6 +14,7 @@ class RoleSeeder extends Seeder
             ['name' => 'Data Entry',  'slug' => 'data_entry',  'description' => 'Manages catalogue content for the brands assigned to them only.'],
             ['name' => 'Sales Agent', 'slug' => 'sales_agent', 'description' => 'Showroom staff. Tracks enquiries and test rides for their assigned showroom.'],
             ['name' => 'Customer',    'slug' => 'customer',    'description' => 'Public customer account. Browses the site and manages their own enquiries and test rides.'],
+            ['name' => 'Merchant',    'slug' => 'merchant',    'description' => 'Trader / dealer account. Requires admin approval before accessing the merchant dashboard.'],
         ];
 
         foreach ($roles as $role) {

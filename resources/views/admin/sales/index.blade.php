@@ -66,40 +66,60 @@
     </div>
 </div>
 
-<div class="kpi-row">
-    <div class="kpi-card kc-purple">
-        <div class="kpi-top"><div class="kpi-icon ki-purple"><i class="fa-solid fa-cart-shopping"></i></div></div>
-        <div class="kpi-val">{{ $stats['total'] }}</div>
-        <div class="kpi-lbl">Total Sales</div>
+<div class="row g-3 mb-4">
+    <div class="col-xl col-md-4 col-6">
+        <div class="stat-card" style="height: 140px;">
+            <div class="stat-head">
+                <div class="stat-icon" style="background:#f3e8ff; color:#7c3aed;"><i class="bi bi-cart3"></i></div>
+                Total Sales
+            </div>
+            <h3>{{ $stats['total'] }}</h3>
+        </div>
     </div>
-    <div class="kpi-card kc-amber">
-        <div class="kpi-top"><div class="kpi-icon ki-amber"><i class="fa-solid fa-bell"></i></div></div>
-        <div class="kpi-val">{{ $stats['pending'] }}</div>
-        <div class="kpi-lbl">New / Pending</div>
+    <div class="col-xl col-md-4 col-6">
+        <div class="stat-card" style="height: 140px;">
+            <div class="stat-head">
+                <div class="stat-icon" style="background:#fffbeb; color:#d97706;"><i class="bi bi-bell"></i></div>
+                New / Pending
+            </div>
+            <h3>{{ $stats['pending'] }}</h3>
+        </div>
     </div>
-    <div class="kpi-card kc-blue">
-        <div class="kpi-top"><div class="kpi-icon ki-blue"><i class="fa-solid fa-circle-check"></i></div></div>
-        <div class="kpi-val">{{ $stats['confirmed'] }}</div>
-        <div class="kpi-lbl">Confirmed</div>
+    <div class="col-xl col-md-4 col-6">
+        <div class="stat-card" style="height: 140px;">
+            <div class="stat-head">
+                <div class="stat-icon" style="background:#eff6ff; color:#2563eb;"><i class="bi bi-check2-circle"></i></div>
+                Confirmed
+            </div>
+            <h3>{{ $stats['confirmed'] }}</h3>
+        </div>
     </div>
-    <div class="kpi-card kc-green">
-        <div class="kpi-top"><div class="kpi-icon ki-green"><i class="fa-solid fa-money-bill-wave"></i></div></div>
-        <div class="kpi-val">{{ $stats['paid'] }}</div>
-        <div class="kpi-lbl">Paid Orders</div>
+    <div class="col-xl col-md-4 col-6">
+        <div class="stat-card" style="height: 140px;">
+            <div class="stat-head">
+                <div class="stat-icon" style="background:#f0fdf4; color:#16a34a;"><i class="bi bi-cash-stack"></i></div>
+                Paid Orders
+            </div>
+            <h3>{{ $stats['paid'] }}</h3>
+        </div>
     </div>
-    <div class="kpi-card kc-green">
-        <div class="kpi-top"><div class="kpi-icon ki-green"><i class="fa-solid fa-box-check"></i></div></div>
-        <div class="kpi-val">{{ $stats['completed'] }}</div>
-        <div class="kpi-lbl">Completed</div>
+    <div class="col-xl col-md-4 col-6">
+        <div class="stat-card" style="height: 140px;">
+            <div class="stat-head">
+                <div class="stat-icon" style="background:#f0fdf4; color:#16a34a;"><i class="bi bi-box-seam"></i></div>
+                Completed
+            </div>
+            <h3>{{ $stats['completed'] }}</h3>
+        </div>
     </div>
 </div>
 
-<form method="GET" class="filter-bar">
-    <div class="search-wrap">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search reference, customer, email...">
+<form method="GET" class="filter-card border-0 shadow-sm">
+    <div class="position-relative">
+        <i class="bi bi-search position-absolute text-muted" style="left: 12px; top: 9px;"></i>
+        <input type="text" name="search" value="{{ request('search') }}" class="filter-input ps-5" placeholder="Search reference, customer, email...">
     </div>
-    <select name="status">
+    <select name="status" class="filter-select">
         <option value="">All Statuses</option>
         <option value="pending" {{ request('status')=='pending'?'selected':'' }}>Pending</option>
         <option value="confirmed" {{ request('status')=='confirmed'?'selected':'' }}>Confirmed</option>
@@ -107,86 +127,88 @@
         <option value="completed" {{ request('status')=='completed'?'selected':'' }}>Completed</option>
         <option value="cancelled" {{ request('status')=='cancelled'?'selected':'' }}>Cancelled</option>
     </select>
-    <select name="payment_status">
+    <select name="payment_status" class="filter-select">
         <option value="">All Payments</option>
         <option value="pending" {{ request('payment_status')=='pending'?'selected':'' }}>Pending</option>
         <option value="paid" {{ request('payment_status')=='paid'?'selected':'' }}>Paid</option>
         <option value="failed" {{ request('payment_status')=='failed'?'selected':'' }}>Failed</option>
     </select>
-    <button type="submit" class="btn-primary" style="height:38px;padding:0 16px;font-size:12px;">Filter</button>
+    <button type="submit" class="btn btn-primary-alt" style="height:38px;">Filter</button>
 </form>
 
-<div class="admin-table-wrap">
+<div class="panel border-0 shadow-sm">
     @if($orders->isEmpty())
-        <div class="empty-state">
-            <i class="fa-solid fa-cart-shopping"></i>
-            <p>No sales orders found yet.</p>
+        <div class="text-center py-5">
+            <i class="bi bi-cart-x text-muted display-1 opacity-25"></i>
+            <p class="mt-3 text-muted">No sales orders found yet.</p>
         </div>
     @else
-    <table class="admin-table">
-        <thead>
-            <tr>
-                <th>Reference</th>
-                <th>Products</th>
-                <th>Customer</th>
-                <th>Subtotal</th>
-                <th>Payment</th>
-                <th>Status</th>
-                <th>Date</th>
-                <th style="text-align:right">Action</th>
-            </tr>
-        </thead>
-        <tbody>
-        @foreach($orders as $order)
-            <tr>
-                <td>
-                    <a href="{{ route('admin.sales.show', $order) }}" class="ref-link">{{ $order->order_reference }}</a>
-                </td>
-                <td>
-                    @foreach($order->items as $item)
-                        <div class="moto-item">
-                            <div class="moto-thumb">
-                                @if($item->motorcycle?->image_url)
-                                    <img src="{{ $item->motorcycle->image_url }}" alt="">
-                                @else
-                                    <i class="fa-solid fa-motorcycle" style="font-size:12px;color:var(--muted);padding:8px"></i>
-                                @endif
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Reference</th>
+                    <th>Products</th>
+                    <th>Customer</th>
+                    <th>Subtotal</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th class="text-end">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach($orders as $order)
+                <tr>
+                    <td>
+                        <a href="{{ route('admin.sales.show', $order) }}" class="fw-bold text-primary text-decoration-none" style="font-family: monospace;">{{ $order->order_reference }}</a>
+                    </td>
+                    <td>
+                        @foreach($order->items as $item)
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <div style="width: 32px; height: 32px; border-radius: 6px; overflow: hidden; background: #f8fafc; display: grid; place-items: center;">
+                                    @if($item->motorcycle?->image_url)
+                                        <img src="{{ $item->motorcycle->image_url }}" alt="" style="width: 100%; height: 100%; object-fit: contain;">
+                                    @else
+                                        <i class="bi bi-bicycle text-muted" style="font-size: 12px;"></i>
+                                    @endif
+                                </div>
+                                <span class="small fw-semibold text-truncate" style="max-width: 150px;">{{ $item->motorcycle_snapshot }}</span>
                             </div>
-                            <div style="font-size:11px;font-weight:600">{{ $item->motorcycle_snapshot }}</div>
-                        </div>
-                    @endforeach
-                </td>
-                <td>
-                    <div style="font-size:12px;font-weight:700">{{ $order->name }}</div>
-                    <div style="font-size:10px;color:var(--muted)">{{ $order->email }}</div>
-                </td>
-                <td>
-                    <div style="font-size:13px;font-weight:800">{{ $order->currency }} {{ number_format($order->items->sum('subtotal'), 2) }}</div>
-                </td>
-                <td>
-                    <span class="status-pill sp-{{ $order->payment_status }}">
-                        {{ ucfirst($order->payment_status) }}
-                    </span>
-                </td>
-                <td>
-                    <span class="status-pill sp-{{ $order->status }}">
-                        {{ ucfirst($order->status) }}
-                    </span>
-                </td>
-                <td>
-                    <div style="font-size:11px;color:var(--muted)">{{ $order->created_at->format('d M Y') }}</div>
-                    <div style="font-size:10px;color:var(--muted)">{{ $order->created_at->format('H:i') }}</div>
-                </td>
-                <td style="text-align:right">
-                    <a href="{{ route('admin.sales.show', $order) }}" class="act-btn">
-                        <i class="fa-solid fa-eye"></i> Details
-                    </a>
-                </td>
-            </tr>
-        @endforeach
-        </tbody>
-    </table>
-    <div class="admin-pagination">
+                        @endforeach
+                    </td>
+                    <td>
+                        <div class="fw-bold">{{ $order->name }}</div>
+                        <small class="text-muted d-block">{{ $order->email }}</small>
+                    </td>
+                    <td class="fw-bold text-dark">
+                        {{ $order->currency }} {{ number_format($order->items->sum('subtotal'), 2) }}
+                    </td>
+                    <td>
+                        <span class="badge-alt {{ $order->payment_status === 'paid' ? 'badge-success' : ($order->payment_status === 'failed' ? 'badge-danger' : 'badge-warning') }}">
+                            {{ ucfirst($order->payment_status) }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge-alt {{ $order->status === 'completed' ? 'badge-success' : ($order->status === 'cancelled' ? 'badge-danger' : 'badge-info') }}">
+                            {{ ucfirst($order->status) }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="small">{{ $order->created_at->format('d M Y') }}</div>
+                        <small class="text-muted">{{ $order->created_at->format('H:i') }}</small>
+                    </td>
+                    <td class="text-end">
+                        <a href="{{ route('admin.sales.show', $order) }}" class="action-btn btn-view" title="Details">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                    </td>
+                </tr>
+            @endforeach
+            </tbody>
+        </table>
+    </div>
+    <div class="mt-4">
         {{ $orders->links() }}
     </div>
     @endif

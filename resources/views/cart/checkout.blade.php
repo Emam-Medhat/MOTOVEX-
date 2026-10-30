@@ -419,18 +419,26 @@
     <div class="co-summary-sticky reveal" style="transition-delay:.2s">
 
       {{-- Summary card --}}
+      @php
+        $motoCount    = $motoItems->count();
+        $spCount      = $spItems->count();
+        $itemCount    = $motoCount + $spCount;
+        $cartCurrency = ($motoItems->isNotEmpty() ? ($motoItems->first()['motorcycle']->currency ?: null) : null)
+            ?? ($spItems->isNotEmpty() ? ($spItems->first()['spare_part']->currency ?: null) : null)
+            ?? 'USD';
+      @endphp
       <div class="co-card" style="margin-bottom:1rem;">
         <div class="co-card-head">
           <div class="co-card-ico"><i class="fa-solid fa-receipt"></i></div>
           <div>
             <div class="co-card-title">Order Summary</div>
-            <div class="co-card-sub">{{ $cartItems->count() }} motorcycle{{ $cartItems->count() !== 1 ? 's' : '' }} selected</div>
+            <div class="co-card-sub">{{ $itemCount }} item{{ $itemCount !== 1 ? 's' : '' }} selected</div>
           </div>
         </div>
         <div class="co-card-body" style="padding-top:1rem;padding-bottom:1rem;">
 
           {{-- Motorcycles --}}
-          @foreach($cartItems as $item)
+          @foreach($motoItems as $item)
             @php $moto = $item['motorcycle']; @endphp
             <div class="co-moto-item">
               <div class="co-moto-img">
@@ -454,11 +462,39 @@
             </div>
           @endforeach
 
+          {{-- Spare parts --}}
+          @foreach($spItems as $item)
+            @php
+              $sp  = $item['spare_part'];
+              $qty = max(1, (int) $item['quantity']);
+            @endphp
+            <div class="co-moto-item">
+              <div class="co-moto-img">
+                @if($sp->image_url)
+                  <img src="{{ $sp->image_url }}" alt="{{ $sp->name }}">
+                @else
+                  <i class="fa-solid fa-gears" style="color:#c4b5fd;font-size:18px;"></i>
+                @endif
+              </div>
+              <div style="flex:1;min-width:0;">
+                <div class="co-moto-name">{{ $sp->name }}</div>
+                <div class="co-moto-brand">{{ $sp->brand?->name ?? 'MOTOVEX' }} &middot; Qty {{ $qty }}</div>
+              </div>
+              <div class="co-moto-price">
+                @if($sp->price)
+                  {{ $sp->currency ?: 'USD' }} {{ number_format((float) $sp->price * $qty) }}
+                @else
+                  <span style="font-size:.75rem;color:#94a3b8;">On request</span>
+                @endif
+              </div>
+            </div>
+          @endforeach
+
           {{-- Total --}}
           @if($total > 0)
           <div class="co-total-row">
             <span class="co-total-lbl">Total</span>
-            <span class="co-total-val"><span class="co-total-cur">USD</span>{{ number_format($total) }}</span>
+            <span class="co-total-val"><span class="co-total-cur">{{ $cartCurrency }}</span>{{ number_format($total) }}</span>
           </div>
           @endif
 

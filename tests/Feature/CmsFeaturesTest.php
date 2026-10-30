@@ -78,7 +78,9 @@ class CmsFeaturesTest extends TestCase
 
         $response = $this->post(route('cart.add', $bike->slug));
         $response->assertRedirect();
-        $this->assertEquals(1, count(session('cart', [])));
+        // Cart session is structured as ['motorcycles' => [...], 'spare_parts' => [...]].
+        $this->assertEquals(1, count(session('cart.motorcycles', [])));
+        $this->assertArrayHasKey($bike->id, session('cart.motorcycles', []));
     }
 
     /** @test */

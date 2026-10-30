@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Motorcycle extends Model
 {
@@ -65,6 +66,11 @@ class Motorcycle extends Model
     public function brand(): BelongsTo
     {
         return $this->belongsTo(Brand::class);
+    }
+
+    public function enquiries(): HasMany
+    {
+        return $this->hasMany(Enquiry::class);
     }
 
     public function creator(): BelongsTo

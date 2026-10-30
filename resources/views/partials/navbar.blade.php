@@ -33,16 +33,27 @@
         <nav class="hidden shrink-0 items-center gap-5 text-sm font-medium text-slate-500 lg:flex xl:gap-7">
             <a href="{{ route('home') }}" class="whitespace-nowrap transition hover:text-slate-900 {{ request()->routeIs('home') ? 'text-brand-600 font-semibold' : '' }}">Home</a>
             <a href="{{ route('motorcycles.index') }}" class="whitespace-nowrap transition hover:text-slate-900 {{ request()->routeIs('motorcycles.*') ? 'text-brand-600 font-semibold' : '' }}">Shop</a>
+            <a href="{{ route('spare-parts.index') }}" class="whitespace-nowrap transition hover:text-slate-900 {{ request()->routeIs('spare-parts.*') ? 'text-brand-600 font-semibold' : '' }}">Spare Parts</a>
             <a href="{{ route('brands.index') }}" class="whitespace-nowrap transition hover:text-slate-900 {{ request()->routeIs('brands.*') ? 'text-brand-600 font-semibold' : '' }}">Brands</a>
+            <a href="{{ route('promotions') }}" class="whitespace-nowrap transition hover:text-slate-900 {{ request()->routeIs('promotions') ? 'text-brand-600 font-semibold' : '' }}">Promotions</a>
             <a href="{{ route('services') }}" class="whitespace-nowrap transition hover:text-slate-900 {{ request()->routeIs('services') ? 'text-brand-600 font-semibold' : '' }}">Services</a>
             <a href="{{ route('contact') }}" class="whitespace-nowrap transition hover:text-slate-900 {{ request()->routeIs('contact') ? 'text-brand-600 font-semibold' : '' }}">Contact</a>
         </nav>
 
         {{-- Right actions --}}
         <div class="ml-auto flex shrink-0 items-center gap-2 lg:ml-3">
+            @php
+                $cart = session('cart', ['motorcycles' => [], 'spare_parts' => []]);
+                $cartCount = count($cart['motorcycles'] ?? []) + array_sum(array_column($cart['spare_parts'] ?? [], 'quantity'));
+            @endphp
             <a href="{{ route('cart.index') }}" aria-label="Cart"
-               class="hidden h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition hover:border-brand-300 hover:text-brand-600 sm:flex">
+               class="hidden h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition hover:border-brand-300 hover:text-brand-600 sm:flex relative">
                 <i class="fa-solid fa-cart-shopping"></i>
+                @if($cartCount > 0)
+                    <span class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-brand-600 text-[9px] font-bold text-white shadow-sm">
+                        {{ $cartCount }}
+                    </span>
+                @endif
             </a>
 
             @auth
@@ -83,15 +94,23 @@
         <div class="flex flex-col gap-1 text-sm font-medium text-slate-600">
             <a href="{{ route('home') }}" class="rounded-lg px-3 py-2.5 transition hover:bg-slate-50 hover:text-brand-600 {{ request()->routeIs('home') ? 'bg-brand-50 text-brand-600 font-semibold' : '' }}">Home</a>
             <a href="{{ route('motorcycles.index') }}" class="rounded-lg px-3 py-2.5 transition hover:bg-slate-50 hover:text-brand-600 {{ request()->routeIs('motorcycles.*') ? 'bg-brand-50 text-brand-600 font-semibold' : '' }}">Shop</a>
+            <a href="{{ route('spare-parts.index') }}" class="rounded-lg px-3 py-2.5 transition hover:bg-slate-50 hover:text-brand-600 {{ request()->routeIs('spare-parts.*') ? 'bg-brand-50 text-brand-600 font-semibold' : '' }}">Spare Parts</a>
             <a href="{{ route('brands.index') }}" class="rounded-lg px-3 py-2.5 transition hover:bg-slate-50 hover:text-brand-600 {{ request()->routeIs('brands.*') ? 'bg-brand-50 text-brand-600 font-semibold' : '' }}">Brands</a>
+            <a href="{{ route('promotions') }}" class="rounded-lg px-3 py-2.5 transition hover:bg-slate-50 hover:text-brand-600 {{ request()->routeIs('promotions') ? 'bg-brand-50 text-brand-600 font-semibold' : '' }}">Promotions</a>
             <a href="{{ route('services') }}" class="rounded-lg px-3 py-2.5 transition hover:bg-slate-50 hover:text-brand-600 {{ request()->routeIs('services') ? 'bg-brand-50 text-brand-600 font-semibold' : '' }}">Services</a>
             <a href="{{ route('contact') }}" class="rounded-lg px-3 py-2.5 transition hover:bg-slate-50 hover:text-brand-600 {{ request()->routeIs('contact') ? 'bg-brand-50 text-brand-600 font-semibold' : '' }}">Contact</a>
         </div>
 
         {{-- Mobile actions --}}
         <div class="mt-4 flex flex-col gap-2 border-t border-slate-100 pt-4">
-            <a href="{{ route('cart.index') }}" class="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50">
-                <i class="fa-solid fa-cart-shopping w-5 text-center"></i> Cart
+            <a href="{{ route('cart.index') }}" class="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 relative">
+                <i class="fa-solid fa-cart-shopping w-5 text-center"></i> 
+                Cart
+                @if($cartCount > 0)
+                    <span class="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-brand-600 text-[10px] font-bold text-white shadow-sm">
+                        {{ $cartCount }}
+                    </span>
+                @endif
             </a>
             @auth
                 @if(auth()->user()->isAdmin() || auth()->user()->isDataEntry() || auth()->user()->isSalesAgent())

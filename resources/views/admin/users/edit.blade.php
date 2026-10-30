@@ -1,89 +1,100 @@
-﻿@extends('layouts.admin')
+@extends('layouts.admin')
 @section('title', 'Edit ' . $user->name)
 
 @section('content')
 <div class="page-header">
     <div>
-        <a href="{{ route('admin.users.index') }}"
-           style="font-size:12px;color:#6e6888;display:inline-flex;align-items:center;gap:6px;margin-bottom:6px"
-           onmouseover="this.style.color='#d4cfea'" onmouseout="this.style.color='#6e6888'">
-            <i class="fa-solid fa-arrow-left" style="font-size:10px"></i> Back to Users
+        <a href="{{ route('admin.users.index') }}" class="text-decoration-none text-muted small d-inline-flex align-items-center gap-2 mb-2">
+            <i class="bi bi-arrow-left"></i> Back to Users
         </a>
-        <h1>{{ $user->name }}</h1>
+        <h1>Edit User Account</h1>
+        <p>Updating account details for <strong>{{ $user->name }}</strong></p>
     </div>
 </div>
 
-<div>
-    <div class="admin-panel">
-        <form method="POST" action="{{ route('admin.users.update', $user) }}" style="display:flex;flex-direction:column;gap:16px">
-            @csrf @method('PUT')
+<div class="panel border-0 shadow-sm p-4">
+    <form method="POST" action="{{ route('admin.users.update', $user) }}">
+        @csrf @method('PUT')
 
-            <div>
+        <div class="row g-4">
+            <div class="col-md-6">
                 <label class="form-label">Full Name *</label>
                 <input type="text" name="name" value="{{ old('name', $user->name) }}"
-                       class="form-input {{ $errors->has('name') ? 'is-invalid' : '' }}">
-                @error('name')<p class="form-error">{{ $message }}</p>@enderror
+                       class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}">
+                @error('name')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
             </div>
 
-            <div>
+            <div class="col-md-6">
                 <label class="form-label">Email Address *</label>
                 <input type="email" name="email" value="{{ old('email', $user->email) }}"
-                       class="form-input {{ $errors->has('email') ? 'is-invalid' : '' }}">
-                @error('email')<p class="form-error">{{ $message }}</p>@enderror
+                       class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}">
+                @error('email')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
             </div>
 
-            <div>
-                <label class="form-label">
-                    New Password
-                    <span style="font-weight:400;color:#6e6888">(leave blank to keep current)</span>
-                </label>
+            <div class="col-md-6">
+                <label class="form-label">New Password <small class="text-muted fw-normal">(leave blank to keep current)</small></label>
                 <input type="password" name="password"
-                       class="form-input {{ $errors->has('password') ? 'is-invalid' : '' }}"
+                       class="form-control {{ $errors->has('password') ? 'is-invalid' : '' }}"
                        placeholder="••••••••">
-                @error('password')<p class="form-error">{{ $message }}</p>@enderror
+                @error('password')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
             </div>
 
-            <div>
-                <label class="form-label">Role *</label>
+            <div class="col-md-6">
+                <label class="form-label">Account Role *</label>
                 <select name="role_id" class="form-select {{ $errors->has('role_id') ? 'is-invalid' : '' }}">
                     @foreach($roles as $role)
                         <option value="{{ $role->id }}" @selected(old('role_id', $user->roles->first()?->id) == $role->id)>{{ $role->name }}</option>
                     @endforeach
                 </select>
-                @error('role_id')<p class="form-error">{{ $message }}</p>@enderror
+                @error('role_id')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
             </div>
 
             @if($brands->isNotEmpty())
-            <div>
-                <label class="form-label">Assigned Brands <span style="color:#6e6888;font-weight:400">(Data Entry only)</span></label>
+            <div class="col-md-12">
+                <label class="form-label">Assigned Brands <small class="text-muted fw-normal">(For Data Entry roles)</small></label>
                 @php $assigned = collect(old('brand_ids', $user->brands->pluck('id')->all())); @endphp
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
-                    @foreach($brands as $brand)
-                    <label style="display:flex;align-items:center;gap:9px;padding:10px 13px;border:1px solid var(--line);border-radius:10px;cursor:pointer;transition:border-color .15s"
-                           onmouseover="this.style.borderColor='rgba(155,92,255,.35)'" onmouseout="this.style.borderColor='rgba(255,255,255,.08)'">
-                        <input type="checkbox" name="brand_ids[]" value="{{ $brand->id }}"
-                               @checked($assigned->contains($brand->id))
-                               style="accent-color:#9b5cff;width:15px;height:15px;cursor:pointer">
-                        <span style="font-size:13px">{{ $brand->name }}</span>
-                    </label>
-                    @endforeach
+                <div class="border rounded-3 p-3 bg-light">
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-2">
+                        @foreach($brands as $brand)
+                        <div class="col">
+                            <div class="form-check">
+                                <input type="checkbox" name="brand_ids[]" value="{{ $brand->id }}"
+                                       id="brand_{{ $brand->id }}" class="form-check-input"
+                                       @checked($assigned->contains($brand->id))>
+                                <label class="form-check-label small" for="brand_{{ $brand->id }}">
+                                    {{ $brand->name }}
+                                </label>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
                 </div>
-                @error('brand_ids')<p class="form-error">{{ $message }}</p>@enderror
+                @error('brand_ids')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
             </div>
             @endif
 
-            <label style="display:flex;align-items:center;gap:9px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;cursor:pointer">
-                <input type="checkbox" name="is_active" value="1" @checked(old('is_active', $user->is_active))
-                       style="accent-color:#9b5cff;width:15px;height:15px;cursor:pointer">
-                <span style="font-size:13px;color:#c8c3da">Account is active</span>
-                <span style="font-size:11px;color:#6e6888">— suspended accounts can't sign in</span>
-            </label>
-
-            <div style="display:flex;gap:12px;padding-top:16px;border-top:1px solid var(--line)">
-                <button type="submit" class="btn-primary"><i class="fa-solid fa-check"></i> Save Changes</button>
-                <a href="{{ route('admin.users.index') }}" class="btn-ghost">Cancel</a>
+            <div class="col-md-12 mt-4">
+                <div class="form-check form-switch d-flex align-items-center gap-2">
+                    <input type="hidden" name="is_active" value="0">
+                    <input type="checkbox" id="is_active" name="is_active" value="1"
+                           class="form-check-input" style="width: 40px; height: 20px;"
+                           @checked(old('is_active', $user->is_active))>
+                    <label class="form-check-label fw-bold ms-2" for="is_active">
+                        <i class="bi bi-person-check me-1 text-primary"></i> Account is Active
+                    </label>
+                </div>
+                <small class="text-muted d-block mt-1 ms-5">Suspended accounts cannot sign in.</small>
             </div>
-        </form>
-    </div>
+        </div>
+
+        <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn-primary-alt">
+                <i class="bi bi-check-lg"></i> Save Changes
+            </button>
+            <a href="{{ route('admin.users.index') }}" class="btn btn-light" style="border-radius: 8px; font-weight: 600;">
+                Cancel
+            </a>
+        </div>
+    </form>
 </div>
 @endsection

@@ -1,299 +1,272 @@
 @extends('layouts.admin')
-@section('title', 'User Details')
+@section('title', 'User — ' . $user->name)
 
 @section('styles')
 <style>
-    .user-details-grid {
-        display: grid;
-        grid-template-columns: 320px 1fr;
-        gap: 24px;
-        align-items: start;
-    }
+.user-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 22px;
+    align-items: start;
+}
+@media(max-width:1024px){ .user-grid{ grid-template-columns:1fr; } }
+@media(max-width:640px){  .summary-grid-4{ grid-template-columns: repeat(2,1fr) !important; } }
 
-    .profile-panel {
-        background: #fff;
-        border: 1px solid var(--line);
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    }
+.profile-panel {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+}
+.profile-accent {
+    height: 72px;
+    background: linear-gradient(135deg,#8b5cf6,#6d28d9);
+    opacity: .12;
+}
+.profile-avatar-wrap {
+    margin-top: -38px;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 18px;
+}
+.profile-avatar {
+    width: 76px; height: 76px;
+    border-radius: 18px;
+    background: linear-gradient(135deg,#8b5cf6,#6d28d9);
+    display: grid; place-items: center;
+    font-size: 30px; font-weight: 800; color: #fff;
+    border: 4px solid #fff;
+    box-shadow: 0 8px 20px rgba(109,40,217,.22);
+}
+.summary-card {
+    background: #fff; border: 1px solid var(--border);
+    border-radius: 12px; padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px;
+}
+.summary-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    display: grid; place-items: center; font-size: 15px; flex-shrink: 0;
+}
+.brand-item {
+    padding: 14px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background .12s;
+}
+.brand-item:last-child { border-bottom: none; }
+.brand-item:hover { background: #f8fafc; }
 
-    .profile-accent {
-        height: 80px;
-        background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
-        opacity: 0.1;
-    }
-
-    .profile-avatar-wrap {
-        margin-top: -40px;
-        display: flex;
-        justify-content: center;
-        padding-bottom: 20px;
-    }
-
-    .profile-avatar {
-        width: 80px;
-        height: 80px;
-        border-radius: 20px;
-        background: linear-gradient(135deg, #8b5cf6, #6d28d9);
-        display: grid;
-        place-items: center;
-        font-size: 32px;
-        font-weight: 800;
-        color: #fff;
-        border: 4px solid #fff;
-        box-shadow: 0 10px 15px -3px rgba(109, 40, 217, 0.2);
-    }
-
-    .summary-card {
-        background: #fff;
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 16px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .summary-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
-        display: grid;
-        place-items: center;
-        font-size: 16px;
-    }
-
-    .brand-item {
-        padding: 12px 16px;
-        border-bottom: 1px solid #f1f5f9;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        transition: background 0.15s;
-    }
-
-    .brand-item:last-child {
-        border-bottom: 0;
-    }
-
-    .brand-item:hover {
-        background: #f8fafc;
-    }
-
-    @media (max-width: 1024px) {
-        .user-details-grid {
-            grid-template-columns: 1fr;
-        }
-        .summary-grid {
-            grid-template-columns: repeat(2, 1fr) !important;
-        }
-    }
-
-    @media (max-width: 640px) {
-        .summary-grid {
-            grid-template-columns: 1fr !important;
-        }
-        .page-header {
-            flex-direction: column;
-            align-items: flex-start !important;
-        }
-        .page-header > div:last-child {
-            margin-top: 16px;
-            width: 100%;
-            display: flex;
-            gap: 10px;
-        }
-        .page-header .btn-primary, .page-header .btn-ghost {
-            flex: 1;
-            justify-content: center;
-        }
-    }
+.info-row {
+    display: flex; align-items: flex-start; gap: 12px;
+    font-size: 13px; margin-bottom: 14px;
+}
+.info-row:last-child { margin-bottom: 0; }
+.info-row-icon { width: 16px; color: var(--primary); margin-top: 1px; flex-shrink: 0; }
 </style>
 @endsection
 
 @section('content')
-{{-- Breadcrumbs & Header --}}
-<div class="page-header" style="margin-bottom: 28px;">
+
+{{-- ── Page Header ── --}}
+<div class="page-header" style="margin-bottom:26px;">
     <div>
-        <nav style="font-size: 12px; color: var(--muted); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-            <a href="{{ route('admin.dashboard') }}" style="color: var(--muted); text-decoration: none;">Admin</a>
-            <i class="fa-solid fa-chevron-right" style="font-size: 8px; opacity: 0.5;"></i>
-            <a href="{{ route('admin.users.index') }}" style="color: var(--muted); text-decoration: none;">Users</a>
-            <i class="fa-solid fa-chevron-right" style="font-size: 8px; opacity: 0.5;"></i>
-            <span style="color: var(--text); font-weight: 500;">{{ $user->name }}</span>
+        <nav style="font-size:12px;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+            <a href="{{ route('admin.dashboard') }}" style="color:var(--muted);text-decoration:none;">Admin</a>
+            <i class="bi bi-chevron-right" style="font-size:8px;opacity:.5;"></i>
+            <a href="{{ route('admin.users.index') }}" style="color:var(--muted);text-decoration:none;">Users</a>
+            <i class="bi bi-chevron-right" style="font-size:8px;opacity:.5;"></i>
+            <span style="color:var(--dark);font-weight:500;">{{ $user->name }}</span>
         </nav>
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <h1 style="margin: 0;">{{ $user->name }}</h1>
-            <span class="badge {{ $user->is_active ? 'badge-green' : 'badge-red' }}" style="padding: 4px 10px;">
-                {{ $user->is_active ? 'Active' : 'Suspended' }}
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <h1 style="margin:0;">{{ $user->name }}</h1>
+            @if($user->account_status === 'pending')
+                <span class="badge badge-yellow"><i class="bi bi-clock" style="font-size:9px;"></i> Pending</span>
+            @elseif($user->account_status === 'rejected')
+                <span class="badge badge-red"><i class="bi bi-ban" style="font-size:9px;"></i> Rejected</span>
+            @elseif($user->is_active)
+                <span class="badge badge-green">Active</span>
+            @else
+                <span class="badge badge-red">Suspended</span>
+            @endif
+        </div>
+        <p style="margin-top:4px;font-size:13px;color:var(--muted);">{{ $user->roleName() }} Account</p>
+
+        @if($user->account_status === 'pending' && $user->isMerchant())
+        <div style="margin-top:12px;display:flex;align-items:center;gap:10px;padding:12px 16px;background:#fffbeb;border:1px solid #fde68a;border-radius:12px;flex-wrap:wrap;">
+            <span style="font-size:12px;color:#92400e;font-weight:600;flex:1;min-width:200px;">
+                <i class="bi bi-clock-history me-1"></i> Merchant application awaiting review
             </span>
+            <div style="display:flex;gap:8px;">
+                <form method="POST" action="{{ route('admin.users.approve-merchant', $user) }}"
+                      onsubmit="return confirm('Approve merchant for {{ addslashes($user->name) }}?')">
+                    @csrf @method('PATCH')
+                    <button type="submit" style="padding:6px 14px;background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">
+                        <i class="bi bi-check-circle-fill"></i> Approve
+                    </button>
+                </form>
+                <form method="POST" action="{{ route('admin.users.reject-merchant', $user) }}"
+                      onsubmit="return confirm('Reject this merchant application?')">
+                    @csrf @method('PATCH')
+                    <button type="submit" style="padding:6px 14px;background:#fef2f2;border:1px solid #fecaca;color:#dc2626;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">
+                        <i class="bi bi-ban"></i> Reject
+                    </button>
+                </form>
+            </div>
         </div>
-        <p style="margin-top: 4px; font-size: 13px; color: var(--muted);">{{ $user->roleName() }} Account</p>
+        @endif
     </div>
-    <div style="display: flex; gap: 10px;">
+    <div style="display:flex;gap:10px;align-items:flex-start;">
         <a href="{{ route('admin.users.index') }}" class="btn-ghost">
-            <i class="fa-solid fa-arrow-left"></i> Back
+            <i class="bi bi-arrow-left"></i> Back
         </a>
-        <a href="{{ route('admin.users.edit', $user) }}" class="btn-primary">
-            <i class="fa-solid fa-user-pen"></i> Edit User
+        <a href="{{ route('admin.users.edit', $user) }}" class="btn-primary-alt">
+            <i class="bi bi-person-gear"></i> Edit User
         </a>
     </div>
 </div>
 
-{{-- Summary Row --}}
-<div class="summary-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
+{{-- ── Summary Cards ── --}}
+<div class="summary-grid-4" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;">
     <div class="summary-card">
-        <div class="summary-icon" style="background: #f5f3ff; color: #7c3aed;">
-            <i class="fa-solid fa-copyright"></i>
-        </div>
+        <div class="summary-icon" style="background:#f5f3ff;color:#7c3aed;"><i class="bi bi-patch-check-fill"></i></div>
         <div>
-            <div style="font-size: 10px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Assigned Brands</div>
-            <div style="font-size: 16px; font-weight: 800; color: var(--text);">{{ $user->isAdmin() ? 'Global' : $user->brands->count() }}</div>
+            <div style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;">Brands</div>
+            <div style="font-size:16px;font-weight:800;color:var(--dark);">{{ $user->isAdmin() ? 'All' : $user->brands->count() }}</div>
         </div>
     </div>
     <div class="summary-card">
-        <div class="summary-icon" style="background: #eff6ff; color: #2563eb;">
-            <i class="fa-solid fa-shield-halved"></i>
-        </div>
+        <div class="summary-icon" style="background:#eff6ff;color:#2563eb;"><i class="bi bi-shield-fill"></i></div>
         <div>
-            <div style="font-size: 10px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Account Role</div>
-            <div style="font-size: 16px; font-weight: 800; color: var(--text);">{{ $user->roleName() }}</div>
+            <div style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;">Role</div>
+            <div style="font-size:14px;font-weight:800;color:var(--dark);">{{ $user->roleName() }}</div>
         </div>
     </div>
     <div class="summary-card">
-        <div class="summary-icon" style="background: {{ $user->is_active ? '#ecfdf5' : '#fef2f2' }}; color: {{ $user->is_active ? '#059669' : '#dc2626' }};">
-            <i class="fa-solid {{ $user->is_active ? 'fa-circle-check' : 'fa-circle-xmark' }}"></i>
+        <div class="summary-icon" style="background:{{ $user->is_active ? '#f0fdf4' : '#fef2f2' }};color:{{ $user->is_active ? '#16a34a' : '#dc2626' }};">
+            <i class="bi bi-{{ $user->is_active ? 'check-circle-fill' : 'x-circle-fill' }}"></i>
         </div>
         <div>
-            <div style="font-size: 10px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Status</div>
-            <div style="font-size: 16px; font-weight: 800; color: var(--text);">{{ $user->is_active ? 'Active' : 'Suspended' }}</div>
+            <div style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;">Status</div>
+            <div style="font-size:14px;font-weight:800;color:var(--dark);">
+                @if($user->account_status === 'pending') Pending
+                @elseif($user->account_status === 'rejected') Rejected
+                @elseif($user->is_active) Active
+                @else Suspended @endif
+            </div>
         </div>
     </div>
     <div class="summary-card">
-        <div class="summary-icon" style="background: #fffbeb; color: #d97706;">
-            <i class="fa-solid fa-calendar-day"></i>
-        </div>
+        <div class="summary-icon" style="background:#fffbeb;color:#d97706;"><i class="bi bi-calendar2-fill"></i></div>
         <div>
-            <div style="font-size: 10px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Member Since</div>
-            <div style="font-size: 16px; font-weight: 800; color: var(--text);">{{ $user->created_at->format('M Y') }}</div>
+            <div style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;">Joined</div>
+            <div style="font-size:14px;font-weight:800;color:var(--dark);">{{ $user->created_at->format('M Y') }}</div>
         </div>
     </div>
 </div>
 
-<div class="user-details-grid">
-    {{-- Left: Profile Panel --}}
+{{-- ── Main grid ── --}}
+<div class="user-grid">
+
+    {{-- Profile Panel --}}
     <aside class="profile-panel">
         <div class="profile-accent"></div>
         <div class="profile-avatar-wrap">
-            <div class="profile-avatar">
-                {{ strtoupper(substr($user->name, 0, 1)) }}
-            </div>
+            <div class="profile-avatar">{{ strtoupper(substr($user->name,0,1)) }}</div>
         </div>
-        
-        <div style="padding: 0 24px 24px; text-align: center;">
-            <h3 style="margin: 0; font-size: 18px; font-weight: 800; color: var(--text);">{{ $user->name }}</h3>
-            <p style="font-size: 13px; color: var(--muted); margin-top: 4px;">{{ $user->email }}</p>
-            
-            <div style="margin-top: 24px; display: flex; flex-direction: column; gap: 14px; text-align: left;">
-                <div style="display: flex; align-items: flex-start; gap: 12px; font-size: 13px;">
-                    <i class="fa-solid fa-envelope" style="width: 16px; color: var(--purple); margin-top: 2px;"></i>
-                    <div style="min-width: 0;">
-                        <div style="font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Email Address</div>
-                        <div style="color: var(--text); font-weight: 500; overflow-wrap: break-word;">{{ $user->email }}</div>
+        <div style="padding:0 22px 22px;text-align:center;">
+            <h3 style="margin:0;font-size:17px;font-weight:800;color:var(--dark);">{{ $user->name }}</h3>
+            <p style="font-size:12.5px;color:var(--muted);margin-top:3px;">{{ $user->email }}</p>
+
+            <div style="margin-top:22px;display:flex;flex-direction:column;gap:0;text-align:left;border-top:1px solid var(--border);padding-top:16px;">
+                <div class="info-row">
+                    <i class="bi bi-envelope-fill info-row-icon"></i>
+                    <div>
+                        <div style="font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;">Email</div>
+                        <div style="color:var(--dark);font-weight:500;font-size:12.5px;word-break:break-all;">{{ $user->email }}</div>
                     </div>
                 </div>
-                
                 @if($user->phone)
-                <div style="display: flex; align-items: flex-start; gap: 12px; font-size: 13px;">
-                    <i class="fa-solid fa-phone" style="width: 16px; color: var(--purple); margin-top: 2px;"></i>
+                <div class="info-row">
+                    <i class="bi bi-telephone-fill info-row-icon"></i>
                     <div>
-                        <div style="font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Phone Number</div>
-                        <div style="color: var(--text); font-weight: 500;">{{ $user->phone }}</div>
+                        <div style="font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;">Phone</div>
+                        <div style="color:var(--dark);font-weight:500;font-size:12.5px;">{{ $user->phone }}</div>
                     </div>
                 </div>
                 @endif
-                
                 @if($user->city || $user->country)
-                <div style="display: flex; align-items: flex-start; gap: 12px; font-size: 13px;">
-                    <i class="fa-solid fa-location-dot" style="width: 16px; color: var(--purple); margin-top: 2px;"></i>
+                <div class="info-row">
+                    <i class="bi bi-geo-alt-fill info-row-icon"></i>
                     <div>
-                        <div style="font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Location</div>
-                        <div style="color: var(--text); font-weight: 500;">{{ collect([$user->city, $user->country])->filter()->implode(', ') }}</div>
+                        <div style="font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;">Location</div>
+                        <div style="color:var(--dark);font-weight:500;font-size:12.5px;">{{ collect([$user->city,$user->country])->filter()->implode(', ') }}</div>
                     </div>
                 </div>
                 @endif
-                
-                <div style="display: flex; align-items: flex-start; gap: 12px; font-size: 13px;">
-                    <i class="fa-solid fa-calendar-check" style="width: 16px; color: var(--purple); margin-top: 2px;"></i>
+                <div class="info-row">
+                    <i class="bi bi-calendar-check-fill info-row-icon"></i>
                     <div>
-                        <div style="font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Join Date</div>
-                        <div style="color: var(--text); font-weight: 500;">{{ $user->created_at->format('d F Y') }}</div>
+                        <div style="font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;">Member Since</div>
+                        <div style="color:var(--dark);font-weight:500;font-size:12.5px;">{{ $user->created_at->format('d F Y') }}</div>
                     </div>
                 </div>
             </div>
 
-            <div style="margin-top: 28px; padding-top: 20px; border-top: 1px solid #f1f5f9; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;">
+            <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:6px;justify-content:center;">
                 @foreach($user->roles as $role)
-                    @php $rc = ['admin'=>'badge-purple','data_entry'=>'badge-blue','sales_agent'=>'badge-yellow','customer'=>'badge-muted']; @endphp
-                    <span class="badge {{ $rc[$role->slug] ?? 'badge-muted' }}" style="padding: 4px 10px;">{{ $role->name }}</span>
+                    @php $rc = ['admin'=>'badge-red','data_entry'=>'badge-blue','sales_agent'=>'badge-yellow','customer'=>'badge-muted','merchant'=>'badge-green']; @endphp
+                    <span class="badge {{ $rc[$role->slug] ?? 'badge-muted' }}">{{ $role->name }}</span>
                 @endforeach
             </div>
         </div>
     </aside>
 
-    {{-- Right: Assigned Brands --}}
-    <main class="admin-panel" style="padding: 0;">
-        <div style="padding: 24px; border-bottom: 1px solid var(--line);">
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-                <div>
-                    <h3 style="margin: 0; font-size: 16px; font-weight: 800; color: var(--text);">Assigned Brands</h3>
-                    <p style="margin-top: 4px; font-size: 12px; color: var(--muted);">
-                        {{ $user->isAdmin() ? 'Global administrative access to all brands.' : 'Specific brands this user is authorized to manage.' }}
-                    </p>
-                </div>
-                <div style="background: var(--purple-bg); color: var(--purple); font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 20px;">
-                    {{ $user->isAdmin() ? 'Full Access' : $user->brands->count() . ' Brands' }}
-                </div>
+    {{-- Right: Brands --}}
+    <main class="admin-panel" style="padding:0;">
+        <div style="padding:20px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+            <div>
+                <h3 style="margin:0;font-size:15px;font-weight:800;color:var(--dark);">Assigned Brands</h3>
+                <p style="margin-top:3px;font-size:12px;color:var(--muted);">
+                    {{ $user->isAdmin() ? 'Global admin — access to all brands.' : 'Brands this user can manage.' }}
+                </p>
             </div>
+            <span class="badge badge-purple">
+                {{ $user->isAdmin() ? 'Full Access' : $user->brands->count() . ' Brand' . ($user->brands->count() !== 1 ? 's' : '') }}
+            </span>
         </div>
 
         @if($user->brands->isEmpty())
-            <div class="empty-state" style="padding: 60px 24px;">
-                <div style="width: 56px; height: 56px; border-radius: 14px; background: #f8fafc; border: 1px solid #e2e8f0; display: grid; place-items: center; margin: 0 auto 20px; color: #cbd5e1;">
-                    <i class="fa-regular fa-copyright" style="font-size: 28px;"></i>
-                </div>
-                <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: var(--text);">No Brands Assigned</h4>
-                <p style="margin-top: 8px; font-size: 13px; color: var(--muted); max-w: 340px; margin-left: auto; margin-right: auto; line-height: 1.5;">
-                    @if($user->isAdmin()) Administrators automatically inherit access to every brand in the catalogue.
-                    @elseif($user->isCustomer() || $user->isSalesAgent()) This role type does not require brand assignment.
-                    @else This user has not been linked to any brands yet. Assign them from the brand management section.
+            <div class="empty-state" style="padding:52px 24px;">
+                <i class="bi bi-award"></i>
+                <p>
+                    @if($user->isAdmin()) Administrators have full access to all brands automatically.
+                    @elseif(method_exists($user,'isCustomer') && ($user->isCustomer() || $user->isSalesAgent())) This role does not require brand assignment.
+                    @else No brands assigned yet. Use the brand page to assign this user.
                     @endif
                 </p>
-                @if(!$user->isAdmin() && !$user->isCustomer() && !$user->isSalesAgent())
-                    <a href="{{ route('admin.brands.index') }}" class="admin-btn-sm btn-edit-alt" style="margin-top: 20px; padding: 8px 18px;">
-                        <i class="fa-solid fa-magnifying-glass"></i> Browse Brands Directory
-                    </a>
+                @if(!$user->isAdmin() && !(method_exists($user,'isCustomer') && $user->isCustomer()))
+                <a href="{{ route('admin.brands.index') }}" class="admin-btn-sm btn-view-alt" style="margin-top:16px;padding:8px 18px;">
+                    <i class="bi bi-collection"></i> Browse Brands
+                </a>
                 @endif
             </div>
         @else
-            <div style="padding: 8px 0;">
+            <div>
                 @foreach($user->brands as $brand)
-                <div class="brand-item" style="padding: 16px 24px;">
-                    <div style="display: flex; align-items: center; gap: 16px;">
-                        <div style="width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #f8fafc, #f1f5f9); border: 1px solid #e2e8f0; display: grid; place-items: center; font-weight: 800; color: var(--purple); font-size: 16px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
-                            {{ strtoupper(substr($brand->name, 0, 1)) }}
+                <div class="brand-item">
+                    <div style="display:flex;align-items:center;gap:14px;">
+                        <div style="width:42px;height:42px;border-radius:11px;background:#f3e8ff;border:1px solid #e9d5ff;display:grid;place-items:center;font-weight:800;color:var(--purple);font-size:15px;flex-shrink:0;">
+                            {{ strtoupper(substr($brand->name,0,1)) }}
                         </div>
                         <div>
-                            <div style="font-size: 14px; font-weight: 700; color: var(--text);">{{ $brand->name }}</div>
-                            <div style="font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 6px; margin-top: 2px;">
-                                <i class="fa-solid fa-globe" style="font-size: 10px;"></i>
-                                {{ $brand->country ?? 'Universal' }}
+                            <div style="font-size:14px;font-weight:700;color:var(--dark);">{{ $brand->name }}</div>
+                            <div style="font-size:12px;color:var(--muted);margin-top:1px;">
+                                <i class="bi bi-globe" style="font-size:10px;margin-right:3px;"></i>{{ $brand->country ?? 'Universal' }}
                             </div>
                         </div>
                     </div>
-                    <a href="{{ route('admin.brands.assign-users', $brand) }}" class="admin-btn-sm btn-view-alt" style="padding: 7px 14px;">
-                        <i class="fa-solid fa-users-gear"></i> Manage
+                    <a href="{{ route('admin.brands.assign-users', $brand) }}" class="admin-btn-sm btn-view-alt">
+                        <i class="bi bi-people-fill"></i> Manage
                     </a>
                 </div>
                 @endforeach

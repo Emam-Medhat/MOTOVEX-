@@ -12,9 +12,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
-            'role'         => \App\Http\Middleware\CheckRole::class,
-            'brand.access' => \App\Http\Middleware\CheckBrandAccess::class,
-            'active'       => \App\Http\Middleware\EnsureUserIsActive::class,
+            'role'              => \App\Http\Middleware\CheckRole::class,
+            'brand.access'      => \App\Http\Middleware\CheckBrandAccess::class,
+            'active'            => \App\Http\Middleware\EnsureUserIsActive::class,
+            'merchant.approved' => \App\Http\Middleware\EnsureMerchantIsApproved::class,
         ]);
 
         $middleware->redirectTo(

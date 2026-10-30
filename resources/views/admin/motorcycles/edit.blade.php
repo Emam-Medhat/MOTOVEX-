@@ -7,14 +7,14 @@
         <a href="{{ route('admin.motorcycles.index') }}"
            style="font-size:12px;color:#6e6888;display:inline-flex;align-items:center;gap:6px;margin-bottom:6px;transition:color .15s"
            onmouseover="this.style.color='#d4cfea'" onmouseout="this.style.color='#6e6888'">
-            <i class="fa-solid fa-arrow-left" style="font-size:10px"></i> Back to Motorcycles
+            <i class="bi bi-arrow-left" style="font-size:10px"></i> Back to Motorcycles
         </a>
         <h1>{{ $motorcycle->model_name }}</h1>
     </div>
     @can('delete', $motorcycle)
     <button type="button" class="btn-danger" id="edit-delete-btn"
             data-name="{{ $motorcycle->model_name }}">
-        <i class="fa-solid fa-trash"></i> Delete
+        <i class="bi bi-trash3"></i> Delete
     </button>
     <form id="edit-delete-form" method="POST"
           action="{{ route('admin.motorcycles.destroy', $motorcycle) }}"
@@ -31,7 +31,7 @@
             @include('admin.motorcycles._form')
             <div style="display:flex;gap:12px;margin-top:24px;padding-top:20px;border-top:1px solid var(--line)">
                 <button type="submit" class="btn-primary">
-                    <i class="fa-solid fa-check"></i> Save Changes
+                    <i class="bi bi-check-lg"></i> Save Changes
                 </button>
                 <a href="{{ route('admin.motorcycles.index') }}" class="btn-ghost">Cancel</a>
             </div>
@@ -54,7 +54,7 @@
             <div style="background:#fff;border-radius:18px;padding:28px 28px 24px;width:100%;max-width:400px;box-shadow:0 25px 60px rgba(0,0,0,.18)">
                 <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:18px">
                     <div style="flex-shrink:0;width:42px;height:42px;border-radius:12px;background:#FEF2F2;border:1px solid #FECACA;display:grid;place-items:center">
-                        <i class="fa-solid fa-triangle-exclamation" style="color:#DC2626;font-size:16px"></i>
+                        <i class="bi bi-exclamation-triangle-fill" style="color:#DC2626;font-size:16px"></i>
                     </div>
                     <div>
                         <p style="font-size:15px;font-weight:700;color:#111;margin:0 0 4px">Delete Motorcycle</p>
@@ -71,7 +71,7 @@
                     </button>
                     <button id="edm-confirm" type="button"
                             style="height:38px;padding:0 18px;font-size:13px;font-weight:600;border-radius:10px;border:none;background:#DC2626;color:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:6px">
-                        <i class="fa-solid fa-trash-can"></i> Yes, Delete
+                        <i class="bi bi-trash3"></i> Yes, Delete
                     </button>
                 </div>
             </div>
@@ -87,7 +87,7 @@
     modal.querySelector('#edm-backdrop').addEventListener('click', closeModal);
     modal.querySelector('#edm-confirm').addEventListener('click', function () {
         this.disabled = true;
-        this.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Deleting…';
+        this.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Deleting…';
         form.submit();
     });
     document.addEventListener('keydown', function (e) {
@@ -96,3 +96,4 @@
 })();
 </script>
 @endsection
+

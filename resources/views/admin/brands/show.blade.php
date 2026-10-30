@@ -14,7 +14,7 @@
         <a href="{{ route('admin.brands.index') }}"
            style="font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:6px;margin-bottom:6px"
            class="nav-link-back">
-            <i class="fa-solid fa-arrow-left" style="font-size:10px"></i> Back to Brands
+            <i class="bi bi-arrow-left" style="font-size:11px;"></i> Back to Brands
         </a>
         <h1>{{ $brand->name }}</h1>
         @if($brand->country)<p style="font-size:12px;color:var(--muted);margin-top:3px">{{ $brand->country }}</p>@endif
@@ -22,12 +22,12 @@
     <div style="display:flex;gap:10px;align-items:center">
         @can('assignUsers', App\Models\Brand::class)
         <a href="{{ route('admin.brands.assign-users', $brand) }}" class="btn-ghost">
-            <i class="fa-solid fa-user-tag"></i> Assign Users
+            <i class="bi bi-person-gear"></i> Assign Users
         </a>
         @endcan
         @can('update', $brand)
-        <a href="{{ route('admin.brands.edit', $brand) }}" class="btn-primary">
-            <i class="fa-solid fa-pen-to-square"></i> Edit Brand
+        <a href="{{ route('admin.brands.edit', $brand) }}" class="btn-primary-alt">
+            <i class="bi bi-pencil-square"></i> Edit Brand
         </a>
         @endcan
     </div>
@@ -40,7 +40,7 @@
         <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)">
             <strong style="font-size:13px">Motorcycles ({{ $motorcycles->total() }})</strong>
             <a href="{{ route('admin.motorcycles.create') }}" class="admin-btn-sm btn-view-alt" style="padding:4px 10px">
-                <i class="fa-solid fa-plus" style="font-size:9px"></i> Add
+                <i class="bi bi-plus" style="font-size:9px"></i> Add
             </a>
         </div>
         @if($motorcycles->isEmpty())
@@ -103,7 +103,7 @@
                     <span style="color:var(--muted);font-size:11px">Website</span>
                     <a href="{{ $brand->website_url }}" target="_blank"
                        class="admin-btn-sm btn-view-alt" style="display:inline-flex;margin-top:3px;font-size:10px;padding:4px 8px">
-                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Visit Website
+                        <i class="bi bi-arrow-up-right-square"></i> Visit Website
                     </a>
                 </div>
                 @endif

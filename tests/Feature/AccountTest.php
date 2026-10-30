@@ -78,7 +78,7 @@ class AccountTest extends TestCase
         $this->assertTrue($user->newsletter_opted_in);
     }
 
-    public function test_dealer_can_register_and_is_redirected_to_admin(): void
+    public function test_dealer_can_register_as_merchant_and_gets_pending_status(): void
     {
         $this->brand(); // Create at least one brand
 
@@ -86,26 +86,24 @@ class AccountTest extends TestCase
             'name'                  => 'New Dealer',
             'email'                 => 'dealer@example.com',
             'phone'                 => '+971500000005',
-            'account_type'          => 'data_entry',
+            'account_type'          => 'merchant',
             'password'              => 'secret123',
             'password_confirmation' => 'secret123',
             'terms'                 => '1',
         ]);
 
-        $response->assertRedirect(route('admin.dashboard'));
-        $this->assertAuthenticated();
+        // Merchant registration redirects to pending page — NOT logged in
+        $response->assertRedirect(route('register.pending'));
+        $this->assertGuest();
 
         $user = User::where('email', 'dealer@example.com')->first();
-        $this->assertTrue($user->isDataEntry());
-
-        // Verify they can see the motorcycle creation form with brands
-        $this->actingAs($user)
-            ->get('/admin/motorcycles/create')
-            ->assertStatus(200)
-            ->assertSee('Test Brand');
+        $this->assertNotNull($user);
+        $this->assertTrue($user->isMerchant());
+        $this->assertEquals('pending', $user->account_status);
+        $this->assertFalse($user->is_active);
     }
 
-    public function test_admin_can_register_via_public_form(): void
+    public function test_admin_cannot_register_via_public_form(): void
     {
         $response = $this->post('/register', [
             'name'                  => 'New Admin',
@@ -117,11 +115,10 @@ class AccountTest extends TestCase
             'terms'                 => '1',
         ]);
 
-        $response->assertRedirect(route('admin.dashboard'));
-        $this->assertAuthenticated();
-
-        $user = User::where('email', 'newadmin@example.com')->first();
-        $this->assertTrue($user->isAdmin());
+        // Must be blocked — 'admin' is not allowed in public registration
+        $response->assertSessionHasErrors('account_type');
+        $this->assertGuest();
+        $this->assertDatabaseMissing('users', ['email' => 'newadmin@example.com']);
     }
 
     public function test_registration_rejects_duplicate_email(): void

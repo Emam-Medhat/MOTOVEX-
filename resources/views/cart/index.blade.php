@@ -259,15 +259,25 @@
     .mvx-crumbs a:hover { color: #7C3AED; }
     .mvx-crumbs i { font-size: 8px; }
     .mvx-crumbs .is-current { color: #475569; font-weight: 600; }
+
+    .mvx-group-title {
+        display: flex; align-items: center; gap: 9px;
+        font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em;
+        color: #64748B; margin: 0 0 14px;
+    }
+    .mvx-group-title i { color: #8B5CF6; font-size: 13px; }
+    .mvx-group-title::after { content: ''; flex: 1; height: 1px; background: #E9E8F5; }
 </style>
 @endpush
 
 @section('content')
 @php
-    $itemCount   = $cartItems->count();
-    $cartCurrency = $cartItems->isNotEmpty()
-        ? ($cartItems->first()['motorcycle']->currency ?: 'USD')
-        : 'USD';
+    $motoCount    = $motoItems->count();
+    $spCount      = $spItems->count();
+    $itemCount    = $motoCount + $spCount;
+    $cartCurrency = ($motoItems->isNotEmpty() ? ($motoItems->first()['motorcycle']->currency ?: null) : null)
+        ?? ($spItems->isNotEmpty() ? ($spItems->first()['spare_part']->currency ?: null) : null)
+        ?? 'USD';
 @endphp
 
 <div class="mvx-cart">
@@ -291,7 +301,7 @@
                         Your Cart
                         <span class="mvx-count-pill">{{ $itemCount }} {{ $itemCount === 1 ? 'item' : 'items' }}</span>
                     </h1>
-                    <p>Review your selected machines before requesting an order.</p>
+                    <p>Review your selected items before requesting an order.</p>
                 </div>
             </div>
             <a href="{{ route('motorcycles.index') }}" class="mvx-back">
@@ -300,7 +310,7 @@
             </a>
         </header>
 
-        @if($cartItems->isEmpty())
+        @if($motoItems->isEmpty() && $spItems->isEmpty())
 
             {{-- ── Empty state ────────────────────────────────── --}}
             <div class="mvx-empty">
@@ -312,14 +322,18 @@
                 </div>
                 <h2>Your cart is waiting for your next ride</h2>
                 <p>
-                    You haven&rsquo;t added any motorcycles yet. Explore our certified lineup and
-                    add a machine to your cart to request an order — our team will confirm
-                    availability and finalise everything with you.
+                    You haven&rsquo;t added any motorcycles or spare parts yet. Explore our certified
+                    lineup and parts catalogue, then add items to your cart to request an order —
+                    our team will confirm availability and finalise everything with you.
                 </p>
                 <div class="mvx-empty-actions">
                     <a href="{{ route('motorcycles.index') }}" class="mvx-empty-cta">
                         <i class="fa-solid fa-motorcycle" aria-hidden="true"></i>
                         Browse Motorcycles
+                    </a>
+                    <a href="{{ route('spare-parts.index') }}" class="mvx-link">
+                        <i class="fa-solid fa-gears" aria-hidden="true"></i>
+                        Browse Spare Parts
                     </a>
                     <a href="{{ route('brands.index') }}" class="mvx-link">
                         <i class="fa-solid fa-tags" aria-hidden="true"></i>
@@ -335,7 +349,7 @@
                 {{-- ── Items ──────────────────────────────────── --}}
                 <section aria-label="Cart items" class="min-w-0">
                     <div class="mb-3 flex items-center justify-between gap-4">
-                        <h2 class="text-[13px] font-bold uppercase tracking-[.1em] text-slate-500">Selected Machines</h2>
+                        <h2 class="text-[13px] font-bold uppercase tracking-[.1em] text-slate-500">Your Items</h2>
                         <form method="POST" action="{{ route('cart.clear') }}" data-guard>
                             @csrf @method('DELETE')
                             <button type="submit" class="mvx-clear">
@@ -345,8 +359,10 @@
                         </form>
                     </div>
 
+                    @if($motoItems->isNotEmpty())
+                    <h3 class="mvx-group-title"><i class="fa-solid fa-motorcycle" aria-hidden="true"></i> Motorcycles</h3>
                     <div class="space-y-4">
-                        @foreach($cartItems as $item)
+                        @foreach($motoItems as $item)
                             @php
                                 $moto   = $item['motorcycle'];
                                 $specs  = array_values(array_filter([
@@ -460,6 +476,115 @@
                             </article>
                         @endforeach
                     </div>
+                    @endif
+
+                    @if($spItems->isNotEmpty())
+                    <h3 class="mvx-group-title {{ $motoItems->isNotEmpty() ? 'mt-8' : '' }}"><i class="fa-solid fa-gears" aria-hidden="true"></i> Spare Parts</h3>
+                    <div class="space-y-4">
+                        @foreach($spItems as $item)
+                            @php
+                                $sp        = $item['spare_part'];
+                                $qty       = max(1, (int) $item['quantity']);
+                                $unitPrice = (float) ($sp->price ?? 0);
+                                $lineTotal = $unitPrice * $qty;
+                                $brandName = $sp->brand?->name ?? 'MOTOVEX';
+                                $productUrl = route('spare-parts.show', $sp->slug);
+                                $stockTone = $sp->isAvailable() ? 'ok' : 'bad';
+                            @endphp
+
+                            <article class="mvx-item">
+                                <a href="{{ $productUrl }}" class="mvx-thumb" aria-label="View {{ $sp->name }}">
+                                    @if($sp->image_url)
+                                        <img src="{{ $sp->image_url }}"
+                                             alt="{{ $sp->name }}"
+                                             loading="lazy" decoding="async">
+                                    @else
+                                        <span class="mvx-thumb-fallback" role="img" aria-label="No image available for {{ $sp->name }}">
+                                            <i class="fa-solid fa-gears" aria-hidden="true"></i>
+                                        </span>
+                                    @endif
+                                </a>
+
+                                <div class="min-w-0">
+                                    <div class="flex items-start justify-between">
+                                        <div>
+                                            <p class="mvx-brand">{{ $brandName }}</p>
+                                            <h3 class="mvx-name">
+                                                <a href="{{ $productUrl }}">{{ $sp->name }}</a>
+                                            </h3>
+                                        </div>
+                                        @if($sp->sku)
+                                        <span class="text-[10px] font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded border border-slate-100 uppercase tracking-tight">
+                                            {{ $sp->sku }}
+                                        </span>
+                                        @endif
+                                    </div>
+
+                                    <div class="flex items-center gap-3 mt-3">
+                                        <p class="mvx-stock {{ $stockTone }} m-0">
+                                            <i class="fa-solid fa-circle" aria-hidden="true"></i>
+                                            {{ $sp->isAvailable() ? ucfirst($sp->availability_status ?? 'In stock') : 'Out of stock' }}
+                                        </p>
+                                        @if($sp->category)
+                                        <span class="text-[11px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
+                                            {{ ucwords(str_replace('_', ' ', $sp->category)) }}
+                                        </span>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="mvx-buy">
+                                    <div class="mvx-price">
+                                        <span class="mvx-unit-label">Unit Price</span>
+                                        <span class="mvx-unit">{{ $sp->currency ?: $cartCurrency }} {{ number_format($unitPrice) }}</span>
+                                        <span class="mvx-line">Line total: {{ $sp->currency ?: $cartCurrency }} {{ number_format($lineTotal) }}</span>
+                                    </div>
+
+                                    <div class="flex flex-col items-start gap-2 lg:items-end">
+                                        <div class="mvx-controls">
+                                            {{-- Quantity: adjustable per spare part (CartController::addSparePart / updateSparePart) --}}
+                                            <form id="mvx-qty-{{ $sp->id }}" method="POST"
+                                                  action="{{ route('cart.update-part', $sp) }}">
+                                                @csrf @method('PATCH')
+                                            </form>
+                                            <div class="mvx-qty" role="group" aria-label="Quantity">
+                                                <button type="submit"
+                                                        form="mvx-qty-{{ $sp->id }}"
+                                                        name="quantity"
+                                                        value="{{ max(1, $qty - 1) }}"
+                                                        title="Decrease quantity"
+                                                        aria-label="Decrease quantity of {{ $sp->name }}">
+                                                    <i class="fa-solid fa-minus" aria-hidden="true"></i>
+                                                </button>
+                                                <span class="mvx-qty-val" aria-live="polite" aria-label="Quantity: {{ $qty }}">{{ $qty }}</span>
+                                                <button type="submit"
+                                                        form="mvx-qty-{{ $sp->id }}"
+                                                        name="quantity"
+                                                        value="{{ $qty + 1 }}"
+                                                        title="Increase quantity"
+                                                        aria-label="Increase quantity of {{ $sp->name }}">
+                                                    <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                                                </button>
+                                            </div>
+
+                                            <form id="mvx-remove-{{ $sp->id }}" method="POST"
+                                                  action="{{ route('cart.remove-part', $sp) }}"
+                                                  data-guard>
+                                                @csrf @method('DELETE')
+                                                <button type="submit" class="mvx-remove"
+                                                        aria-label="Remove {{ $sp->name }} from cart"
+                                                        title="Remove from cart">
+                                                    <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                        <span class="mvx-qty-label lg:text-right">Quantity editable</span>
+                                    </div>
+                                </div>
+                            </article>
+                        @endforeach
+                    </div>
+                    @endif
                 </section>
 
                 {{-- ── Order summary ──────────────────────────── --}}

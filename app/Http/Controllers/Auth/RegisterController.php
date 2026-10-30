@@ -21,38 +21,61 @@ class RegisterController extends Controller
 
     public function register(RegisterRequest $request)
     {
-        $data = $request->validated();
+        $data       = $request->validated();
         $newsletter = $request->boolean('newsletter');
+        $type       = $data['account_type']; // 'customer' or 'merchant' only
 
-        $user = DB::transaction(function () use ($data, $newsletter) {
+        // Double-check at the controller level — never allow admin self-registration,
+        // even if the request were somehow forged past the FormRequest rules.
+        if (! in_array($type, ['customer', 'merchant'], true)) {
+            abort(403, 'Invalid account type.');
+        }
+
+        $user = DB::transaction(function () use ($data, $newsletter, $type) {
+            // Merchants start as pending (is_active=false until approved); customers are immediately active.
+            $accountStatus = ($type === 'merchant') ? 'pending' : 'active';
+            $isActive      = ($type !== 'merchant'); // merchants blocked until admin approves
+
             $user = User::create([
-                'name'               => $data['name'],
-                'email'              => $data['email'],
-                'phone'              => $data['phone'],
-                'country'            => $data['country'] ?? null,
-                'city'               => $data['city'] ?? null,
-                'password'           => $data['password'],
+                'name'                => $data['name'],
+                'email'               => $data['email'],
+                'phone'               => $data['phone'],
+                'country'             => $data['country'] ?? null,
+                'city'                => $data['city'] ?? null,
+                'password'            => $data['password'],
                 'newsletter_opted_in' => $newsletter,
-                'is_active'          => true,
+                'is_active'           => $isActive,
+                'account_status'      => $accountStatus,
             ]);
 
-            $role = Role::where('slug', $data['account_type'])->firstOrFail();
+            $role = Role::where('slug', $type)->firstOrFail();
             $user->roles()->attach($role->id);
-
-            // If registering as a Dealer (data_entry), assign all current brands so they can start working.
-            if ($data['account_type'] === 'data_entry') {
-                $brandIds = \App\Models\Brand::pluck('id')->toArray();
-                $syncData = collect($brandIds)
-                    ->mapWithKeys(fn ($id) => [$id => ['role' => 'data_entry']])
-                    ->all();
-                $user->brands()->attach($syncData);
-            }
 
             return $user;
         });
 
+        if ($type === 'merchant') {
+            // Do NOT log them in — redirect to a page explaining pending status.
+            return redirect()
+                ->route('register.pending')
+                ->with('pending_name', $user->name);
+        }
+
+        // Customer: log them in and take them to their account.
+        Auth::login($user);
+        $request->session()->regenerate();
+
         return redirect()
-            ->route('login')
-            ->with('success', 'Registration successful! Please sign in with your new account.');
+            ->route('account.dashboard')
+            ->with('success', 'Welcome to MOTOVEX! Your account is ready.');
+    }
+
+    /**
+     * Show the "your merchant account is pending approval" page.
+     * Accessible without authentication (the user was never logged in).
+     */
+    public function showPendingPage()
+    {
+        return view('auth.merchant-pending');
     }
 }

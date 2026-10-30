@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\SparePart;
 use App\Models\User;
+use App\Support\OrderNotifier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -64,9 +66,10 @@ class OrderController extends Controller
             }
             
             // Filter items for this merchant only
-            $order->setRelation('items', $order->items()->where('merchant_id', $user->id)->with('motorcycle.brand')->get());
+            $order->setRelation('items', $order->items()->where('merchant_id', $user->id)
+                ->with(['motorcycle.brand', 'sparePart.brand', 'merchant'])->get());
         } else {
-            $order->load(['items.motorcycle.brand', 'user', 'paymentVerifiedBy']);
+            $order->load(['items.motorcycle.brand', 'items.sparePart.brand', 'items.merchant', 'user', 'paymentVerifiedBy']);
         }
 
         return view('admin.sales.show', compact('order'));
@@ -75,22 +78,48 @@ class OrderController extends Controller
     public function updateItemStatus(Request $request, OrderItem $item)
     {
         $user = auth()->user();
-        
-        // Security
+
+        // Security: merchants can only update their own items
         if (! $user->isAdmin() && $item->merchant_id !== $user->id) {
             abort(403);
         }
 
         $validated = $request->validate([
-            'status' => ['required', 'string', 'in:pending,processing,ready_for_delivery,completed,cancelled'],
+            'status'           => ['required', 'string', 'in:' . implode(',', array_keys(OrderItem::$merchantStatuses))],
+            'fulfillment_notes'=> ['nullable', 'string', 'max:1000'],
+            'rejection_reason' => ['required_if:status,rejected', 'nullable', 'string', 'max:500'],
+            'tracking_number'  => ['nullable', 'string', 'max:100'],
         ]);
 
-        $item->update(['status' => $validated['status']]);
+        try {
+            $item->transitionStatus(
+                $validated['status'],
+                $user->id,
+                $validated['fulfillment_notes'] ?? null,
+                $validated['rejection_reason'] ?? null
+            );
 
-        // If all items in the order are completed, mark the order as completed
-        $order = $item->order;
-        if ($order->items()->where('status', '!=', 'completed')->count() === 0) {
-            $order->update(['status' => Order::STATUS_COMPLETED]);
+            if (!empty($validated['tracking_number'])) {
+                $item->update(['tracking_number' => $validated['tracking_number']]);
+            }
+
+            // Restore stock on rejection/cancellation of spare parts
+            if (in_array($validated['status'], [OrderItem::STATUS_REJECTED, OrderItem::STATUS_CANCELLED])
+                && $item->isSparePartItem()) {
+                $sp = $item->sparePart;
+                if ($sp) {
+                    $sp->increment('stock_quantity', $item->quantity);
+                    if ($sp->availability_status === \App\Models\SparePart::AVAIL_OUT_OF_STOCK) {
+                        $sp->update(['availability_status' => \App\Models\SparePart::AVAIL_IN_STOCK]);
+                    }
+                }
+            }
+
+            // Notify the customer (and admins on rejection)
+            OrderNotifier::notifyStatusChange($item);
+
+        } catch (\InvalidArgumentException $e) {
+            return back()->with('error', $e->getMessage());
         }
 
         return back()->with('success', 'Item status updated.');

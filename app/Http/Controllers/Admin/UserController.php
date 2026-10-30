@@ -19,49 +19,89 @@ class UserController extends Controller
         $this->authorizeResource(User::class, 'user');
     }
 
+    // ──────────────────────────────────────────────────────────────────────────
+    // LIST / FILTER
+    // ──────────────────────────────────────────────────────────────────────────
+
     public function index(Request $request)
     {
-        $role = $request->query('role');
+        $role   = $request->query('role');
+        $status = $request->query('status');   // 'pending' | 'rejected' | null
 
         $users = User::with(['roles', 'brands'])
-            ->when($role, fn ($query) => $query->whereHas('roles', fn ($q) => $q->where('slug', $role)))
-            ->orderBy('name')
-            ->paginate(15)
+            ->when($role, fn ($q) => $q->whereHas('roles', fn ($r) => $r->where('slug', $role)))
+            ->when($status === 'pending',  fn ($q) => $q->where('account_status', 'pending'))
+            ->when($status === 'rejected', fn ($q) => $q->where('account_status', 'rejected'))
+            ->orderBy('created_at', 'desc')
+            ->paginate(20)
             ->withQueryString();
 
-        $roles = Role::orderBy('name')->get();
+        $roles     = Role::orderBy('name')->get();
         $roleCounts = Role::withCount('users')->get()->pluck('users_count', 'slug');
 
-        return view('admin.users.index', compact('users', 'roles', 'role', 'roleCounts'));
+        // Count for tab badges
+        $pendingCount  = User::pendingMerchants()->count();
+        $rejectedCount = User::whereHas('roles', fn ($q) => $q->where('slug', 'merchant'))
+                             ->where('account_status', 'rejected')
+                             ->count();
+
+        return view('admin.users.index', compact(
+            'users', 'roles', 'role', 'status', 'roleCounts', 'pendingCount', 'rejectedCount'
+        ));
     }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // CREATE / STORE  (admin-created users including new admins)
+    // ──────────────────────────────────────────────────────────────────────────
 
     public function create()
     {
-        $roles = Role::orderBy('name')->get();
+        $roles  = Role::orderBy('name')->get();
         $brands = Brand::orderBy('name')->get();
 
-        return view('admin.users.create', compact('roles', 'brands'));
+        // Pass the admin role id for the "Add New Admin" shortcut.
+        $adminRoleId = Role::where('slug', 'admin')->value('id');
+
+        return view('admin.users.create', compact('roles', 'brands', 'adminRoleId'));
     }
 
     public function store(StoreUserRequest $request)
     {
         $data = $request->validated();
 
-        $user = DB::transaction(function () use ($data) {
+        // Security: prevent creating an admin via a manipulated role_id unless
+        // the current user is already an admin (StoreUserRequest already gates this
+        // via UserPolicy::create which requires isAdmin()).
+        $selectedRole = Role::findOrFail($data['role_id']);
+
+        // Admin accounts are always active — no pending status.
+        $accountStatus = 'active';
+
+        $user = DB::transaction(function () use ($data, $selectedRole, $accountStatus) {
             $user = User::create([
-                'name'     => $data['name'],
-                'email'    => $data['email'],
-                'password' => Hash::make($data['password']),
+                'name'           => $data['name'],
+                'email'          => $data['email'],
+                'password'       => Hash::make($data['password']),
+                'is_active'      => $data['is_active'] ?? true,
+                'account_status' => $accountStatus,
             ]);
 
-            $user->roles()->attach($data['role_id']);
+            $user->roles()->attach($selectedRole->id);
             $this->syncBrandAssignments($user, $data['brand_ids'] ?? []);
 
             return $user;
         });
 
-        return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
+        $roleLabel = $selectedRole->name;
+
+        return redirect()
+            ->route('admin.users.index')
+            ->with('success', "{$roleLabel} account for {$user->name} created successfully.");
     }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // SHOW / EDIT / UPDATE / DESTROY
+    // ──────────────────────────────────────────────────────────────────────────
 
     public function show(User $user)
     {
@@ -72,7 +112,7 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        $roles = Role::orderBy('name')->get();
+        $roles  = Role::orderBy('name')->get();
         $brands = Brand::orderBy('name')->get();
         $user->load('roles', 'brands');
 
@@ -93,9 +133,9 @@ class UserController extends Controller
                 $user->update(['password' => Hash::make($data['password'])]);
             }
 
-            $adminRole = Role::where('slug', 'admin')->first();
+            $adminRole       = Role::where('slug', 'admin')->first();
             $isCurrentlyAdmin = $user->isAdmin();
-            $willRemainAdmin = $adminRole && (int) $data['role_id'] === (int) $adminRole->id;
+            $willRemainAdmin  = $adminRole && (int) $data['role_id'] === (int) $adminRole->id;
 
             if ($isCurrentlyAdmin && ! $willRemainAdmin) {
                 $otherAdmins = User::whereHas('roles', fn ($q) => $q->where('slug', 'admin'))
@@ -141,6 +181,10 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
     }
 
+    // ──────────────────────────────────────────────────────────────────────────
+    // TOGGLE ACTIVE
+    // ──────────────────────────────────────────────────────────────────────────
+
     public function toggleActive(User $user)
     {
         $this->authorize('update', $user);
@@ -155,6 +199,56 @@ class UserController extends Controller
             $user->is_active ? 'reactivated' : 'suspended'
         ));
     }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // MERCHANT APPROVAL / REJECTION
+    // ──────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Approve a pending merchant application.
+     */
+    public function approveMerchant(User $user)
+    {
+        $this->authorize('update', $user);
+
+        abort_unless($user->isMerchant(), 403, 'This action is only available for merchant accounts.');
+        abort_unless($user->isAccountPending(), 422, 'This account is not in pending status.');
+
+        $user->update([
+            'account_status' => 'active',
+            'is_active'      => true,
+            'approved_at'    => now(),
+            'approved_by'    => auth()->id(),
+        ]);
+
+        return redirect()
+            ->route('admin.users.index', ['status' => 'pending'])
+            ->with('success', "Merchant account for {$user->name} has been approved. They can now log in.");
+    }
+
+    /**
+     * Reject a pending merchant application.
+     */
+    public function rejectMerchant(User $user)
+    {
+        $this->authorize('update', $user);
+
+        abort_unless($user->isMerchant(), 403, 'This action is only available for merchant accounts.');
+        abort_unless($user->isAccountPending(), 422, 'This account is not in pending status.');
+
+        $user->update([
+            'account_status' => 'rejected',
+            'is_active'      => false,
+        ]);
+
+        return redirect()
+            ->route('admin.users.index', ['status' => 'pending'])
+            ->with('success', "Merchant application for {$user->name} has been rejected.");
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // PRIVATE HELPERS
+    // ──────────────────────────────────────────────────────────────────────────
 
     private function syncBrandAssignments(User $user, array $brandIds): void
     {

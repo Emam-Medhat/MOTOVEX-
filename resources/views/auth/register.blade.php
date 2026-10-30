@@ -1,5 +1,9 @@
 ﻿@php
     $selectedType = old('account_type', 'customer');
+    // Only 'customer' and 'merchant' are valid public registration types.
+    if (! in_array($selectedType, ['customer', 'merchant'])) {
+        $selectedType = 'customer';
+    }
 @endphp
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -293,15 +297,21 @@
                                     <input type="radio" name="account_type" value="customer" class="sr-only" @checked($selectedType === 'customer')>
                                     عميل
                                 </label>
-                                <label class="type-pill {{ $selectedType === 'data_entry' ? 'is-active' : '' }}">
-                                    <input type="radio" name="account_type" value="data_entry" class="sr-only" @checked($selectedType === 'data_entry')>
+                                <label class="type-pill {{ $selectedType === 'merchant' ? 'is-active' : '' }}">
+                                    <input type="radio" name="account_type" value="merchant" class="sr-only" @checked($selectedType === 'merchant')>
                                     تاجر
                                 </label>
-                                <label class="type-pill {{ $selectedType === 'admin' ? 'is-active' : '' }}">
-                                    <input type="radio" name="account_type" value="admin" class="sr-only" @checked($selectedType === 'admin')>
-                                    أدمن
-                                </label>
+                                {{-- Admin registration is NOT available publicly.
+                                     Admin accounts can only be created from the Admin Dashboard. --}}
                             </div>
+                            @if($selectedType === 'merchant')
+                            <p class="mt-1.5 text-[10px] font-bold text-yellow-400/70 flex items-center gap-1.5">
+                                <span style="width:6px;height:6px;border-radius:50%;background:#facc15;display:inline-block;flex-shrink:0;box-shadow:0 0 6px #facc15"></span>
+                                حسابات التجار تحتاج إلى موافقة المشرف قبل التفعيل
+                            </p>
+                            @endif
+                            <p id="merchant-note" class="mt-1.5 text-[10px] font-bold text-yellow-400/70 items-center gap-1.5 {{ $selectedType === 'merchant' ? 'flex' : 'hidden' }}" aria-live="polite">
+                            </p>
                             <p class="field-error">@error('account_type'){{ $message }}@enderror</p>
                         </div>
 
@@ -528,10 +538,22 @@
 
             // Account type pills
             const pills = document.querySelectorAll('#type-pills .type-pill');
+            const merchantNote = document.getElementById('merchant-note');
             pills.forEach(pill => {
                 pill.querySelector('input').addEventListener('change', () => {
                     pills.forEach(p => p.classList.remove('is-active'));
                     pill.classList.add('is-active');
+                    // Show a warning when merchant is selected
+                    const val = pill.querySelector('input').value;
+                    if (merchantNote) {
+                        if (val === 'merchant') {
+                            merchantNote.classList.remove('hidden');
+                            merchantNote.classList.add('flex');
+                        } else {
+                            merchantNote.classList.add('hidden');
+                            merchantNote.classList.remove('flex');
+                        }
+                    }
                 });
             });
 

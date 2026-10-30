@@ -161,59 +161,54 @@
             <p class="mt-4 text-slate-500">Every detail designed to make your ownership experience exceptional from day one.</p>
         </div>
 
+        @php
+            $serviceTones = [
+                'bg-violet-50 text-violet-600',
+                'bg-indigo-50 text-indigo-600',
+                'bg-emerald-50 text-emerald-600',
+                'bg-amber-50 text-amber-600',
+            ];
+        @endphp
+
         <div class="mt-16 grid sm:grid-cols-2 gap-7">
-            @foreach([
-                [
-                    'icon'  => 'fa-gears',
-                    'title' => 'Scheduled Maintenance',
-                    'desc'  => 'Factory-trained technicians keep your motorcycle performing at its best using genuine OEM parts and manufacturer-approved procedures.',
-                    'items' => ['Oil & filter changes','Brake inspections & fluid flush','Chain & sprocket service','Tyre checks & replacements','Full pre-season inspection'],
-                    'color' => 'bg-violet-50 text-violet-600',
-                ],
-                [
-                    'icon'  => 'fa-box-open',
-                    'title' => 'Genuine Spare Parts',
-                    'desc'  => 'Every component sourced directly from manufacturers or authorised distributors — ensuring fit, reliability, and warranty compliance.',
-                    'items' => ['OEM-style parts sourcing','Supported MOTOVEX brands','Regional delivery options','Compatibility guidance','Transparent pricing'],
-                    'color' => 'bg-indigo-50 text-indigo-600',
-                ],
-                [
-                    'icon'  => 'fa-shield-halved',
-                    'title' => 'Warranty & Protection',
-                    'desc'  => 'Comprehensive plans that protect your investment and keep you moving, wherever the road takes you.',
-                    'items' => ['Standard manufacturer warranty','Extended protection plans','Accidental damage cover','Roadside assistance','Track-day add-on cover'],
-                    'color' => 'bg-emerald-50 text-emerald-600',
-                ],
-                [
-                    'icon'  => 'fa-motorcycle',
-                    'title' => 'Test Rides & Delivery',
-                    'desc'  => 'Experience your dream motorcycle before you commit. Our experts guide you through every feature and help arrange delivery.',
-                    'items' => ['Booked showroom test rides','Home delivery available','White-glove handover','Full model orientation','Finance arranged same day'],
-                    'color' => 'bg-amber-50 text-amber-600',
-                ],
-            ] as $i => $service)
-            <div class="card-hover reveal rounded-2xl border border-slate-200 bg-white p-8 shadow-sm" style="transition-delay: {{ $i * 0.1 }}s">
-                <div class="flex items-start gap-5">
-                    <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl {{ $service['color'] }} text-2xl">
-                        <i class="fa-solid {{ $service['icon'] }}"></i>
+            @forelse($services as $i => $service)
+            <div class="card-hover reveal overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" style="transition-delay: {{ $i * 0.1 }}s">
+                @if($service->image_url)
+                <img src="{{ $service->image_url }}" alt="{{ $service->title }}" class="h-44 w-full object-cover" loading="lazy">
+                @endif
+                <div class="p-8">
+                    <div class="flex items-start gap-5">
+                        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl {{ $serviceTones[$i % count($serviceTones)] }} text-2xl">
+                            <i class="fa-solid {{ $service->icon_class }}"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-slate-900">{{ $service->title }}</h3>
+                            <p class="mt-2 text-sm leading-6 text-slate-500">{{ $service->description }}</p>
+                        </div>
                     </div>
-                    <div>
-                        <h3 class="text-xl font-bold text-slate-900">{{ $service['title'] }}</h3>
-                        <p class="mt-2 text-sm leading-6 text-slate-500">{{ $service['desc'] }}</p>
-                    </div>
+                    @if($service->full_description)
+                    <p class="mt-6 text-sm leading-7 text-slate-600">{{ $service->full_description }}</p>
+                    @endif
+                    @if($service->cta_label)
+                    <a href="{{ $service->cta_route ?: '#' }}"
+                       class="mt-6 inline-flex items-center gap-2 text-sm font-bold text-brand-600 transition-colors hover:text-brand-700">
+                        {{ $service->cta_label }}
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+                    @endif
                 </div>
-                <ul class="mt-6 space-y-2.5">
-                    @foreach($service['items'] as $item)
-                    <li class="flex items-center gap-3 text-sm text-slate-600">
-                        <span class="flex h-5 w-5 items-center justify-center rounded-full bg-brand-50 text-brand-600 shrink-0">
-                            <i class="fa-solid fa-check text-[9px]"></i>
-                        </span>
-                        {{ $item }}
-                    </li>
-                    @endforeach
-                </ul>
             </div>
-            @endforeach
+            @empty
+            <div class="sm:col-span-2 rounded-2xl border border-dashed border-slate-300 bg-white p-16 text-center">
+                <i class="fa-solid fa-screwdriver-wrench text-4xl text-slate-300"></i>
+                <h3 class="mt-4 text-lg font-bold text-slate-800">No services available yet</h3>
+                <p class="mt-2 text-sm text-slate-500">Our team is preparing the latest ownership services. Please check back soon.</p>
+                <a href="{{ route('contact') }}"
+                   class="mt-6 inline-flex items-center gap-2 rounded-xl bg-brand-600 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-brand-500">
+                    <i class="fa-solid fa-paper-plane"></i> Contact Us
+                </a>
+            </div>
+            @endforelse
         </div>
     </div>
 </section>

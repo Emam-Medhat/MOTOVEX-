@@ -212,22 +212,42 @@
             <div class="os-card-body">
 
                 @forelse($order->items as $item)
+                @php
+                    $itemStatusLabels = ['pending' => 'Pending'] + \App\Models\OrderItem::$merchantStatuses;
+                @endphp
                 <div class="item-card">
                     <div class="item-thumb">
-                        @if($item->motorcycle?->image_url)
-                            <img src="{{ $item->motorcycle->image_url }}" alt="{{ $item->motorcycle_snapshot }}">
+                        @if($item->productImageUrl())
+                            <img src="{{ $item->productImageUrl() }}" alt="{{ $item->displayName() }}">
                         @else
-                            <i class="fa-solid fa-motorcycle item-thumb-ico"></i>
+                            <i class="fa-solid {{ $item->isSparePartItem() ? 'fa-gears' : 'fa-motorcycle' }} item-thumb-ico"></i>
                         @endif
                     </div>
                     <div style="flex:1;min-width:0;">
-                        <div class="item-name">{{ $item->motorcycle_snapshot }}</div>
-                        <div class="item-price-line">
+                        <div class="item-name">{{ $item->displayName() }}</div>
+                        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;">
+                            <span style="font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:2px 8px;border-radius:6px;background:{{ $item->isSparePartItem() ? '#eef2ff' : '#f3e8ff' }};color:{{ $item->isSparePartItem() ? '#4f46e5' : '#7c3aed' }};">
+                                {{ $item->isSparePartItem() ? 'Spare Part' : 'Motorcycle' }}
+                            </span>
+                            @if($item->sku_snapshot)
+                            <span style="font-size:10px;font-family:ui-monospace,monospace;color:var(--muted);padding:2px 8px;border-radius:6px;background:#f8fafc;border:1px solid var(--line);">SKU {{ $item->sku_snapshot }}</span>
+                            @endif
+                            @if($item->merchant)
+                            <span style="font-size:10px;color:var(--subtext);padding:2px 8px;border-radius:6px;background:#f8fafc;border:1px solid var(--line);">
+                                <i class="fa-solid fa-store" style="font-size:8px;"></i> {{ $item->merchant->name }}
+                            </span>
+                            @endif
+                        </div>
+                        <div class="item-price-line" style="margin-top:6px;">
                             {{ $order->currency }} {{ number_format($item->unit_price, 2) }} × {{ $item->quantity }}
                             &nbsp;=&nbsp;
                             <strong>{{ $order->currency }} {{ number_format($item->subtotal, 2) }}</strong>
                         </div>
-                        @if($item->motorcycle)
+                        @if($item->isSparePartItem() && $item->sparePart)
+                        <a href="{{ route('admin.spare-parts.show', $item->sparePart) }}" style="font-size:11px;color:var(--purple);margin-top:4px;display:inline-flex;align-items:center;gap:4px;">
+                            <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:9px;"></i> View part
+                        </a>
+                        @elseif($item->motorcycle)
                         <a href="{{ route('admin.motorcycles.show', $item->motorcycle) }}" style="font-size:11px;color:var(--purple);margin-top:4px;display:inline-flex;align-items:center;gap:4px;">
                             <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:9px;"></i> View motorcycle
                         </a>
@@ -238,7 +258,7 @@
                             @csrf
                             @method('PATCH')
                             <select name="status" onchange="this.form.submit()" class="item-status-sel">
-                                @foreach(['pending'=>'Pending','processing'=>'Processing','ready_for_delivery'=>'Ready','completed'=>'Completed','cancelled'=>'Cancelled'] as $val=>$lbl)
+                                @foreach($itemStatusLabels as $val => $lbl)
                                 <option value="{{ $val }}" {{ $item->status == $val ? 'selected' : '' }}>{{ $lbl }}</option>
                                 @endforeach
                             </select>

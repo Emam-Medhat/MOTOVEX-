@@ -18,7 +18,11 @@ class ContactController extends Controller
             $motorcycle = Motorcycle::published()->findOrFail($request->integer('motorcycle_id'));
         }
 
-        return view('contact', compact('motorcycle'));
+        // Pre-fill subject and enquiry_type from query string (e.g. from spare-parts page)
+        $prefillSubject      = $request->input('subject', '');
+        $prefillEnquiryType  = $request->input('enquiry_type', '');
+
+        return view('contact', compact('motorcycle', 'prefillSubject', 'prefillEnquiryType'));
     }
 
     public function store(StoreContactRequest $request)
