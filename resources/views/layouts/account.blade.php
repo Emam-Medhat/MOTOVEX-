@@ -731,6 +731,10 @@
        class="ac-tab {{ request()->routeIs('account.dashboard') ? 'is-active' : '' }}">
       <i class="fa-solid fa-gauge"></i> Overview
     </a>
+    <a href="{{ route('account.orders') }}"
+       class="ac-tab {{ request()->routeIs('account.orders*') ? 'is-active' : '' }}">
+      <i class="fa-solid fa-receipt"></i> Orders
+    </a>
     <a href="{{ route('account.enquiries') }}"
        class="ac-tab {{ request()->routeIs('account.enquiries') ? 'is-active' : '' }}">
       <i class="fa-solid fa-envelope"></i> Enquiries
@@ -778,6 +782,12 @@
             <i class="fa-solid fa-gauge"></i>
             <span>Overview</span>
             <small style="font-size:.68rem;color:#94a3b8;margin-right:auto;margin-left:.25rem;font-weight:400;">الرئيسية</small>
+          </a>
+          <a href="{{ route('account.orders') }}"
+             class="ac-nav-item {{ request()->routeIs('account.orders*') ? 'is-active' : '' }}">
+            <i class="fa-solid fa-receipt"></i>
+            <span>My Orders</span>
+            <small style="font-size:.68rem;color:#94a3b8;margin-right:auto;margin-left:.25rem;font-weight:400;">طلباتي</small>
           </a>
           <a href="{{ route('account.enquiries') }}"
              class="ac-nav-item {{ request()->routeIs('account.enquiries') ? 'is-active' : '' }}">

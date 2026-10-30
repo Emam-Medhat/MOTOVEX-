@@ -306,6 +306,13 @@
   </div>
   @endif
 
+  @if(session('error'))
+  <div class="reveal" style="display:flex;align-items:center;gap:.75rem;padding:.9rem 1.1rem;border-radius:13px;margin-bottom:1.5rem;background:#fef2f2;border:1px solid #fecaca;color:#991b1b;font-size:.88rem;font-weight:600;">
+    <i class="fa-solid fa-circle-exclamation"></i>
+    {{ session('error') }}
+  </div>
+  @endif
+
   {{-- ── Main Grid ── --}}
   <div class="co-grid">
 
@@ -321,8 +328,9 @@
         </div>
         <div class="co-card-body">
 
-          <form method="POST" action="{{ route('cart.place-order') }}" id="checkoutForm">
+          <form method="POST" action="{{ route('cart.place-order') }}" id="checkoutForm" novalidate>
             @csrf
+            <input type="hidden" name="idempotency_key" id="idempotencyKey" value="{{ session('cart_submission_token', '') }}">
 
             {{-- Name (full width) --}}
             <div class="co-field">
@@ -509,11 +517,48 @@
   var form = document.getElementById('checkoutForm');
   var btn  = document.getElementById('submitBtn');
   var txt  = document.getElementById('submitTxt');
+  var submitted = false;
 
-  form && form.addEventListener('submit', function(){
+  form && form.addEventListener('submit', function(e) {
+    // Validate required visible fields manually
+    var name  = form.querySelector('[name="name"]');
+    var email = form.querySelector('[name="email"]');
+    var phone = form.querySelector('[name="phone"]');
+    var valid = true;
+
+    [name, email, phone].forEach(function(field) {
+      if (!field || !field.value.trim()) {
+        if (field) field.classList.add('is-err');
+        valid = false;
+      } else {
+        if (field) field.classList.remove('is-err');
+      }
+    });
+
+    if (!valid) {
+      e.preventDefault();
+      return;
+    }
+
+    // Prevent double submission
+    if (submitted) {
+      e.preventDefault();
+      return;
+    }
+    submitted = true;
+
     btn.disabled = true;
     txt.textContent = 'Submitting…';
-    btn.style.opacity = '.8';
+    btn.style.opacity = '.75';
+  });
+
+  // Restore button if page is shown from bfcache (back button)
+  window.addEventListener('pageshow', function(e) {
+    if (e.persisted) {
+      submitted = false;
+      if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
+      if (txt) { txt.textContent = 'Place Order Enquiry'; }
+    }
   });
 </script>
 

@@ -15,23 +15,72 @@ class AccountController extends Controller
     {
         $user = auth()->user();
 
-        $enquiries = Enquiry::where('email', $user->email)
-            ->latest()
-            ->take(5)
-            ->get();
+        // Use user_id when available, fall back to email match for legacy records
+        $baseQuery = Enquiry::where(function ($q) use ($user) {
+            $q->where('user_id', $user->id)
+              ->orWhere('email', $user->email);
+        });
+
+        $enquiries = (clone $baseQuery)
+            ->where('enquiry_type', '!=', Enquiry::TYPE_PURCHASE)
+            ->latest()->take(5)->get();
+
+        $recentOrders = (clone $baseQuery)
+            ->purchaseOrders()
+            ->latest()->take(3)->get();
 
         $stats = [
-            'total'   => Enquiry::where('email', $user->email)->count(),
-            'open'    => Enquiry::where('email', $user->email)->where('status', 'pending')->count(),
-            'test_rides' => Enquiry::where('email', $user->email)->where('enquiry_type', 'test_drive')->count(),
+            'total'      => (clone $baseQuery)->where('enquiry_type', '!=', Enquiry::TYPE_PURCHASE)->count(),
+            'open'       => (clone $baseQuery)->where('enquiry_type', '!=', Enquiry::TYPE_PURCHASE)->where('status', 'pending')->count(),
+            'test_rides' => (clone $baseQuery)->where('enquiry_type', Enquiry::TYPE_TEST_DRIVE)->count(),
+            'orders'     => (clone $baseQuery)->purchaseOrders()->count(),
         ];
 
-        return view('account.dashboard', compact('user', 'enquiries', 'stats'));
+        return view('account.dashboard', compact('user', 'enquiries', 'recentOrders', 'stats'));
+    }
+
+    public function orders()
+    {
+        $user = auth()->user();
+
+        $orders = Enquiry::purchaseOrders()
+            ->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                  ->orWhere('email', $user->email);
+            })
+            ->latest()
+            ->paginate(10);
+
+        return view('account.orders', compact('orders'));
+    }
+
+    public function orderShow(Enquiry $enquiry)
+    {
+        $user = auth()->user();
+
+        // Ownership check — customer can only see their own orders
+        abort_unless(
+            $enquiry->user_id === $user->id || $enquiry->email === $user->email,
+            403,
+            'You do not have permission to view this order.'
+        );
+
+        abort_unless($enquiry->enquiry_type === Enquiry::TYPE_PURCHASE, 404);
+
+        $enquiry->load('motorcycle.brand');
+
+        return view('account.order-show', compact('enquiry'));
     }
 
     public function enquiries()
     {
-        $enquiries = Enquiry::where('email', auth()->user()->email)
+        $user = auth()->user();
+
+        $enquiries = Enquiry::where(function ($q) use ($user) {
+                $q->where('user_id', $user->id)
+                  ->orWhere('email', $user->email);
+            })
+            ->where('enquiry_type', '!=', Enquiry::TYPE_PURCHASE)
             ->latest()
             ->paginate(10);
 

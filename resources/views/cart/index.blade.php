@@ -381,25 +381,41 @@
                                 </a>
 
                                 <div class="min-w-0">
-                                    <p class="mvx-brand">{{ $brandName }}</p>
-                                    <h3 class="mvx-name">
-                                        <a href="{{ $productUrl }}">{{ $moto->model_name }}</a>
-                                    </h3>
+                                    <div class="flex items-start justify-between">
+                                        <div>
+                                            <p class="mvx-brand">{{ $brandName }}</p>
+                                            <h3 class="mvx-name">
+                                                <a href="{{ $productUrl }}">{{ $moto->model_name }}</a>
+                                            </h3>
+                                        </div>
+                                        <span class="text-[10px] font-bold text-slate-400 bg-slate-50 px-2 py-1 rounded border border-slate-100 uppercase tracking-tight">
+                                            {{ $moto->year }}
+                                        </span>
+                                    </div>
 
                                     @if(!empty($specs))
                                         <div class="mvx-chips">
                                             @foreach($specs as $spec)
-                                                <span class="mvx-chip">{{ $spec }}</span>
+                                                <span class="mvx-chip">
+                                                    @if(str_contains($spec, 'cc')) <i class="fa-solid fa-gauge-high mr-1 opacity-60"></i> @endif
+                                                    @if(str_contains($spec, 'hp')) <i class="fa-solid fa-bolt mr-1 opacity-60"></i> @endif
+                                                    {{ $spec }}
+                                                </span>
                                             @endforeach
                                         </div>
                                     @endif
 
-                                    @if($moto->availability_status)
-                                        <p class="mvx-stock {{ $stockTone }}">
-                                            <i class="fa-solid fa-circle" aria-hidden="true"></i>
-                                            {{ ucfirst($moto->availability_status) }}
-                                        </p>
-                                    @endif
+                                    <div class="flex items-center gap-3 mt-3">
+                                        @if($moto->availability_status)
+                                            <p class="mvx-stock {{ $stockTone }} m-0">
+                                                <i class="fa-solid fa-circle" aria-hidden="true"></i>
+                                                {{ ucfirst($moto->availability_status) }}
+                                            </p>
+                                        @endif
+                                        <span class="text-[11px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
+                                            {{ ucfirst($moto->category ?? 'Standard') }}
+                                        </span>
+                                    </div>
                                 </div>
 
                                 <div class="mvx-buy">

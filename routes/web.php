@@ -8,6 +8,7 @@ use App\Http\Controllers\ServicesController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\TestRideController;
+use App\Http\Controllers\RentalRequestController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\Admin\BrandController as AdminBrandController;
 use App\Http\Controllers\Admin\MotorcycleController as AdminMotorcycleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\EnquiryController;
+use App\Http\Controllers\Admin\RequestController;
 
 // ─── Public Routes ─────────────────────────────────────────────────────────────
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -33,15 +35,21 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 Route::post('/test-ride', [TestRideController::class, 'store'])
     ->middleware('throttle:5,1')   // 5 requests per minute per IP
     ->name('test-ride.store');
+Route::post('/motorcycles/{motorcycle:slug}/rent', [RentalRequestController::class, 'store'])
+    ->middleware('throttle:5,1')
+    ->name('rentals.store');
 
 // ─── Cart ───────────────────────────────────────────────────────────────────────
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/add/{motorcycle:slug}', [CartController::class, 'add'])->name('cart.add');
 Route::delete('/cart/remove/{motorcycle:slug}', [CartController::class, 'remove'])->name('cart.remove');
 Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
-Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
-Route::post('/cart/checkout', [CartController::class, 'placeOrder'])->name('cart.place-order');
-Route::get('/cart/order-success', [CartController::class, 'orderSuccess'])->name('cart.order-success');
+
+Route::middleware(['auth', 'active'])->group(function () {
+    Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+    Route::post('/cart/checkout', [CartController::class, 'placeOrder'])->name('cart.place-order');
+    Route::get('/cart/order-success', [CartController::class, 'orderSuccess'])->name('cart.order-success');
+});
 
 // ─── Authentication ─────────────────────────────────────────────────────────────
 Route::middleware('guest')->group(function () {
@@ -72,6 +80,7 @@ Route::middleware(['auth', 'active'])->prefix('account')->name('account.')->grou
     Route::put('/security', [AccountController::class, 'updatePassword'])->name('security.update');
 });
 
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\PromotionController;
 use App\Http\Controllers\Admin\ShowroomController;
 use App\Http\Controllers\Admin\TestRideController as AdminTestRideController;
@@ -80,6 +89,7 @@ use App\Http\Controllers\Admin\TestRideController as AdminTestRideController;
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'active', 'role:admin,data_entry,sales_agent'])->group(function () {
 
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('requests', [RequestController::class, 'index'])->name('requests.index');
 
     // Catalogue – admin + data entry only
     Route::middleware('role:admin,data_entry')->group(function () {
@@ -98,31 +108,44 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'active', 'role:admi
     Route::patch('users/{user}/toggle-active', [UserController::class, 'toggleActive'])
         ->middleware('role:admin')->name('users.toggle-active');
 
-    // Enquiries – admin (full) + sales agent (view & update status)
+    // Requests – admins have global scope; operational staff are scoped to their motorcycles.
     Route::get('enquiries/export', [EnquiryController::class, 'export'])
-        ->middleware('role:admin,sales_agent')->name('enquiries.export');
+        ->middleware('role:admin,data_entry,sales_agent')->name('enquiries.export');
     Route::resource('enquiries', EnquiryController::class)
         ->only(['index', 'show', 'update'])
-        ->middleware('role:admin,sales_agent');
+        ->middleware('role:admin,data_entry,sales_agent');
     Route::delete('enquiries/{enquiry}', [EnquiryController::class, 'destroy'])
         ->middleware('role:admin')->name('enquiries.destroy');
 
-    // Purchase Orders — admin + sales agent
-    Route::middleware('role:admin,sales_agent')->prefix('orders')->name('orders.')->group(function () {
+    // Sales and rentals share canonical enquiry records.
+    Route::middleware('role:admin,data_entry,sales_agent')->prefix('orders')->name('orders.')->group(function () {
         Route::get('/',                                   [EnquiryController::class, 'ordersIndex'])->name('index');
         Route::get('/{enquiry}',                          [EnquiryController::class, 'orderShow'])->name('show');
         Route::patch('/{enquiry}/status',                 [EnquiryController::class, 'orderUpdateStatus'])->name('update-status');
         Route::patch('/{enquiry}/payment',                [EnquiryController::class, 'orderVerifyPayment'])->name('verify-payment');
     });
+
+    // New Sales/Orders System
+    Route::middleware('role:admin,data_entry')->prefix('sales')->name('sales.')->group(function () {
+        Route::get('/', [OrderController::class, 'index'])->name('index');
+        Route::get('/{order}', [OrderController::class, 'show'])->name('show');
+        Route::patch('/items/{item}/status', [OrderController::class, 'updateItemStatus'])->name('items.update-status');
+        Route::patch('/{order}/verify-payment', [OrderController::class, 'verifyPayment'])->name('verify-payment');
+    });
     Route::delete('orders/{enquiry}', [EnquiryController::class, 'orderDestroy'])
         ->middleware('role:admin')->name('orders.destroy');
 
     // Test Ride Bookings – admin + sales agent (view & update); admin-only delete
-    Route::middleware('role:admin,sales_agent')->group(function () {
+    Route::middleware('role:admin,data_entry,sales_agent')->group(function () {
         Route::get('test-rides',                               [AdminTestRideController::class, 'index'])->name('test-rides.index');
         Route::get('test-rides/{testRide}',                    [AdminTestRideController::class, 'show'])->name('test-rides.show');
         Route::put('test-rides/{testRide}',                    [AdminTestRideController::class, 'update'])->name('test-rides.update');
         Route::patch('test-rides/{testRide}/status',           [AdminTestRideController::class, 'updateStatus'])->name('test-rides.update-status');
+    });
+    Route::middleware('role:admin,data_entry,sales_agent')->prefix('rentals')->name('rentals.')->group(function () {
+        Route::get('/', [EnquiryController::class, 'rentalsIndex'])->name('index');
+        Route::get('/{enquiry}', [EnquiryController::class, 'orderShow'])->name('show');
+        Route::patch('/{enquiry}/status', [EnquiryController::class, 'orderUpdateStatus'])->name('update-status');
     });
     Route::delete('test-rides/{testRide}',                     [AdminTestRideController::class, 'destroy'])
         ->middleware('role:admin')->name('test-rides.destroy');

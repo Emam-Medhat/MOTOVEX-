@@ -32,7 +32,9 @@ class MotorcyclePolicy
             return true;
         }
 
-        return $user->canManageBrand($motorcycle->brand);
+        return $user->isDataEntry() 
+            && $user->canManageBrand($motorcycle->brand)
+            && ($motorcycle->created_by === $user->id || $motorcycle->assigned_manager_id === $user->id);
     }
 
     public function delete(User $user, Motorcycle $motorcycle): bool

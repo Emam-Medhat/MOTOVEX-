@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\TestRideRequest;
 use App\Http\Requests\StoreTestRideRequest;
 use App\Models\Showroom;
+use App\Models\Motorcycle;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 
 /**
@@ -26,7 +29,25 @@ class TestRideController extends Controller
             $data['email'] = $data['email'] ?: auth()->user()->email;
         }
 
-        $booking = TestRideRequest::create($data);
+        $booking = DB::transaction(function () use ($data) {
+            if (! empty($data['motorcycle_id'])) {
+                $motorcycle = Motorcycle::lockForUpdate()->findOrFail($data['motorcycle_id']);
+                abort_unless($motorcycle->is_published && $motorcycle->availability_status !== 'sold', 422, 'This motorcycle is not available.');
+
+                $conflict = TestRideRequest::where('motorcycle_id', $motorcycle->id)
+                    ->whereDate('preferred_date', $data['preferred_date'])
+                    ->where('preferred_time', $data['preferred_time'])
+                    ->whereIn('status', [TestRideRequest::STATUS_PENDING, TestRideRequest::STATUS_CONFIRMED])
+                    ->exists();
+                if ($conflict) {
+                    throw ValidationException::withMessages([
+                        'preferred_time' => 'This motorcycle already has a booking at that time.',
+                    ]);
+                }
+            }
+
+            return TestRideRequest::create($data);
+        });
 
         if ($request->expectsJson() || $request->header('X-Requested-With') === 'XMLHttpRequest') {
             return response()->json([

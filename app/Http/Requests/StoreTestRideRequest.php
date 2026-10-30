@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreTestRideRequest extends FormRequest
@@ -36,5 +37,18 @@ class StoreTestRideRequest extends FormRequest
             'phone.regex'            => 'That phone number does not look right.',
             'preferred_date.after_or_equal' => 'The preferred date must be today or in the future.',
         ];
+    }
+
+    public function withValidator($validator): void
+    {
+        $validator->after(function (Validator $validator) {
+            if ($this->filled('motorcycle_id')) {
+                foreach (['preferred_date', 'preferred_time'] as $field) {
+                    if (! $this->filled($field)) {
+                        $validator->errors()->add($field, 'Choose a preferred date and time for this motorcycle.');
+                    }
+                }
+            }
+        });
     }
 }

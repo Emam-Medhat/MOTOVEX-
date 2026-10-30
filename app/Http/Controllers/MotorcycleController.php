@@ -55,7 +55,7 @@ class MotorcycleController extends Controller
             default      => $query->orderBy('model_name'),
         };
 
-        $motorcycles = $query->paginate(9)->withQueryString();
+        $motorcycles = $query->paginate(12)->withQueryString();
         $brands      = Brand::published()->withCount('motorcycles')->orderBy('name')->get();
         $categories  = Motorcycle::published()->distinct()->orderBy('category')->pluck('category');
         $footerBrands = Brand::published()->take(6)->get();

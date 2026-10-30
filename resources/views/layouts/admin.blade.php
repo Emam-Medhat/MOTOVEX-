@@ -534,16 +534,43 @@
             </div>
             @endif
 
-            {{-- Test Rides — admin + sales agent --}}
-            @if(auth()->user()->isAdmin() || auth()->user()->isSalesAgent())
+            {{-- Orders & Sales — admin + data_entry + sales agent --}}
+            @if(auth()->user()->isAdmin() || auth()->user()->isDataEntry() || auth()->user()->isSalesAgent())
             <div class="nav-section">
-                <div class="nav-label">Bookings</div>
+                <div class="nav-label">Orders & Sales</div>
                 <nav class="sidebar-nav">
+                    @if(auth()->user()->isAdmin() || auth()->user()->isDataEntry())
+                    <a href="{{ route('admin.sales.index') }}" class="{{ request()->routeIs('admin.sales*') ? 'active' : '' }}">
+                        <i class="fa-solid fa-cart-shopping"></i> Sales Orders
+                        @php 
+                            $pendingSales = auth()->user()->isAdmin() 
+                                ? \App\Models\Order::where('status', 'pending')->count()
+                                : \App\Models\OrderItem::where('merchant_id', auth()->id())->where('status', 'pending')->count();
+                        @endphp
+                        @if($pendingSales > 0)
+                            <span style="margin-left:auto;min-width:18px;height:18px;border-radius:9px;background:#7c3aed;color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;padding:0 4px;">{{ $pendingSales }}</span>
+                        @endif
+                    </a>
+                    @endif
+                    
+                    <a href="{{ route('admin.orders.index') }}" class="{{ request()->routeIs('admin.orders*') ? 'active' : '' }}">
+                        <i class="fa-solid fa-receipt"></i> Enquiries
+                        @php 
+                            $pendingEnqs = \App\Models\Enquiry::purchaseOrders()->where('status','pending');
+                            if (!auth()->user()->isAdmin() && !auth()->user()->isSalesAgent()) {
+                                $pendingEnqs->whereHas('motorcycle', fn($q) => $q->responsibleFor(auth()->user()));
+                            }
+                            $pendingEnqsCount = $pendingEnqs->count();
+                        @endphp
+                        @if($pendingEnqsCount > 0)
+                            <span style="margin-left:auto;min-width:18px;height:18px;border-radius:9px;background:#7c3aed;color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;padding:0 4px;">{{ $pendingEnqsCount }}</span>
+                        @endif
+                    </a>
                     <a href="{{ route('admin.test-rides.index') }}" class="{{ request()->routeIs('admin.test-rides*') ? 'active' : '' }}">
                         <i class="fa-solid fa-flag-checkered"></i> Test Rides
-                        @php $pending = \App\Models\TestRideRequest::where('status','pending')->count(); @endphp
-                        @if($pending > 0)
-                            <span style="margin-left:auto;min-width:18px;height:18px;border-radius:9px;background:#7c3aed;color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;padding:0 4px;">{{ $pending }}</span>
+                        @php $pendingRides = \App\Models\TestRideRequest::where('status','pending')->count(); @endphp
+                        @if($pendingRides > 0)
+                            <span style="margin-left:auto;min-width:18px;height:18px;border-radius:9px;background:#d97706;color:#fff;font-size:9px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;padding:0 4px;">{{ $pendingRides }}</span>
                         @endif
                     </a>
                 </nav>

@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -70,6 +71,26 @@ class User extends Authenticatable
     public function preferredBrand()
     {
         return $this->belongsTo(Brand::class, 'preferred_brand_id');
+    }
+
+    public function createdMotorcycles(): HasMany
+    {
+        return $this->hasMany(Motorcycle::class, 'created_by');
+    }
+
+    public function managedMotorcycles(): HasMany
+    {
+        return $this->hasMany(Motorcycle::class, 'assigned_manager_id');
+    }
+
+    public function operationalMotorcycles()
+    {
+        return Motorcycle::query()->responsibleFor($this);
+    }
+
+    public function isOperationalManager(): bool
+    {
+        return $this->isDataEntry() || $this->isSalesAgent();
     }
 
     public function scopeActive($query)

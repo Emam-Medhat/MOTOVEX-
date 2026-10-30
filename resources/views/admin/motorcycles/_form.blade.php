@@ -53,6 +53,31 @@
         @error('price')<p class="error-msg">{{ $message }}</p>@enderror
     </div>
 
+    <div>
+        <label class="form-label">Rental Price per Day</label>
+        <input type="number" step="0.01" min="0.01" name="rental_price_per_day"
+               value="{{ old('rental_price_per_day', $motorcycle->rental_price_per_day ?? '') }}"
+               class="form-input {{ $errors->has('rental_price_per_day') ? 'is-invalid' : '' }}"
+               placeholder="Leave blank to disable rentals">
+        @error('rental_price_per_day')<p class="error-msg">{{ $message }}</p>@enderror
+    </div>
+
+    @if(auth()->user()->isAdmin())
+    <div class="col-span-2">
+        <label class="form-label">Assigned Manager</label>
+        <select name="assigned_manager_id" class="form-select {{ $errors->has('assigned_manager_id') ? 'is-invalid' : '' }}">
+            <option value="">Use original creator</option>
+            @foreach($managers as $manager)
+                <option value="{{ $manager->id }}" {{ (string) old('assigned_manager_id', $motorcycle->assigned_manager_id ?? '') === (string) $manager->id ? 'selected' : '' }}>
+                    {{ $manager->name }} ({{ $manager->roleName() }})
+                </option>
+            @endforeach
+        </select>
+        <p class="form-hint">The assigned manager handles new requests. The creator remains recorded for auditing.</p>
+        @error('assigned_manager_id')<p class="error-msg">{{ $message }}</p>@enderror
+    </div>
+    @endif
+
     {{-- Year --}}
     <div>
         <label class="form-label">Model Year *</label>

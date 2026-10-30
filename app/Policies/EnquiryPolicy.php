@@ -9,17 +9,19 @@ class EnquiryPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->isAdmin() || $user->isSalesAgent();
+        return $user->isAdmin() || $user->isOperationalManager();
     }
 
     public function view(User $user, Enquiry $enquiry): bool
     {
-        return $user->isAdmin() || $user->isSalesAgent();
+        return $user->isAdmin() || $user->isSalesAgent()
+            || ($user->isDataEntry() && $enquiry->motorcycle?->responsibleManagerId() === $user->id);
     }
 
     public function update(User $user, Enquiry $enquiry): bool
     {
-        return $user->isAdmin() || $user->isSalesAgent();
+        return $user->isAdmin() || $user->isSalesAgent()
+            || ($user->isDataEntry() && $enquiry->motorcycle?->responsibleManagerId() === $user->id);
     }
 
     public function delete(User $user, Enquiry $enquiry): bool

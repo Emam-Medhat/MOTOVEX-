@@ -10,6 +10,30 @@ class TestRideRequest extends Model
 {
     protected $table = 'test_ride_requests';
 
+    // ── Single booted() — auto-reference + audit trail ───────────────────────
+    protected static function booted(): void
+    {
+        static::creating(function (self $model) {
+            if (empty($model->booking_reference)) {
+                $model->booking_reference = static::generateReference();
+            }
+            if (empty($model->status)) {
+                $model->status = self::STATUS_PENDING;
+            }
+        });
+
+        static::updated(function (self $model) {
+            if ($model->wasChanged('status')) {
+                WorkflowActivity::record(
+                    $model,
+                    'status',
+                    $model->getOriginal('status'),
+                    $model->status
+                );
+            }
+        });
+    }
+
     protected $fillable = [
         'booking_reference',
         'user_id',
@@ -28,9 +52,9 @@ class TestRideRequest extends Model
     ];
 
     protected $casts = [
-        'motorcycle_id' => 'integer',
-        'showroom_id'   => 'integer',
-        'user_id'       => 'integer',
+        'motorcycle_id'  => 'integer',
+        'showroom_id'    => 'integer',
+        'user_id'        => 'integer',
         'preferred_date' => 'date',
     ];
 
@@ -47,26 +71,25 @@ class TestRideRequest extends Model
         self::STATUS_CANCELLED => 'Cancelled',
     ];
 
-    // ── Boot: auto-generate booking reference ─────────────────────────────────
-    protected static function booted(): void
-    {
-        static::creating(function (self $model) {
-            if (empty($model->booking_reference)) {
-                $model->booking_reference = static::generateReference();
-            }
-            if (empty($model->status)) {
-                $model->status = self::STATUS_PENDING;
-            }
-        });
-    }
-
+    // ── Reference generator ──────────────────────────────────────────────────
     public static function generateReference(): string
     {
         do {
-            $ref = 'TRB-' . strtoupper(Str::random(3)) . '-' . date('Ymd') . '-' . str_pad(random_int(1, 99999), 5, '0', STR_PAD_LEFT);
+            $ref = 'TRB-' . strtoupper(Str::random(3)) . '-' . date('Ymd') . '-'
+                 . str_pad(random_int(1, 99999), 5, '0', STR_PAD_LEFT);
         } while (static::where('booking_reference', $ref)->exists());
 
         return $ref;
+    }
+
+    // ── Status transition guard ──────────────────────────────────────────────
+    public static function canTransitionStatus(string $from, string $to): bool
+    {
+        return in_array($to, match ($from) {
+            self::STATUS_PENDING   => [self::STATUS_CONFIRMED, self::STATUS_CANCELLED],
+            self::STATUS_CONFIRMED => [self::STATUS_COMPLETED, self::STATUS_CANCELLED],
+            default                => [],
+        }, true);
     }
 
     // ── Relationships ────────────────────────────────────────────────────────
@@ -85,7 +108,7 @@ class TestRideRequest extends Model
         return $this->belongsTo(User::class);
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
+    // ── Accessors ────────────────────────────────────────────────────────────
     public function getStatusLabelAttribute(): string
     {
         return self::$statuses[$this->status] ?? ucfirst($this->status);
@@ -93,7 +116,7 @@ class TestRideRequest extends Model
 
     public function getStatusColorAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             self::STATUS_PENDING   => 'badge-amber',
             self::STATUS_CONFIRMED => 'badge-blue',
             self::STATUS_COMPLETED => 'badge-green',

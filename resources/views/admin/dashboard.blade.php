@@ -9,18 +9,29 @@
 @php
     $user = auth()->user();
     $canManageCatalogue = $user->isAdmin() || $user->isDataEntry();
-    $canSeeEnquiries    = $user->isAdmin() || $user->isSalesAgent();
+    $canSeeEnquiries    = $user->isAdmin() || $user->isSalesAgent() || $user->isDataEntry();
 
     $statMeta = [
         'Brands'          => ['fa-regular fa-copyright',  'kpi-purple', 'admin.brands.index',      'الماركات',      'كل الماركات المسجلة'],
         'My Brands'       => ['fa-regular fa-copyright',  'kpi-purple', 'admin.brands.index',      'ماركاتي',       'الماركات المخصصة لك'],
         'Motorcycles'     => ['fa-solid fa-motorcycle',   'kpi-blue',   'admin.motorcycles.index', 'الموتوسيكلات',  'موديلات في الكتالوج'],
+        'My Motorcycles'  => ['fa-solid fa-motorcycle',   'kpi-blue',   'admin.motorcycles.index', 'موتوسيكلاتي', 'الموتوسيكلات المسؤولة عنها'],
         'Promotions'      => ['fa-solid fa-tags',         'kpi-amber',  'admin.promotions.index',  'العروض',        'عروض ترويجية نشطة'],
         'Showrooms'       => ['fa-solid fa-shop',         'kpi-green',  'admin.showrooms.index',   'المعارض',       'فروع المبيعات'],
         'Enquiries'       => ['fa-solid fa-envelope',     'kpi-purple', 'admin.enquiries.index',   'الاستفسارات',   'طلبات من الموقع'],
         'Total Enquiries' => ['fa-solid fa-envelope',     'kpi-purple', 'admin.enquiries.index',   'إجمالي الطلبات','كل الاستفسارات'],
         'Pending'         => ['fa-regular fa-clock',      'kpi-amber',  'admin.enquiries.index',   'معلّقة',        'تنتظر المتابعة'],
+        'Sales Orders'    => ['fa-solid fa-cart-shopping', 'kpi-purple', 'admin.sales.index',       'طلبات المبيعات', 'إجمالي طلبات البيع'],
+        'My Sales'        => ['fa-solid fa-cart-shopping', 'kpi-purple', 'admin.sales.index',       'مبيعاتي',       'طلبات البيع الخاصة بك'],
+        'New Orders'      => ['fa-solid fa-bell',          'kpi-amber',  'admin.sales.index',       'طلبات جديدة',    'طلبات شراء تنتظر مراجعتك'],
+        'Pending Sales'   => ['fa-regular fa-clock',       'kpi-amber',  'admin.sales.index',       'مبيعات معلقة',    'طلبات شراء تنتظر التأكيد'],
+        'Confirmed Sales' => ['fa-solid fa-circle-check',  'kpi-green',  'admin.sales.index',       'مبيعات مؤكدة',    'طلبات تم تأكيد دفعها'],
         'Test Rides'      => ['fa-solid fa-flag-checkered','kpi-blue',  'admin.test-rides.index',   'تجارب القيادة', 'طلبات حجز جديدة'],
+        'Test-Ride Bookings' => ['fa-solid fa-flag-checkered','kpi-blue','admin.test-rides.index',  'حجوزات التجربة','طلبات حجز موتوسيكلاتك'],
+        'Sales Requests'  => ['fa-solid fa-receipt',       'kpi-purple', 'admin.orders.index',       'طلبات الشراء', 'طلبات شراء موتوسيكلاتك'],
+        'Rental Requests' => ['fa-solid fa-key',            'kpi-amber',  'admin.rentals.index',      'طلبات الإيجار', 'طلبات إيجار موتوسيكلاتك'],
+        'Product Enquiries' => ['fa-solid fa-comments',    'kpi-purple', 'admin.enquiries.index',    'استفسارات المنتجات','استفسارات حول موتوسيكلاتك'],
+        'Pending Actions' => ['fa-regular fa-clock',       'kpi-amber',  'admin.requests.index',     'إجراءات معلّقة','طلبات تنتظر مراجعتك'],
         'Completed'       => ['fa-solid fa-circle-check', 'kpi-green',  'admin.enquiries.index',   'منجزة',         'طلبات مكتملة'],
     ];
 
@@ -175,6 +186,18 @@
 }
 .d-text-link:hover { color: var(--d-purpled); }
 .d-text-link i { font-size: 9px; }
+
+/* ── Chart tabs ── */
+.chart-tab {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 9px;
+    font-size: 11.5px; font-weight: 600;
+    border: 1px solid var(--d-line); background: var(--d-surface);
+    color: var(--d-muted); cursor: pointer;
+    transition: all .18s;
+}
+.chart-tab.active { background: var(--d-purple); color: #fff; border-color: var(--d-purple); }
+.chart-tab:hover:not(.active) { background: var(--d-purplel); color: var(--d-purple); border-color: #ddd6fe; }
 
 /* ── Chart ── */
 .d-chart-wrap { position: relative; height: 210px; }
@@ -358,7 +381,12 @@
     @foreach($statCards as [$label, $value])
     @php
         $meta = $statMeta[$label] ?? ['fa-solid fa-chart-simple', 'kpi-purple', null, $label, 'سجلات'];
-        $href = !empty($meta[2]) && \Illuminate\Support\Facades\Route::has($meta[2]) ? route($meta[2]) : null;
+        $href = !empty($meta[2]) && \Illuminate\Support\Facades\Route::has($meta[2])
+            ? route($meta[2], $label === 'Pending Actions' ? ['status' => 'pending'] : [])
+            : null;
+        if ($label === 'Product Enquiries' && $href) {
+            $href = route('admin.enquiries.index', ['enquiry_type' => 'product']);
+        }
         $ar   = $meta[3] ?? $label;
         $hint = $meta[4] ?? 'إجمالي السجلات';
     @endphp
@@ -384,6 +412,35 @@
 
 
 {{-- ── Main content ── --}}
+@if($canSeeEnquiries)
+<div class="d-panel" style="margin-bottom:20px">
+    <div class="d-panel-head">
+        <div class="d-panel-head-left">
+            <div class="d-panel-title">Recent Activity</div>
+            <div class="d-panel-sub">The latest customer requests for your motorcycles</div>
+        </div>
+        <a href="{{ route('admin.requests.index') }}" class="d-text-link">View all requests <i class="fa-solid fa-arrow-left"></i></a>
+    </div>
+    @forelse($recentActivity as $activity)
+        <a href="{{ $activity['url'] }}" class="d-enq-row" style="text-decoration:none;color:inherit">
+            <div class="d-enq-avatar">{{ strtoupper(substr($activity['customer'], 0, 1)) }}</div>
+            <div class="d-enq-body">
+                <div class="d-enq-top">
+                    <span class="d-enq-name">{{ $activity['reference'] }} · {{ $activity['customer'] }}</span>
+                    <span class="d-enq-time">{{ $activity['created_at']->diffForHumans() }}</span>
+                </div>
+                <div class="d-row" style="gap:7px;margin-top:5px">
+                    <span class="d-enq-subject d-grow">{{ $activity['type'] }} · {{ $activity['motorcycle'] ?: 'General enquiry' }}</span>
+                    <span class="d-pill {{ $statusBadge[$activity['status']] ?? 'badge-muted' }}">{{ ucfirst($activity['status']) }}</span>
+                </div>
+            </div>
+        </a>
+    @empty
+        <p class="d-muted" style="padding:16px">No customer activity yet.</p>
+    @endforelse
+</div>
+@endif
+
 <div class="d-content">
 
     {{-- Left: chart + motorcycles ── --}}
@@ -394,10 +451,34 @@
                     <div class="d-panel-title">نظرة عامة على الكتالوج</div>
                     <div class="d-panel-sub">توزيع السجلات في مساحة عملك</div>
                 </div>
-                <div class="d-panel-icon"><i class="fa-solid fa-chart-bar"></i></div>
+                <div class="d-panel-icon"><i class="fa-solid fa-chart-pie"></i></div>
             </div>
-            <div class="d-chart-wrap">
-                <canvas id="catalogueChart"></canvas>
+
+            {{-- Chart tabs --}}
+            <div style="display:flex;gap:6px;margin-bottom:18px;">
+                <button class="chart-tab active" data-chart="donut" onclick="switchChart('donut',this)">
+                    <i class="fa-solid fa-chart-pie"></i> توزيع
+                </button>
+                <button class="chart-tab" data-chart="line" onclick="switchChart('line',this)">
+                    <i class="fa-solid fa-chart-line"></i> مقارنة
+                </button>
+            </div>
+
+            {{-- Donut chart --}}
+            <div id="chartDonut" class="chart-pane" style="display:flex;align-items:center;gap:20px;">
+                <div style="position:relative;width:200px;height:200px;flex-shrink:0;margin:0 auto;">
+                    <canvas id="donutChart" style="width:200px;height:200px;"></canvas>
+                    <div id="donutCenter" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;">
+                        <span style="font-size:26px;font-weight:900;color:#111827;letter-spacing:-1px;line-height:1;" id="donutTotal">—</span>
+                        <span style="font-size:10px;color:#9ca3af;font-weight:600;margin-top:2px;">إجمالي</span>
+                    </div>
+                </div>
+                <div id="donutLegend" style="flex:1;display:flex;flex-direction:column;gap:9px;min-width:0;"></div>
+            </div>
+
+            {{-- Line chart --}}
+            <div id="chartLine" class="chart-pane" style="display:none;height:220px;">
+                <canvas id="lineChart"></canvas>
             </div>
         </div>
 
@@ -588,66 +669,170 @@
 
 /* ── Chart ── */
 (function () {
-    const labels = @json(array_column($statCards, 3, 0) ?? []);
     const rawLabels = @json(array_column($statCards, 0));
-    const values  = @json(array_column($statCards, 1));
-    const meta    = @json($statMeta);
+    const values    = @json(array_column($statCards, 1));
+    const metaMap   = @json($statMeta);
 
-    const arLabels = rawLabels.map(k => (meta[k] && meta[k][3]) ? meta[k][3] : k);
+    const arLabels = rawLabels.map(k => (metaMap[k] && metaMap[k][3]) ? metaMap[k][3] : k);
+    const total    = values.reduce((a, b) => a + b, 0);
 
-    const gradients = ['#7c3aed','#8b5cf6','#a78bfa','#c4b5fd','#2563eb','#60a5fa'];
-    const ctx = document.getElementById('catalogueChart');
-    if (!ctx) return;
+    const palette = [
+        '#7c3aed','#6d28d9','#8b5cf6','#a78bfa',
+        '#2563eb','#60a5fa','#0d9488','#f59e0b',
+        '#dc2626','#ec4899',
+    ];
+    const colors = values.map((_, i) => palette[i % palette.length]);
 
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: arLabels,
-            datasets: [{
-                label: 'العدد',
-                data: values,
-                backgroundColor: gradients.slice(0, values.length),
-                borderWidth: 0,
-                borderRadius: 9,
-                borderSkipped: false,
-                barThickness: 38,
-                maxBarThickness: 46,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: { duration: 700, easing: 'easeOutQuart' },
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    backgroundColor: '#ffffff',
-                    borderColor: '#e2e8f0',
-                    borderWidth: 1,
-                    titleColor: '#111827',
-                    titleFont: { family: 'Inter', size: 12, weight: '700' },
-                    bodyColor: '#6b7280',
-                    bodyFont: { family: 'Inter', size: 11 },
-                    padding: 12, cornerRadius: 10,
-                    displayColors: true, boxWidth: 8, boxHeight: 8,
-                    callbacks: { label: c => `  ${c.parsed.y} سجل` }
-                }
+    // ── Update center total
+    const centerEl = document.getElementById('donutTotal');
+    if (centerEl) centerEl.textContent = total.toLocaleString('ar-EG');
+
+    // ── Donut chart ──────────────────────────────────────
+    const donutCtx = document.getElementById('donutChart');
+    let donutChart = null;
+    if (donutCtx) {
+        donutChart = new Chart(donutCtx, {
+            type: 'doughnut',
+            data: {
+                labels: arLabels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: colors,
+                    borderWidth: 3,
+                    borderColor: '#ffffff',
+                    hoverBorderColor: '#ffffff',
+                    hoverOffset: 8,
+                }]
             },
-            scales: {
-                x: {
-                    grid: { display: false },
-                    border: { display: false },
-                    ticks: { color: '#6b7280', font: { size: 11.5, family: 'Inter', weight: '500' }, padding: 8 }
+            options: {
+                responsive: false,
+                cutout: '68%',
+                animation: { animateRotate: true, duration: 800, easing: 'easeOutQuart' },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1e1b4b',
+                        titleColor: '#fff',
+                        bodyColor: '#c4b5fd',
+                        padding: 12, cornerRadius: 10, borderWidth: 0,
+                        titleFont: { size: 12, weight: '700', family: 'Inter' },
+                        bodyFont:  { size: 11, family: 'Inter' },
+                        callbacks: {
+                            label: ctx => {
+                                const pct = total > 0 ? ((ctx.parsed / total) * 100).toFixed(1) : 0;
+                                return `  ${ctx.parsed.toLocaleString()} سجل  (${pct}%)`;
+                            }
+                        }
+                    }
                 },
-                y: {
-                    beginAtZero: true, min: 0,
-                    grid: { color: '#f1f5f9' },
-                    border: { display: false },
-                    ticks: { color: '#9ca3af', font: { size: 11, family: 'Inter' }, stepSize: 1, precision: 0, padding: 10 }
+                onHover: (event, elements) => {
+                    donutCtx.style.cursor = elements.length ? 'pointer' : 'default';
+                    if (elements.length) {
+                        const i = elements[0].index;
+                        centerEl.textContent = values[i].toLocaleString('ar-EG');
+                    } else {
+                        centerEl.textContent = total.toLocaleString('ar-EG');
+                    }
                 }
             }
-        }
-    });
+        });
+    }
+
+    // ── Build donut legend ────────────────────────────────
+    const legend = document.getElementById('donutLegend');
+    if (legend) {
+        arLabels.forEach((lbl, i) => {
+            const pct = total > 0 ? ((values[i] / total) * 100).toFixed(0) : 0;
+            legend.insertAdjacentHTML('beforeend', `
+                <div style="display:flex;align-items:center;gap:9px;cursor:default;"
+                     onmouseover="highlightSlice(${i})" onmouseout="resetSlice()">
+                    <span style="width:10px;height:10px;border-radius:3px;flex-shrink:0;background:${colors[i]};"></span>
+                    <span style="font-size:11.5px;color:#4b5563;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${lbl}</span>
+                    <span style="font-size:11px;font-weight:700;color:#111827;margin-left:auto;">${values[i]}</span>
+                    <span style="font-size:10px;color:#9ca3af;min-width:32px;text-align:right;">${pct}%</span>
+                </div>
+            `);
+        });
+    }
+
+    window.highlightSlice = function(i) {
+        if (!donutChart) return;
+        donutChart.setDatasetVisibility(0, true);
+        centerEl.textContent = values[i].toLocaleString('ar-EG');
+    };
+    window.resetSlice = function() {
+        if (!donutChart) return;
+        centerEl.textContent = total.toLocaleString('ar-EG');
+    };
+
+    // ── Line chart ────────────────────────────────────────
+    const lineCtx = document.getElementById('lineChart');
+    let lineChart = null;
+    if (lineCtx) {
+        const gradient = lineCtx.getContext('2d').createLinearGradient(0, 0, 0, 220);
+        gradient.addColorStop(0,   'rgba(124,58,237,.22)');
+        gradient.addColorStop(1,   'rgba(124,58,237,.0)');
+
+        lineChart = new Chart(lineCtx, {
+            type: 'line',
+            data: {
+                labels: arLabels,
+                datasets: [{
+                    label: 'العدد',
+                    data: values,
+                    borderColor: '#7c3aed',
+                    borderWidth: 2.5,
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#7c3aed',
+                    pointBorderWidth: 2.5,
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    pointHoverBackgroundColor: '#7c3aed',
+                    fill: true,
+                    backgroundColor: gradient,
+                    tension: 0.42,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: { duration: 700, easing: 'easeOutQuart' },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1e1b4b',
+                        titleColor: '#fff', bodyColor: '#c4b5fd',
+                        padding: 12, cornerRadius: 10,
+                        titleFont: { size: 12, weight: '700', family: 'Inter' },
+                        bodyFont:  { size: 11, family: 'Inter' },
+                        callbacks: { label: c => `  ${c.parsed.y} سجل` }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        border: { display: false },
+                        ticks: { color: '#6b7280', font: { size: 11, family: 'Inter', weight: '500' }, padding: 6 }
+                    },
+                    y: {
+                        beginAtZero: true, min: 0,
+                        grid: { color: '#f1f5f9', drawBorder: false },
+                        border: { display: false },
+                        ticks: { color: '#9ca3af', font: { size: 10, family: 'Inter' }, stepSize: 1, precision: 0, padding: 8 }
+                    }
+                }
+            }
+        });
+    }
+
+    // ── Tab switch ────────────────────────────────────────
+    window.switchChart = function(type, btn) {
+        document.querySelectorAll('.chart-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('chartDonut').style.display = type === 'donut' ? 'flex' : 'none';
+        document.getElementById('chartLine').style.display  = type === 'line'  ? 'block' : 'none';
+        if (type === 'line' && lineChart) lineChart.resize();
+    };
 })();
 </script>
 @endsection

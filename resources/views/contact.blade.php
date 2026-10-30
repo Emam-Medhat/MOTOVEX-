@@ -215,11 +215,13 @@
             <div class="space-y-8 cp-reveal">
 
                 {{-- Intro text --}}
+                @unless($motorcycle)
                 <div>
                     <p class="text-gray-600 leading-relaxed text-base">
                         سواء كنت مهتم بموديل معين، محتاج حجز تجربة قيادة، أو عايز تعرف أكتر عن خدماتنا — فريق MOTOVEX هنا عشانك.
                     </p>
                 </div>
+                @endunless
 
                 {{-- Contact info items --}}
                 <div class="space-y-5">
@@ -310,6 +312,13 @@
 
                     <form method="POST" action="{{ route('contact.store') }}" novalidate>
                         @csrf
+                        @if($motorcycle)
+                            <input type="hidden" name="motorcycle_id" value="{{ $motorcycle->id }}">
+                            <input type="hidden" name="enquiry_type" value="product">
+                            <div class="mb-4 rounded-xl bg-violet-50 p-3 text-sm font-semibold text-violet-800">
+                                Product enquiry: {{ $motorcycle->brand->name }} {{ $motorcycle->model_name }}
+                            </div>
+                        @endif
 
                         {{-- Row 1: Name + Email --}}
                         <div class="grid gap-5 sm:grid-cols-2 mb-5">

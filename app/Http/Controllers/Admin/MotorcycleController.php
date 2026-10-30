@@ -7,6 +7,7 @@ use App\Http\Requests\StoreMotorcycleRequest;
 use App\Http\Requests\UpdateMotorcycleRequest;
 use App\Models\Brand;
 use App\Models\Motorcycle;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -35,8 +36,7 @@ class MotorcycleController extends Controller
                 $query->where('brand_id', $request->integer('brand'));
             }
         } else {
-            $brandIds = $user->assignedBrands()->pluck('brands.id');
-            $query->whereIn('brand_id', $brandIds);
+            $query->visibleToManager($user);
         }
 
         if ($request->filled('search')) {
@@ -62,8 +62,12 @@ class MotorcycleController extends Controller
         $this->authorize('create', Motorcycle::class);
 
         $brands = $this->authorizedBrands();
+        $managers = User::whereHas('roles', fn ($query) => $query->whereIn('slug', ['data_entry', 'sales_agent']))
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get();
 
-        return view('admin.motorcycles.create', compact('brands'));
+        return view('admin.motorcycles.create', compact('brands', 'managers'));
     }
 
     public function store(StoreMotorcycleRequest $request)
@@ -89,6 +93,10 @@ class MotorcycleController extends Controller
         unset($data['image']);
 
         $data['slug'] = $this->uniqueSlug($data['model_name'] . '-' . $data['year']);
+        $data['created_by'] = auth()->id();
+        if (! auth()->user()->isAdmin()) {
+            unset($data['assigned_manager_id']);
+        }
 
         Motorcycle::create($data);
 
@@ -107,8 +115,12 @@ class MotorcycleController extends Controller
     {
         $this->authorize('update', $motorcycle);
         $brands = $this->authorizedBrands();
+        $managers = User::whereHas('roles', fn ($query) => $query->whereIn('slug', ['data_entry', 'sales_agent']))
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get();
 
-        return view('admin.motorcycles.edit', compact('motorcycle', 'brands'));
+        return view('admin.motorcycles.edit', compact('motorcycle', 'brands', 'managers'));
     }
 
     public function update(UpdateMotorcycleRequest $request, Motorcycle $motorcycle)
@@ -132,6 +144,9 @@ class MotorcycleController extends Controller
         }
 
         unset($data['image']);
+        if (! auth()->user()->isAdmin()) {
+            unset($data['assigned_manager_id']);
+        }
 
         $motorcycle->update($data);
 
@@ -162,8 +177,7 @@ class MotorcycleController extends Controller
         $query = Motorcycle::whereIn('id', $ids);
 
         if (! $user->isAdmin()) {
-            $brandIds = $user->assignedBrands()->pluck('brands.id');
-            $query->whereIn('brand_id', $brandIds);
+            $query->visibleToManager($user);
         }
 
         $count = $query->delete();

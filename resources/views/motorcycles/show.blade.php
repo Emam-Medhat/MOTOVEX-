@@ -185,6 +185,47 @@
 
             {{-- CTAs --}}
             <div class="mt-6 space-y-3">
+                @if($motorcycle->availability_status !== 'sold')
+                {{-- Hidden form — submitted only after modal confirmation --}}
+                <form id="addToCartForm" method="POST" action="{{ route('cart.add', $motorcycle) }}">
+                    @csrf
+                </form>
+                {{-- Trigger button — opens confirmation modal --}}
+                <button type="button" id="addToCartBtn"
+                        onclick="openCartModal()"
+                        class="flex w-full items-center justify-center gap-3 rounded-xl bg-slate-900 px-5 py-4 text-sm font-bold text-white transition hover:bg-brand-700">
+                    <i class="fa-solid fa-cart-plus"></i> Add to Cart to Order
+                </button>
+                @endif
+                @if($motorcycle->rental_price_per_day > 0 && $motorcycle->availability_status !== 'sold')
+                <details class="rounded-xl border border-slate-200 bg-white p-4">
+                    <summary class="cursor-pointer font-bold text-slate-800">
+                        Rent for {{ $motorcycle->currency ?: 'USD' }} {{ number_format($motorcycle->rental_price_per_day, 2) }} per day
+                    </summary>
+                    <form method="POST" action="{{ route('rentals.store', $motorcycle) }}" class="mt-4 space-y-3">
+                        @csrf
+                        <label class="block text-xs font-semibold text-slate-600">Full name
+                            <input name="name" required maxlength="100" value="{{ old('name', auth()->user()->name ?? '') }}" class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2">
+                        </label>
+                        <label class="block text-xs font-semibold text-slate-600">Email
+                            <input type="email" name="email" required maxlength="150" value="{{ old('email', auth()->user()->email ?? '') }}" class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2">
+                        </label>
+                        <label class="block text-xs font-semibold text-slate-600">Phone
+                            <input name="phone" required maxlength="30" value="{{ old('phone', auth()->user()->phone ?? '') }}" class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2">
+                        </label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="block text-xs font-semibold text-slate-600">Pickup date
+                                <input type="date" name="rental_start_date" required min="{{ now()->toDateString() }}" value="{{ old('rental_start_date') }}" class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2">
+                            </label>
+                            <label class="block text-xs font-semibold text-slate-600">Return date
+                                <input type="date" name="rental_end_date" required min="{{ now()->toDateString() }}" value="{{ old('rental_end_date') }}" class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2">
+                            </label>
+                        </div>
+                        <p class="text-xs text-slate-500">The final rental price is {{ $motorcycle->currency ?: 'USD' }} {{ number_format($motorcycle->rental_price_per_day, 2) }} per day. This request is not a confirmed booking or payment.</p>
+                        <button class="w-full rounded-lg bg-brand-600 px-4 py-3 text-sm font-bold text-white hover:bg-brand-700">Request Rental</button>
+                    </form>
+                </details>
+                @endif
                 <button id="bookButton"
                         class="flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 px-5 py-4 text-sm font-bold text-white shadow-lg shadow-brand-500/25 transition hover:-translate-y-0.5 hover:from-brand-700 hover:to-brand-600">
                     <i class="fa-solid fa-key"></i>
@@ -197,10 +238,10 @@
                        class="flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">
                         <i class="fa-solid fa-arrow-left"></i> رجوع للمتجر
                     </a>
-                    <button id="contactButton"
+                    <a href="{{ route('contact', ['motorcycle_id' => $motorcycle->id]) }}"
                             class="flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-3 py-3.5 text-xs font-bold text-white hover:bg-brand-700 transition">
                         <i class="fa-regular fa-comments"></i> Contact Seller
-                    </button>
+                    </a>
                 </div>
             </div>
 
@@ -302,6 +343,122 @@
 </main>
 
 @include('partials.footer')
+
+{{-- ══════════════════════════════════════════════
+     ADD TO CART CONFIRMATION MODAL
+══════════════════════════════════════════════ --}}
+<div id="cartConfirmModal"
+     class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm"
+     role="dialog" aria-modal="true" aria-labelledby="cartModalHeading">
+
+    <div class="relative w-full max-w-md rounded-2xl border border-slate-200 bg-white shadow-2xl overflow-hidden"
+         style="animation: cartModalIn .3s cubic-bezier(.16,1,.3,1) both;">
+
+        {{-- Top accent bar --}}
+        <div class="h-1 w-full bg-gradient-to-r from-brand-500 to-indigo-500"></div>
+
+        {{-- Header --}}
+        <div class="flex items-start gap-4 px-6 pt-6 pb-5 border-b border-slate-100">
+            {{-- Motorcycle image --}}
+            <div class="flex-shrink-0">
+                @if($motorcycle->image_url)
+                    <img src="{{ $motorcycle->image_url }}" alt="{{ $motorcycle->model_name }}"
+                         class="h-16 w-20 rounded-xl object-cover border border-slate-200 shadow-sm">
+                @else
+                    <div class="h-16 w-20 rounded-xl bg-brand-50 border border-brand-100 flex items-center justify-center">
+                        <i class="fa-solid fa-motorcycle text-brand-400 text-xl"></i>
+                    </div>
+                @endif
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-[10px] font-bold uppercase tracking-widest text-brand-600 mb-1">{{ $motorcycle->brand->name }}</p>
+                <h2 id="cartModalHeading" class="text-base font-extrabold text-slate-900 leading-tight truncate">
+                    {{ $motorcycle->model_name }}
+                </h2>
+                @if($motorcycle->price)
+                <p class="mt-1 text-sm font-bold text-slate-700">
+                    {{ $motorcycle->currency ?: 'USD' }} {{ number_format($motorcycle->price) }}
+                </p>
+                @endif
+            </div>
+            <button type="button" onclick="closeCartModal()"
+                    class="flex-shrink-0 h-8 w-8 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        {{-- Body --}}
+        <div class="px-6 py-5">
+            {{-- Cart icon + message --}}
+            <div class="flex flex-col items-center text-center mb-6">
+                <div class="w-16 h-16 rounded-full bg-brand-50 border-2 border-brand-100 flex items-center justify-content center mb-3 flex items-center justify-center">
+                    <i class="fa-solid fa-cart-shopping text-2xl text-brand-600"></i>
+                </div>
+                <h3 class="text-lg font-extrabold text-slate-900">Add to Cart?</h3>
+                <p class="mt-1.5 text-sm text-slate-500 leading-relaxed max-w-xs">
+                    This motorcycle will be added to your cart. You can review it before placing your order enquiry.
+                </p>
+            </div>
+
+            {{-- Info note --}}
+            <div class="flex items-start gap-2.5 rounded-xl bg-amber-50 border border-amber-100 px-4 py-3 mb-5">
+                <i class="fa-solid fa-circle-info text-amber-500 mt-0.5 flex-shrink-0 text-sm"></i>
+                <p class="text-xs text-amber-700 leading-relaxed">
+                    No payment is taken. This is a <strong>purchase enquiry</strong> — our team will contact you to confirm availability.
+                </p>
+            </div>
+
+            {{-- Action buttons --}}
+            <div class="flex gap-3">
+                <button type="button" onclick="closeCartModal()"
+                        class="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-100 transition">
+                    Cancel
+                </button>
+                <button type="button" id="cartConfirmBtn" onclick="confirmAddToCart()"
+                        class="flex-1 flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-bold text-white hover:bg-brand-700 transition">
+                    <i class="fa-solid fa-cart-plus"></i>
+                    Yes, Add to Cart
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes cartModalIn {
+    from { opacity: 0; transform: scale(.92) translateY(16px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+</style>
+
+<script>
+function openCartModal() {
+    var m = document.getElementById('cartConfirmModal');
+    m.classList.remove('hidden');
+    m.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+}
+function closeCartModal() {
+    var m = document.getElementById('cartConfirmModal');
+    m.classList.add('hidden');
+    m.classList.remove('flex');
+    document.body.style.overflow = '';
+}
+function confirmAddToCart() {
+    var btn = document.getElementById('cartConfirmBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Adding…';
+    document.getElementById('addToCartForm').submit();
+}
+// Close on backdrop click
+document.getElementById('cartConfirmModal').addEventListener('click', function(e) {
+    if (e.target === this) closeCartModal();
+});
+// Close on Escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeCartModal();
+});
+</script>
 
 {{-- ══════════════════════════════════════════════
      TEST RIDE BOOKING MODAL
@@ -590,7 +747,6 @@
     }
 
     document.getElementById('bookButton')?.addEventListener('click', openModal);
-    document.getElementById('contactButton')?.addEventListener('click', openModal);
     document.getElementById('closeModal')?.addEventListener('click', closeModal);
     document.getElementById('modalBackdrop')?.addEventListener('click', closeModal);
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });

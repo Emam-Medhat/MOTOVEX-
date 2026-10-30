@@ -4,14 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreContactRequest;
 use App\Models\Enquiry;
+use App\Models\Motorcycle;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
 
 class ContactController extends Controller
 {
-    public function show()
+    public function show(Request $request)
     {
-        return view('contact');
+        $motorcycle = null;
+        if ($request->filled('motorcycle_id')) {
+            $motorcycle = Motorcycle::published()->findOrFail($request->integer('motorcycle_id'));
+        }
+
+        return view('contact', compact('motorcycle'));
     }
 
     public function store(StoreContactRequest $request)
@@ -28,7 +35,14 @@ class ContactController extends Controller
 
         RateLimiter::hit($key, 60);
 
-        Enquiry::create($request->validated());
+        $data = $request->validated();
+        $data['user_id'] = $request->user()?->id;
+        if (! empty($data['motorcycle_id'])) {
+            $motorcycle = Motorcycle::findOrFail($data['motorcycle_id']);
+            $data['enquiry_type'] = Enquiry::TYPE_PRODUCT;
+            $data['subject'] = 'Product enquiry: ' . $motorcycle->model_name;
+        }
+        Enquiry::create($data);
 
         return redirect()
             ->route('contact')

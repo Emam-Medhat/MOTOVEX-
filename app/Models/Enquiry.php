@@ -8,10 +8,28 @@ use Illuminate\Support\Str;
 
 class Enquiry extends Model
 {
+    // ── Audit trail: record status/payment changes ─────────────────────────
+    protected static function booted(): void
+    {
+        static::updated(function (self $enquiry) {
+            foreach (['status', 'payment_status'] as $field) {
+                if ($enquiry->wasChanged($field)) {
+                    WorkflowActivity::record(
+                        $enquiry,
+                        $field,
+                        $enquiry->getOriginal($field),
+                        $enquiry->{$field}
+                    );
+                }
+            }
+        });
+    }
+
     protected $fillable = [
         // Ownership
         'user_id',
         'order_reference',
+        'idempotency_key',
         // Contact
         'name',
         'email',
@@ -25,6 +43,10 @@ class Enquiry extends Model
         // Motorcycle link
         'motorcycle_id',
         'motorcycle_snapshot',
+        'rental_start_date',
+        'rental_end_date',
+        'rental_days',
+        'rental_price_per_day',
         // Pricing snapshot (purchase orders only)
         'unit_price',
         'currency',
@@ -48,15 +70,21 @@ class Enquiry extends Model
 
     protected $casts = [
         'preferred_contact_time' => 'datetime',
+        'rental_start_date'      => 'date',
+        'rental_end_date'        => 'date',
         'payment_verified_at'    => 'datetime',
         'unit_price'             => 'decimal:2',
         'total_amount'           => 'decimal:2',
         'delivery_fee'           => 'decimal:2',
         'quantity'               => 'integer',
+        'rental_days'            => 'integer',
+        'rental_price_per_day'   => 'decimal:2',
     ];
 
-    // ── Enquiry types ────────────────────────────────────────────────────────
+    // ── Enquiry types ─────────────────────────────────────────────────────
     const TYPE_PURCHASE   = 'purchase';
+    const TYPE_RENTAL     = 'rental';
+    const TYPE_PRODUCT    = 'product';
     const TYPE_TEST_DRIVE = 'test_drive';
     const TYPE_SERVICE    = 'service';
     const TYPE_PARTS      = 'parts';
@@ -64,17 +92,19 @@ class Enquiry extends Model
 
     public static array $types = [
         self::TYPE_PURCHASE   => 'Purchase Order',
+        self::TYPE_RENTAL     => 'Rental Request',
+        self::TYPE_PRODUCT    => 'Product Enquiry',
         self::TYPE_TEST_DRIVE => 'Test Drive',
         self::TYPE_SERVICE    => 'Service',
         self::TYPE_PARTS      => 'Parts',
         self::TYPE_GENERAL    => 'General',
     ];
 
-    // ── Enquiry statuses ─────────────────────────────────────────────────────
-    const STATUS_PENDING    = 'pending';
-    const STATUS_CONTACTED  = 'contacted';
-    const STATUS_COMPLETED  = 'completed';
-    const STATUS_CANCELLED  = 'cancelled';
+    // ── Order statuses ────────────────────────────────────────────────────
+    const STATUS_PENDING   = 'pending';
+    const STATUS_CONTACTED = 'contacted';
+    const STATUS_COMPLETED = 'completed';
+    const STATUS_CANCELLED = 'cancelled';
 
     public static array $statuses = [
         self::STATUS_PENDING   => 'Pending',
@@ -83,7 +113,7 @@ class Enquiry extends Model
         self::STATUS_CANCELLED => 'Cancelled',
     ];
 
-    // ── Payment statuses ─────────────────────────────────────────────────────
+    // ── Payment statuses ──────────────────────────────────────────────────
     const PAY_PENDING  = 'pending';
     const PAY_VERIFIED = 'verified';
     const PAY_FAILED   = 'failed';
@@ -96,7 +126,7 @@ class Enquiry extends Model
         self::PAY_REFUNDED => 'Refunded',
     ];
 
-    // ── Relationships ────────────────────────────────────────────────────────
+    // ── Relationships ─────────────────────────────────────────────────────
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -112,10 +142,25 @@ class Enquiry extends Model
         return $this->belongsTo(User::class, 'payment_verified_by');
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
+    // ── Helpers ───────────────────────────────────────────────────────────
     public function isPurchaseOrder(): bool
     {
         return $this->enquiry_type === self::TYPE_PURCHASE;
+    }
+
+    public static function canTransitionStatus(string $from, string $to): bool
+    {
+        // Allow moving to cancelled from any status
+        if ($to === self::STATUS_CANCELLED) {
+            return true;
+        }
+
+        return in_array($to, match ($from) {
+            self::STATUS_PENDING   => [self::STATUS_CONTACTED, self::STATUS_COMPLETED],
+            self::STATUS_CONTACTED => [self::STATUS_COMPLETED, self::STATUS_PENDING],
+            self::STATUS_COMPLETED => [self::STATUS_CONTACTED],
+            default => [self::STATUS_PENDING, self::STATUS_CONTACTED, self::STATUS_COMPLETED],
+        }, true);
     }
 
     public function isPaymentVerified(): bool
@@ -123,10 +168,7 @@ class Enquiry extends Model
         return $this->payment_status === self::PAY_VERIFIED;
     }
 
-    /**
-     * Generate a unique, human-readable order reference.
-     * Format: ORD-YYYYMMDD-XXXXX
-     */
+    /** Generate a unique human-readable order reference: ORD-YYYYMMDD-XXXXX */
     public static function generateOrderReference(): string
     {
         do {
@@ -136,14 +178,9 @@ class Enquiry extends Model
         return $ref;
     }
 
-    // ── Scopes ───────────────────────────────────────────────────────────────
+    // ── Scopes ────────────────────────────────────────────────────────────
     public function scopePurchaseOrders($query)
     {
         return $query->where('enquiry_type', self::TYPE_PURCHASE);
-    }
-
-    public function scopeForUser($query, int $userId)
-    {
-        return $query->where('user_id', $userId);
     }
 }
