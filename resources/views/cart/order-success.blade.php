@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="{{ app()->getLocale() === 'ar' ? 'ar' : 'en' }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Order Received | MOTOVEX</title>
+  <title>{{ __('cart.order_success_title') }} | MOTOVEX</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -177,6 +177,7 @@
     /* ── Divider ── */
     .divider { border: none; border-top: 1px solid rgba(255,255,255,.07); }
   </style>
+@include('partials.rtl-styles')
 </head>
 <body>
 
@@ -212,15 +213,16 @@
       {{-- Badge --}}
       <div class="su su-1" style="display:inline-flex;align-items:center;gap:.5rem;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25);border-radius:999px;padding:.38rem 1rem;font-size:.72rem;font-weight:700;letter-spacing:.08em;color:#4ade80;text-transform:uppercase;margin-bottom:1rem;">
         <span style="width:6px;height:6px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;display:inline-block;"></span>
-        Order Successfully Submitted
+        {{ __('cart.order_submitted_badge') }}
       </div>
 
       <h1 class="su su-1" style="font-size:clamp(2rem,5vw,3rem);font-weight:900;letter-spacing:-.04em;line-height:1.1;background:linear-gradient(135deg,#f8fafc 30%,#c4b5fd 70%,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.75rem;">
-        Order Request Received!
+        {{ __('cart.order_received_title') }}
       </h1>
       <p class="su su-2" style="color:#94a3b8;font-size:1rem;max-width:480px;margin:0 auto;line-height:1.7;">
-        Thank you for your enquiry. Our team will review your request and contact you within
-        <strong style="color:#a78bfa;">24 hours</strong> to confirm availability and next steps.
+        {{ __('cart.order_received_desc') }}
+        <strong style="color:#a78bfa;">{{ __('cart.order_received_hours') }}</strong>
+        {{ __('cart.order_received_end') }}
       </p>
     </div>
 
@@ -229,12 +231,12 @@
     <div class="glass su su-2" style="padding:2rem;margin-bottom:1.5rem;text-align:center;">
       <p style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:#6d28d9;margin-bottom:.85rem;display:flex;align-items:center;justify-content:center;gap:.5rem;">
         <i class="fa-solid fa-hashtag" style="color:#a78bfa;"></i>
-        Your Order Reference
+        {{ __('cart.your_order_reference') }}
       </p>
       <div class="ref-badge">{{ $reference }}</div>
       <p style="font-size:.76rem;color:#64748b;margin-top:.85rem;display:flex;align-items:center;justify-content:center;gap:.45rem;">
-        <i class="fa-solid fa-copy" style="color:#6d28d9;cursor:pointer;" onclick="copyRef('{{ $reference }}')" title="Copy reference"></i>
-        <span id="refCopyMsg">Click the icon to copy · Save this to track your order</span>
+        <i class="fa-solid fa-copy" style="color:#6d28d9;cursor:pointer;" onclick="copyRef('{{ $reference }}')" title="{{ __('cart.your_order_reference') }}"></i>
+        <span id="refCopyMsg">{{ __('cart.copy_ref_hint') }}</span>
       </p>
     </div>
     @endif
@@ -243,18 +245,18 @@
     <div class="su su-3" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;">
       <div class="stat-pill">
         <i class="fa-solid fa-clock-rotate-left" style="color:#a78bfa;font-size:1.1rem;margin-bottom:.5rem;"></i>
-        <span style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#64748b;margin-bottom:.2rem;">Status</span>
-        <span style="font-size:.9rem;font-weight:800;color:#fbbf24;">Pending Review</span>
+        <span style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#64748b;margin-bottom:.2rem;">{{ __('cart.status_label') }}</span>
+        <span style="font-size:.9rem;font-weight:800;color:#fbbf24;">{{ __('cart.pending_review') }}</span>
       </div>
       <div class="stat-pill">
         <i class="fa-solid fa-shield-halved" style="color:#4ade80;font-size:1.1rem;margin-bottom:.5rem;"></i>
-        <span style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#64748b;margin-bottom:.2rem;">Payment</span>
-        <span style="font-size:.9rem;font-weight:800;color:#4ade80;">Not Required</span>
+        <span style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#64748b;margin-bottom:.2rem;">{{ __('cart.payment_status_label') }}</span>
+        <span style="font-size:.9rem;font-weight:800;color:#4ade80;">{{ __('cart.not_required') }}</span>
       </div>
       <div class="stat-pill">
         <i class="fa-solid fa-headset" style="color:#818cf8;font-size:1.1rem;margin-bottom:.5rem;"></i>
-        <span style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#64748b;margin-bottom:.2rem;">Response</span>
-        <span style="font-size:.9rem;font-weight:800;color:#818cf8;">Within 24h</span>
+        <span style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#64748b;margin-bottom:.2rem;">{{ __('cart.response_label') }}</span>
+        <span style="font-size:.9rem;font-weight:800;color:#818cf8;">{{ __('cart.within_24h') }}</span>
       </div>
     </div>
 
@@ -267,10 +269,9 @@
           <i class="fa-solid fa-circle-info" style="color:#fbbf24;font-size:.85rem;"></i>
         </div>
         <div>
-          <p style="font-size:.84rem;font-weight:800;color:#fde68a;margin-bottom:.25rem;">No Payment Taken</p>
+          <p style="font-size:.84rem;font-weight:800;color:#fde68a;margin-bottom:.25rem;">{{ __('cart.no_payment_taken') }}</p>
           <p style="font-size:.78rem;color:#92400e;color:#d97706;line-height:1.6;">
-            This is a purchase <em>enquiry</em>, not a confirmed sale. No card has been charged.
-            Our team will contact you to finalise availability and payment details.
+            {{ __('cart.enquiry_disclaimer') }}
           </p>
         </div>
       </div>
@@ -280,14 +281,14 @@
     <div class="glass su su-4" style="padding:1.75rem 2rem;margin-bottom:1.5rem;">
       <p style="font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#6d28d9;margin-bottom:1.4rem;display:flex;align-items:center;gap:.5rem;">
         <i class="fa-solid fa-list-check" style="color:#a78bfa;"></i>
-        What Happens Next?
+        {{ __('cart.what_happens_next') }}
       </p>
 
       <div style="display:flex;flex-direction:column;gap:1.1rem;">
         @foreach([
-          ['fa-phone-volume',  '#a78bfa', 'We Call You',            'Our team contacts you within 24 hours to confirm motorcycle availability and discuss details.'],
-          ['fa-file-invoice',  '#818cf8', 'Order Confirmation',     'You receive a formal confirmation with final pricing and payment instructions.'],
-          ['fa-truck-fast',    '#4ade80', 'Delivery or Pickup',     'Coordinate nationwide delivery to your door or collection from our nearest showroom.'],
+          ['fa-phone-volume',  '#a78bfa', __('cart.next_step_1_title'), __('cart.next_step_1_desc')],
+          ['fa-file-invoice',  '#818cf8', __('cart.next_step_2_title'), __('cart.next_step_2_desc')],
+          ['fa-truck-fast',    '#4ade80', __('cart.next_step_3_title'), __('cart.next_step_3_desc')],
         ] as $i => [$icon, $color, $title, $desc])
         <div class="step-item" style="{{ !$loop->last ? 'padding-bottom:1.1rem;border-bottom:1px solid rgba(255,255,255,.06);' : '' }}">
           <div style="width:40px;height:40px;flex-shrink:0;border-radius:12px;background:linear-gradient(135deg,rgba(124,58,237,.2),rgba(99,102,241,.12));border:1px solid rgba(167,139,250,.18);display:grid;place-items:center;">
@@ -307,16 +308,16 @@
       @auth
         <a href="{{ route('account.orders') }}" class="btn-primary">
           <i class="fa-solid fa-receipt"></i>
-          View My Orders
+          {{ __('cart.view_my_orders') }}
         </a>
       @endauth
       <a href="{{ route('motorcycles.index') }}" class="btn-ghost">
         <i class="fa-solid fa-motorcycle"></i>
-        Browse More Motorcycles
+        {{ __('cart.browse_more_bikes') }}
       </a>
       <a href="{{ route('home') }}" class="btn-ghost">
         <i class="fa-solid fa-house"></i>
-        Back to Home
+        {{ __('cart.back_to_home') }}
       </a>
     </div>
 
@@ -335,10 +336,10 @@ function copyRef(ref) {
   navigator.clipboard.writeText(ref).then(function() {
     var msg = document.getElementById('refCopyMsg');
     if (msg) {
-      msg.textContent = '✓ Copied to clipboard!';
+      msg.textContent = @json(__('cart.copied_clipboard'));
       msg.style.color = '#4ade80';
       setTimeout(function() {
-        msg.textContent = 'Click the icon to copy · Save this to track your order';
+        msg.textContent = @json(__('cart.copy_ref_hint'));
         msg.style.color = '';
       }, 2500);
     }

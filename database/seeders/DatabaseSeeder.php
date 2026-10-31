@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
             // Real-world sport & racing motorcycles (safe to re-run)
             RacingBrandSeeder::class,
             RacingMotorcycleSeeder::class,
+            // Spare parts catalogue — 20 demo products
+            SparePartSeeder::class,
         ]);
     }
 }

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Your Cart | MOTOVEX')
+@section('title', __('cart.cart_title') . ' | MOTOVEX')
 
 {{-- Page-scoped styles — only loaded on the cart page. --}}
 @push('head')
@@ -285,11 +285,11 @@
 
         {{-- Breadcrumb --}}
         <nav class="mvx-crumbs" aria-label="Breadcrumb">
-            <a href="{{ route('home') }}">Home</a>
+            <a href="{{ route('home') }}">{{ __('cart.breadcrumb_home') }}</a>
             <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-            <a href="{{ route('motorcycles.index') }}">Shop</a>
+            <a href="{{ route('motorcycles.index') }}">{{ __('cart.breadcrumb_shop') }}</a>
             <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-            <span class="is-current" aria-current="page">Cart</span>
+            <span class="is-current" aria-current="page">{{ __('cart.breadcrumb_cart') }}</span>
         </nav>
 
         {{-- ── Header ─────────────────────────────────────────── --}}
@@ -298,15 +298,15 @@
                 <span class="mvx-head-icon" aria-hidden="true"><i class="fa-solid fa-motorcycle"></i></span>
                 <div>
                     <h1>
-                        Your Cart
-                        <span class="mvx-count-pill">{{ $itemCount }} {{ $itemCount === 1 ? 'item' : 'items' }}</span>
+                        {{ __('cart.cart_title') }}
+                        <span class="mvx-count-pill">{{ $itemCount === 1 ? __('cart.item_count', ['count' => $itemCount]) : __('cart.items_count', ['count' => $itemCount]) }}</span>
                     </h1>
-                    <p>Review your selected items before requesting an order.</p>
+                    <p>{{ __('cart.review_sub') }}</p>
                 </div>
             </div>
             <a href="{{ route('motorcycles.index') }}" class="mvx-back">
                 <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
-                Continue Shopping
+                {{ __('cart.continue_shopping') }}
             </a>
         </header>
 
@@ -320,24 +320,20 @@
                     <span class="mvx-dot b"></span>
                     <span class="mvx-dot c"></span>
                 </div>
-                <h2>Your cart is waiting for your next ride</h2>
-                <p>
-                    You haven&rsquo;t added any motorcycles or spare parts yet. Explore our certified
-                    lineup and parts catalogue, then add items to your cart to request an order —
-                    our team will confirm availability and finalise everything with you.
-                </p>
+                <h2>{{ __('cart.empty_riding_heading') }}</h2>
+                <p>{{ __('cart.empty_riding_desc') }}</p>
                 <div class="mvx-empty-actions">
                     <a href="{{ route('motorcycles.index') }}" class="mvx-empty-cta">
                         <i class="fa-solid fa-motorcycle" aria-hidden="true"></i>
-                        Browse Motorcycles
+                        {{ __('cart.browse_bikes') }}
                     </a>
                     <a href="{{ route('spare-parts.index') }}" class="mvx-link">
                         <i class="fa-solid fa-gears" aria-hidden="true"></i>
-                        Browse Spare Parts
+                        {{ __('cart.browse_parts_link') }}
                     </a>
                     <a href="{{ route('brands.index') }}" class="mvx-link">
                         <i class="fa-solid fa-tags" aria-hidden="true"></i>
-                        View Brands
+                        {{ __('cart.view_brands_link') }}
                     </a>
                 </div>
             </div>
@@ -349,18 +345,18 @@
                 {{-- ── Items ──────────────────────────────────── --}}
                 <section aria-label="Cart items" class="min-w-0">
                     <div class="mb-3 flex items-center justify-between gap-4">
-                        <h2 class="text-[13px] font-bold uppercase tracking-[.1em] text-slate-500">Your Items</h2>
+                        <h2 class="text-[13px] font-bold uppercase tracking-[.1em] text-slate-500">{{ __('cart.your_items') }}</h2>
                         <form method="POST" action="{{ route('cart.clear') }}" data-guard>
                             @csrf @method('DELETE')
                             <button type="submit" class="mvx-clear">
                                 <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
-                                Clear Cart
+                                {{ __('cart.clear_cart') }}
                             </button>
                         </form>
                     </div>
 
                     @if($motoItems->isNotEmpty())
-                    <h3 class="mvx-group-title"><i class="fa-solid fa-motorcycle" aria-hidden="true"></i> Motorcycles</h3>
+                    <h3 class="mvx-group-title"><i class="fa-solid fa-motorcycle" aria-hidden="true"></i> {{ __('cart.motorcycles_section') }}</h3>
                     <div class="space-y-4">
                         @foreach($motoItems as $item)
                             @php
@@ -425,7 +421,7 @@
                                         @if($moto->availability_status)
                                             <p class="mvx-stock {{ $stockTone }} m-0">
                                                 <i class="fa-solid fa-circle" aria-hidden="true"></i>
-                                                {{ ucfirst($moto->availability_status) }}
+                                                {{ __('cart.stock_' . ($moto->availability_status ?? 'available')) }}
                                             </p>
                                         @endif
                                         <span class="text-[11px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
@@ -436,9 +432,9 @@
 
                                 <div class="mvx-buy">
                                     <div class="mvx-price">
-                                        <span class="mvx-unit-label">Unit Price</span>
+                                        <span class="mvx-unit-label">{{ __('cart.unit_price_label') }}</span>
                                         <span class="mvx-unit">{{ $moto->currency ?: $cartCurrency }} {{ number_format($unitPrice) }}</span>
-                                        <span class="mvx-line">Line total: {{ $moto->currency ?: $cartCurrency }} {{ number_format($unitPrice) }}</span>
+                                        <span class="mvx-line">{{ __('cart.line_total_label') }} {{ $moto->currency ?: $cartCurrency }} {{ number_format($unitPrice) }}</span>
                                     </div>
 
                                     <div class="flex flex-col items-start gap-2 lg:items-end">
@@ -447,14 +443,14 @@
                                             <div class="mvx-qty" role="group" aria-label="Quantity">
                                                 <button type="submit"
                                                         form="mvx-remove-{{ $moto->id }}"
-                                                        title="Remove from cart"
-                                                        aria-label="Remove {{ $moto->model_name }} from cart (decreases quantity to zero)">
+                                                        title="{{ __('cart.remove') }}"
+                                                        aria-label="{{ __('cart.remove') }} {{ $moto->model_name }}">
                                                     <i class="fa-solid fa-minus" aria-hidden="true"></i>
                                                 </button>
                                                 <span class="mvx-qty-val" aria-live="polite" aria-label="Quantity: 1">1</span>
                                                 <button type="button" disabled aria-disabled="true"
-                                                        title="Only one unit per motorcycle"
-                                                        aria-label="Increase quantity (maximum one unit per motorcycle)">
+                                                        title="{{ __('cart.one_unit_per_model') }}"
+                                                        aria-label="{{ __('cart.quantity') }} ({{ __('cart.one_unit_per_model') }})">
                                                     <i class="fa-solid fa-plus" aria-hidden="true"></i>
                                                 </button>
                                             </div>
@@ -464,13 +460,13 @@
                                                   data-guard>
                                                 @csrf @method('DELETE')
                                                 <button type="submit" class="mvx-remove"
-                                                        aria-label="Remove {{ $brandName }} {{ $moto->model_name }} from cart"
-                                                        title="Remove from cart">
+                                                        aria-label="{{ __('cart.remove') }} {{ $brandName }} {{ $moto->model_name }}"
+                                                        title="{{ __('cart.remove') }}">
                                                     <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
                                                 </button>
                                             </form>
                                         </div>
-                                        <span class="mvx-qty-label lg:text-right">1 unit per model</span>
+                                        <span class="mvx-qty-label lg:text-right">{{ __('cart.one_unit_per_model') }}</span>
                                     </div>
                                 </div>
                             </article>
@@ -479,7 +475,7 @@
                     @endif
 
                     @if($spItems->isNotEmpty())
-                    <h3 class="mvx-group-title {{ $motoItems->isNotEmpty() ? 'mt-8' : '' }}"><i class="fa-solid fa-gears" aria-hidden="true"></i> Spare Parts</h3>
+                    <h3 class="mvx-group-title {{ $motoItems->isNotEmpty() ? 'mt-8' : '' }}"><i class="fa-solid fa-gears" aria-hidden="true"></i> {{ __('cart.spare_parts_section') }}</h3>
                     <div class="space-y-4">
                         @foreach($spItems as $item)
                             @php
@@ -523,7 +519,7 @@
                                     <div class="flex items-center gap-3 mt-3">
                                         <p class="mvx-stock {{ $stockTone }} m-0">
                                             <i class="fa-solid fa-circle" aria-hidden="true"></i>
-                                            {{ $sp->isAvailable() ? ucfirst($sp->availability_status ?? 'In stock') : 'Out of stock' }}
+                                            {{ $sp->isAvailable() ? __('cart.in_stock') : __('cart.out_of_stock') }}
                                         </p>
                                         @if($sp->category)
                                         <span class="text-[11px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
@@ -535,9 +531,9 @@
 
                                 <div class="mvx-buy">
                                     <div class="mvx-price">
-                                        <span class="mvx-unit-label">Unit Price</span>
+                                        <span class="mvx-unit-label">{{ __('cart.unit_price_label') }}</span>
                                         <span class="mvx-unit">{{ $sp->currency ?: $cartCurrency }} {{ number_format($unitPrice) }}</span>
-                                        <span class="mvx-line">Line total: {{ $sp->currency ?: $cartCurrency }} {{ number_format($lineTotal) }}</span>
+                                        <span class="mvx-line">{{ __('cart.line_total_label') }} {{ $sp->currency ?: $cartCurrency }} {{ number_format($lineTotal) }}</span>
                                     </div>
 
                                     <div class="flex flex-col items-start gap-2 lg:items-end">
@@ -552,17 +548,17 @@
                                                         form="mvx-qty-{{ $sp->id }}"
                                                         name="quantity"
                                                         value="{{ max(1, $qty - 1) }}"
-                                                        title="Decrease quantity"
-                                                        aria-label="Decrease quantity of {{ $sp->name }}">
+                                                        title="{{ __('cart.quantity') }} -"
+                                                        aria-label="{{ __('cart.quantity') }} - {{ $sp->name }}">
                                                     <i class="fa-solid fa-minus" aria-hidden="true"></i>
                                                 </button>
-                                                <span class="mvx-qty-val" aria-live="polite" aria-label="Quantity: {{ $qty }}">{{ $qty }}</span>
+                                                <span class="mvx-qty-val" aria-live="polite" aria-label="{{ __('cart.quantity') }}: {{ $qty }}">{{ $qty }}</span>
                                                 <button type="submit"
                                                         form="mvx-qty-{{ $sp->id }}"
                                                         name="quantity"
                                                         value="{{ $qty + 1 }}"
-                                                        title="Increase quantity"
-                                                        aria-label="Increase quantity of {{ $sp->name }}">
+                                                        title="{{ __('cart.quantity') }} +"
+                                                        aria-label="{{ __('cart.quantity') }} + {{ $sp->name }}">
                                                     <i class="fa-solid fa-plus" aria-hidden="true"></i>
                                                 </button>
                                             </div>
@@ -572,13 +568,13 @@
                                                   data-guard>
                                                 @csrf @method('DELETE')
                                                 <button type="submit" class="mvx-remove"
-                                                        aria-label="Remove {{ $sp->name }} from cart"
-                                                        title="Remove from cart">
+                                                        aria-label="{{ __('cart.remove') }} {{ $sp->name }}"
+                                                        title="{{ __('cart.remove') }}">
                                                     <i class="fa-solid fa-trash-can" aria-hidden="true"></i>
                                                 </button>
                                             </form>
                                         </div>
-                                        <span class="mvx-qty-label lg:text-right">Quantity editable</span>
+                                        <span class="mvx-qty-label lg:text-right">{{ __('cart.quantity_editable') }}</span>
                                     </div>
                                 </div>
                             </article>
@@ -589,15 +585,15 @@
 
                 {{-- ── Order summary ──────────────────────────── --}}
                 <aside class="mvx-summary lg:sticky lg:top-24" aria-label="Order summary">
-                    <h2>Order Summary</h2>
+                    <h2>{{ __('cart.order_summary') }}</h2>
 
                     <div class="mt-6">
                         <div class="mvx-row">
-                            <span class="mvx-k">Items</span>
+                            <span class="mvx-k">{{ __('cart.your_items') }}</span>
                             <span class="mvx-v">{{ $itemCount }}</span>
                         </div>
                         <div class="mvx-row">
-                            <span class="mvx-k">Subtotal</span>
+                            <span class="mvx-k">{{ __('cart.subtotal_label') }}</span>
                             <span class="mvx-v">{{ $cartCurrency }} {{ number_format($total) }}</span>
                         </div>
                     </div>
@@ -605,23 +601,22 @@
                     <div class="mvx-divide"></div>
 
                     <div class="flex items-end justify-between gap-3">
-                        <span class="mvx-total-label">Total</span>
+                        <span class="mvx-total-label">{{ __('cart.total_label') }}</span>
                         <span class="mvx-total-value"><small>{{ $cartCurrency }}</small>{{ number_format($total) }}</span>
                     </div>
 
                     <a href="{{ route('cart.checkout') }}" class="mvx-cta mt-6">
-                        Proceed to Checkout
+                        {{ __('cart.proceed_checkout') }}
                         <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                     </a>
                     <a href="{{ route('motorcycles.index') }}" class="mvx-cta-ghost">
                         <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
-                        Continue Shopping
+                        {{ __('cart.continue_shopping') }}
                     </a>
 
                     <p class="mvx-note">
                         <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
-                        <span>No online payment is taken. Checkout submits an order enquiry and our team
-                        contacts you to confirm availability, delivery and final pricing.</span>
+                        <span>{{ __('cart.no_payment_note') }}</span>
                     </p>
                 </aside>
             </div>

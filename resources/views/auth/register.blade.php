@@ -6,11 +6,11 @@
     }
 @endphp
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ app()->getLocale() === 'ar' ? 'ar' : 'en' }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AURA MotoVex | إنشاء حساب</title>
+    <title>{{ __('auth.register_title') }}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -225,6 +225,7 @@
             .bike-video { transform: scale(1.02); }
         }
     </style>
+@include('partials.rtl-styles')
 </head>
 <body class="m-0">
 
@@ -267,8 +268,8 @@
 
                     <!-- Heading -->
                     <div class="text-center mb-4 headline-animate">
-                        <h1 class="text-xl font-black text-white mb-1">جاهز للانطلاق؟</h1>
-                        <p class="text-[11px] font-bold text-purple-200/50">أنشئ حسابك للوصول إلى عالم الدراجات الخاصة</p>
+                        <h1 class="text-xl font-black text-white mb-1">{{ __('auth.register_heading') }}</h1>
+                        <p class="text-[11px] font-bold text-purple-200/50">{{ __('auth.register_subheading') }}</p>
                     </div>
 
                     @if($errors->any() && !$errors->has('website'))
@@ -291,15 +292,15 @@
 
                         <!-- Account Type -->
                         <div>
-                            <label class="block text-[10px] font-bold text-purple-200/60 mb-1.5">نوع الحساب</label>
+                            <label class="block text-[10px] font-bold text-purple-200/60 mb-1.5">{{ __('auth.account_type') }}</label>
                             <div class="flex gap-2" id="type-pills">
                                 <label class="type-pill {{ $selectedType === 'customer' ? 'is-active' : '' }}">
                                     <input type="radio" name="account_type" value="customer" class="sr-only" @checked($selectedType === 'customer')>
-                                    عميل
+                                    {{ __('auth.customer_account') }}
                                 </label>
                                 <label class="type-pill {{ $selectedType === 'merchant' ? 'is-active' : '' }}">
                                     <input type="radio" name="account_type" value="merchant" class="sr-only" @checked($selectedType === 'merchant')>
-                                    تاجر
+                                    {{ __('auth.merchant_account') }}
                                 </label>
                                 {{-- Admin registration is NOT available publicly.
                                      Admin accounts can only be created from the Admin Dashboard. --}}
@@ -307,7 +308,7 @@
                             @if($selectedType === 'merchant')
                             <p class="mt-1.5 text-[10px] font-bold text-yellow-400/70 flex items-center gap-1.5">
                                 <span style="width:6px;height:6px;border-radius:50%;background:#facc15;display:inline-block;flex-shrink:0;box-shadow:0 0 6px #facc15"></span>
-                                حسابات التجار تحتاج إلى موافقة المشرف قبل التفعيل
+                                {{ __('auth.merchant_approval_note') }}
                             </p>
                             @endif
                             <p id="merchant-note" class="mt-1.5 text-[10px] font-bold text-yellow-400/70 items-center gap-1.5 {{ $selectedType === 'merchant' ? 'flex' : 'hidden' }}" aria-live="polite">
@@ -317,10 +318,10 @@
 
                         <!-- Name -->
                         <div>
-                            <label for="name" class="block text-[10px] font-bold text-purple-200/60 mb-1">الاسم الكامل</label>
+                            <label for="name" class="block text-[10px] font-bold text-purple-200/60 mb-1">{{ __('auth.full_name') }}</label>
                             <div class="relative">
                                 <input id="name" name="name" type="text" value="{{ old('name') }}" autocomplete="name"
-                                       placeholder="أدخل اسمك بالكامل"
+                                       placeholder="{{ __('auth.full_name_placeholder') }}"
                                        class="input-field w-full pl-4 pr-10 py-2.5 rounded-xl text-sm text-right {{ $errors->has('name') ? 'is-invalid' : '' }}" required>
                                 <span class="absolute inset-y-0 right-3.5 flex items-center text-purple-300/50">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
@@ -333,7 +334,7 @@
 
                         <!-- Email -->
                         <div>
-                            <label for="email" class="block text-[10px] font-bold text-purple-200/60 mb-1">البريد الإلكتروني</label>
+                            <label for="email" class="block text-[10px] font-bold text-purple-200/60 mb-1">{{ __('auth.email_label') }}</label>
                             <div class="relative">
                                 <input id="email" name="email" type="email" value="{{ old('email') }}" autocomplete="email"
                                        placeholder="example@domain.com"
@@ -350,7 +351,7 @@
 
                         <!-- Phone -->
                         <div>
-                            <label for="phone" class="block text-[10px] font-bold text-purple-200/60 mb-1">رقم الواتس</label>
+                            <label for="phone" class="block text-[10px] font-bold text-purple-200/60 mb-1">{{ __('auth.phone_label') }}</label>
                             <div class="relative">
                                 <input id="phone" name="phone" type="tel" value="{{ old('phone') }}" autocomplete="tel"
                                        placeholder="+70 100 000 0000" inputmode="tel"
@@ -366,7 +367,7 @@
 
                         <!-- Password -->
                         <div>
-                            <label for="password" class="block text-[10px] font-bold text-purple-200/60 mb-1">كلمة المرور</label>
+                            <label for="password" class="block text-[10px] font-bold text-purple-200/60 mb-1">{{ __('auth.password_label') }}</label>
                             <div class="relative">
                                 <input id="password" name="password" type="password" autocomplete="new-password"
                                        placeholder="••••••••"
@@ -376,7 +377,7 @@
                                         <path fill-rule="evenodd" d="M12 1.5a5.25 5.25 0 0 0-5.25 5.25v3a3 3 0 0 0-3 3v6.75a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3v-6.75a3 3 0 0 0-3-3v-3c0-2.9-2.35-5.25-5.25-5.25Zm3.75 8.25v-3a3.75 3.75 0 1 0-7.5 0v3h7.5Z" clip-rule="evenodd"/>
                                     </svg>
                                 </span>
-                                <button type="button" id="toggle-password" aria-label="إظهار كلمة المرور"
+                                <button type="button" id="toggle-password" aria-label="{{ __('auth.show_password') }}"
                                         class="absolute inset-y-0 left-3.5 flex items-center text-purple-300/50 hover:text-fuchsia-300 transition-colors">
                                     <svg id="icon-eye-off-pw" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
                                         <path d="M3 3l18 18" stroke-linecap="round"/>
@@ -393,7 +394,7 @@
 
                         <!-- Confirm Password -->
                         <div>
-                            <label for="password_confirmation" class="block text-[10px] font-bold text-purple-200/60 mb-1">تأكيد كلمة المرور</label>
+                            <label for="password_confirmation" class="block text-[10px] font-bold text-purple-200/60 mb-1">{{ __('auth.confirm_password') }}</label>
                             <div class="relative">
                                 <input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password"
                                        placeholder="••••••••"
@@ -404,7 +405,7 @@
                                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
                                 </span>
-                                <button type="button" id="toggle-confirm" aria-label="إظهار كلمة المرور"
+                                <button type="button" id="toggle-confirm" aria-label="{{ __('auth.show_password') }}"
                                         class="absolute inset-y-0 left-3.5 flex items-center text-purple-300/50 hover:text-fuchsia-300 transition-colors">
                                     <svg id="icon-eye-off-cf" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
                                         <path d="M3 3l18 18" stroke-linecap="round"/>
@@ -424,7 +425,7 @@
                                 <input type="checkbox" name="terms" value="1" @checked(old('terms'))
                                        class="mt-0.5 w-4 h-4 rounded border-white/20 bg-white/5 accent-[#8B5CF6] cursor-pointer {{ $errors->has('terms') ? 'outline outline-rose-400' : '' }}">
                                 <span class="group-hover:text-purple-100 transition">
-                                    أوافق على <a href="#" class="text-fuchsia-300 hover:underline">الشروط والأحكام</a> و <a href="#" class="text-fuchsia-300 hover:underline">سياسة الخصوصية</a>
+                                    {{ __('auth.agree_terms_prefix') }} <a href="#" class="text-fuchsia-300 hover:underline">{{ __('auth.terms_link') }}</a> {{ __('auth.and_text') }} <a href="#" class="text-fuchsia-300 hover:underline">{{ __('auth.privacy_link') }}</a>
                                 </span>
                             </label>
                             <p class="field-error">@error('terms'){{ $message }}@enderror</p>
@@ -434,7 +435,7 @@
                         <button type="submit" id="submit-btn"
                                 class="aura-btn w-full py-3 text-white text-sm font-black rounded-xl transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0">
                             <span class="relative z-10 flex items-center justify-center gap-2">
-                                <span id="submit-label">إنشاء حساب جديد</span>
+                                <span id="submit-label">{{ __('auth.create_new_account') }}</span>
                                 <svg id="submit-arrow" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     <path d="M19 12H5"/><path d="m12 19-7-7 7-7"/>
                                 </svg>
@@ -447,22 +448,22 @@
                     </form>
 
                     <p class="text-center mt-3 text-[11px] font-bold text-purple-200/50">
-                        أو
+                        {{ __('auth.or_divider') }}
                     </p>
                     <p class="text-center text-[11px] font-bold text-purple-200/50">
-                        لديك حساب بالفعل؟
-                        <a href="{{ route('login') }}" class="text-pink-400 hover:text-pink-300 hover:underline transition">سجّل الدخول الآن</a>
+                        {{ __('auth.already_have_account') }}
+                        <a href="{{ route('login') }}" class="text-pink-400 hover:text-pink-300 hover:underline transition">{{ __('auth.sign_in_here') }}</a>
                     </p>
                 </div>
             </div>
 
             <!-- Footer -->
             <div class="absolute bottom-5 left-0 right-0 items-center justify-center gap-5 text-[10px] font-bold text-purple-200/30 hidden md:flex">
-                <a href="{{ route('contact') }}" class="hover:text-fuchsia-300 transition">الدعم الفني</a>
+                <a href="{{ route('contact') }}" class="hover:text-fuchsia-300 transition">{{ __('auth.technical_support') }}</a>
                 <span class="w-1 h-1 rounded-full bg-purple-300/30"></span>
                 <span class="font-mono">v2.5.0 Professional</span>
                 <span class="w-1 h-1 rounded-full bg-purple-300/30"></span>
-                <a href="{{ route('home') }}" class="hover:text-fuchsia-300 transition">الرئيسية</a>
+                <a href="{{ route('home') }}" class="hover:text-fuchsia-300 transition">{{ __('auth.back_home') }}</a>
             </div>
         </div>
 
@@ -491,7 +492,7 @@
             <!-- Brand Badge -->
             <div class="absolute top-6 left-6 z-20 flex items-center gap-2 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
                 <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                <span class="text-[11px] text-white/80 font-medium tracking-wide">LIVE PREVIEW</span>
+                <span class="text-[11px] text-white/80 font-medium tracking-wide">{{ __('auth.live_preview') }}</span>
             </div>
 
             <!-- Bottom Content -->
@@ -503,26 +504,26 @@
                             <path d="M8.2 17h7.6"/><path d="M12 10h5.5"/><path d="M12 10 15.2 6H18l2.6 6.2"/>
                             <path d="M8.2 17 11 11.4h1"/><path d="M9.6 6H13.4"/>
                         </svg>
-                        <span class="text-[11px] text-white/90 font-semibold tracking-wider uppercase">استشعر القوة المطلقة</span>
+                        <span class="text-[11px] text-white/90 font-semibold tracking-wider uppercase">{{ __('auth.register_panel_eyebrow') }}</span>
                     </div>
 
                     <h2 class="text-2xl md:text-3xl lg:text-4xl font-black text-white leading-tight">
-                        انضم إلى عالم<br>
-                        <span class="bg-linear-to-l from-purple-300 via-fuchsia-300 to-pink-300 bg-clip-text text-transparent headline-glow">السرعة والتميز</span>
+                        {{ __('auth.register_panel_title_a') }}<br>
+                        <span class="bg-linear-to-l from-purple-300 via-fuchsia-300 to-pink-300 bg-clip-text text-transparent headline-glow">{{ __('auth.register_panel_title_b') }}</span>
                     </h2>
 
                     <p class="text-white/55 text-sm max-w-xs hidden md:block">
-                        أنشئ حسابك الآن واستكشف أرقى الدراجات الثابتة، واحصل على الوصول للقطع التجديرية بضمانة بيّ MotoVex AURA.
+                        {{ __('auth.register_panel_desc') }}
                     </p>
 
                     <div class="hidden md:flex items-center gap-6 text-[11px] font-bold text-white/60 pt-1">
                         <div class="flex items-center gap-2">
                             <svg class="w-3.5 h-3.5 text-purple-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke-linecap="round"/><circle cx="12" cy="7" r="4"/></svg>
-                            حساب مخصص ومؤمّن
+                            {{ __('auth.register_feature_1') }}
                         </div>
                         <div class="flex items-center gap-2">
                             <svg class="w-3.5 h-3.5 text-pink-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 12.5 11 14.5 15.5 10" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                            وصول لصالة العرض
+                            {{ __('auth.register_feature_2') }}
                         </div>
                     </div>
                 </div>
@@ -567,7 +568,7 @@
                     input.type = show ? 'text' : 'password';
                     document.getElementById(eyeId).classList.toggle('hidden', !show);
                     document.getElementById(eyeOffId).classList.toggle('hidden', show);
-                    btn.setAttribute('aria-label', show ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور');
+                    btn.setAttribute('aria-label', show ? @json(__('auth.hide_password')) : @json(__('auth.show_password')));
                 });
             }
             makeToggle('toggle-password', 'password', 'icon-eye-pw', 'icon-eye-off-pw');
@@ -585,7 +586,7 @@
                 if (submitting) return;
                 submitting = true;
                 btn.disabled = true;
-                label.textContent = 'جاري الإنشاء...';
+                label.textContent = @json(__('auth.creating_account'));
                 arrow.classList.add('hidden');
                 spinner.classList.remove('hidden');
             });

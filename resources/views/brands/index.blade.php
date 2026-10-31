@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ app()->getLocale() === 'ar' ? 'ar' : 'en' }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MOTOVEX | الماركات</title>
+  <title>{{ __('brands.meta_title') }}</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -560,6 +560,7 @@
     }
     .mvx-btn-primary:hover { background: var(--mvx-primary-d); transform: translateY(-2px); box-shadow: 0 18px 36px -16px rgba(109, 40, 217, .95); }
   </style>
+@include('partials.rtl-styles')
 </head>
 <body>
 
@@ -616,36 +617,36 @@
   <section class="mvx-head">
     <div class="mvx-wrap">
 
-      <nav class="mvx-crumbs" aria-label="Breadcrumb">
-        <a href="{{ route('home') }}">الرئيسية</a>
+      <nav class="mvx-crumbs" aria-label="{{ __('common.breadcrumb') }}">
+        <a href="{{ route('home') }}">{{ __('brands.breadcrumb_home') }}</a>
         <i class="fa-solid fa-chevron-left sep" aria-hidden="true"></i>
-        <span aria-current="page">الماركات</span>
+        <span aria-current="page">{{ __('brands.breadcrumb_current') }}</span>
       </nav>
 
       <div class="mvx-head-grid">
         <div>
           <span class="mvx-badge">
             <i class="fa-solid fa-gem" aria-hidden="true"></i>
-            ماركات عالمية مختارة بعناية
+            {{ __('brands.badge_label') }}
           </span>
 
-          <h1 class="mvx-title">اكتشف <em>الماركات</em></h1>
+          <h1 class="mvx-title">{{ __('brands.heading_discover') }} <em>{{ __('brands.heading_brands') }}</em></h1>
 
           <p class="mvx-sub">
-            تصفح الماركات المتوفرة لدينا، وتعرّف على سياراتها النارية وموديلاتها المتاحة الآن.
+            {{ __('brands.subheading') }}
           </p>
         </div>
 
         <div>
           <form class="mvx-search" method="GET" action="{{ route('brands.index') }}" role="search">
-            <label for="brandSearch" class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">بحث في الماركات</label>
+            <label for="brandSearch" class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">{{ __('brands.search_aria') }}</label>
             <i class="fa-solid fa-magnifying-glass mvx-search-ico" aria-hidden="true"></i>
             <input id="brandSearch" type="search" name="search"
                    value="{{ request('search') }}"
-                   placeholder="ابحث باسم الماركة أو بلد المنشأ..."
+                   placeholder="{{ __('brands.search_placeholder') }}"
                    autocomplete="off" />
           </form>
-          <p class="mvx-search-hint">اضغط Enter للبحث في كل الماركات</p>
+          <p class="mvx-search-hint">{{ __('brands.search_hint') }}</p>
         </div>
       </div>
 
@@ -658,9 +659,9 @@
     <div class="mvx-wrap">
       <div class="mvx-toolbar-inner">
 
-        <div class="mvx-chips" id="brandFilters" role="group" aria-label="تصفية حسب الفئة">
+        <div class="mvx-chips" id="brandFilters" role="group" aria-label="{{ __('brands.filter_aria') }}">
           <button type="button" class="mvx-chip is-active" data-segment="all" aria-pressed="true">
-            الكل
+            {{ __('brands.all') }}
             <span class="mvx-chip-n">{{ $brands->count() }}</span>
           </button>
           @foreach($segments as $segment => $segmentCount)
@@ -672,12 +673,12 @@
         </div>
 
         <div class="mvx-sort">
-          <label for="brandSort">ترتيب:</label>
+          <label for="brandSort">{{ __('brands.sort_label') }}</label>
           <select id="brandSort" class="mvx-select">
-            <option value="newest">الأحدث</option>
-            <option value="models">الأكثر موديلات</option>
-            <option value="az">أبجدي (أ–ي)</option>
-            <option value="za">أبجدي (ي–أ)</option>
+            <option value="newest">{{ __('brands.sort_newest') }}</option>
+            <option value="models">{{ __('brands.sort_models') }}</option>
+            <option value="az">{{ __('brands.sort_az') }}</option>
+            <option value="za">{{ __('brands.sort_za') }}</option>
           </select>
           <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
         </div>
@@ -694,18 +695,18 @@
       @if($brands->isEmpty())
         <div class="mvx-empty">
           <div class="mvx-empty-ico"><i class="fa-solid fa-motorcycle" aria-hidden="true"></i></div>
-          <h3>لا توجد ماركات منشورة حتى الآن</h3>
-          <p>تابعنا قريبًا، نعمل على إضافة ماركات جديدة.</p>
+          <h3>{{ __('brands.empty_heading') }}</h3>
+          <p>{{ __('brands.empty_desc') }}</p>
           <a class="mvx-btn-ghost" href="{{ route('motorcycles.index') }}">
-            تصفح كل الدراجات
+            {{ __('brands.empty_browse_bikes') }}
             <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
           </a>
         </div>
       @else
         <p class="mvx-count">
-          عرض
+          {{ __('brands.showing') }}
           <b id="brandCount">{{ $brands->count() }}</b>
-          من <b>{{ $totalBrands }}</b> ماركة
+          {{ __('brands.of_brands') }} <b>{{ $totalBrands }}</b>
         </p>
 
         <div class="mvx-grid" id="brandsGrid">
@@ -753,7 +754,7 @@
 
                   <span class="mvx-models">
                     <i class="fa-solid fa-motorcycle" aria-hidden="true"></i>
-                    {{ (int) $brand->motorcycles_count }} موديل
+                    {{ str_replace(':count', (int) $brand->motorcycles_count, __('brands.models_count')) }}
                   </span>
                 </div>
 
@@ -776,7 +777,7 @@
 
                 <div class="mvx-divider">
                   <a class="mvx-cta" href="{{ route('brands.show', $brand->slug) }}">
-                    استكشف الموديلات
+                    {{ __('brands.explore_models') }}
                     <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
                   </a>
                 </div>
@@ -789,10 +790,10 @@
         {{-- Client-side no-match state --}}
         <div class="mvx-empty is-hidden" id="brandsEmpty">
           <div class="mvx-empty-ico"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></div>
-          <h3>لا توجد ماركات مطابقة</h3>
-          <p>جرّب كلمة بحث أخرى أو أعد ضبط الفلاتر.</p>
+          <h3>{{ __('brands.no_match_heading') }}</h3>
+          <p>{{ __('brands.no_match_desc') }}</p>
           <a class="mvx-btn-ghost" href="{{ route('brands.index') }}">
-            إعادة ضبط الفلاتر
+            {{ __('brands.reset_filters') }}
             <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
           </a>
         </div>
@@ -809,10 +810,10 @@
   <section class="mvx-cta-band">
     <div class="mvx-wrap">
       <div class="mvx-cta-box">
-        <h2>لم تجد الماركة التي تبحث عنها؟</h2>
-        <p>أخبرنا بما تحتاجه وسنساعدك في الوصول إليه من خلال شبكة موردينا.</p>
+        <h2>{{ __('brands.cta_heading') }}</h2>
+        <p>{{ __('brands.cta_desc') }}</p>
         <a class="mvx-btn-primary" href="{{ route('contact') }}">
-          تواصل معنا
+          {{ __('brands.cta_button') }}
           <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
         </a>
       </div>

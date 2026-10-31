@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() === 'ar' ? 'ar' : 'en' }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,6 +31,7 @@
         .product-card:hover img { transform:scale(1.07); }
         .thumb.active { border-color:#8b5cf6; box-shadow:0 0 0 2px #8b5cf6; }
     </style>
+@include('partials.rtl-styles')
 </head>
 <body class="bg-slate-50 text-slate-900">
 
@@ -40,13 +41,13 @@
 <section class="hero-bg">
     <div class="mx-auto flex min-h-[220px] max-w-7xl items-end px-4 py-12 sm:px-6 lg:px-8">
         <div>
-            <p class="mb-2 text-xs font-bold uppercase tracking-[0.25em] text-brand-400">{{ strtoupper($motorcycle->brand->name) }} Official</p>
+            <p class="mb-2 text-xs font-bold uppercase tracking-[0.25em] text-brand-400">{{ strtoupper($motorcycle->brand->name) }} {{ __('motorcycles.official') }}</p>
             <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">{{ $motorcycle->model_name }}</h1>
-            <p class="mt-2 text-slate-300">Freedom on Two Wheels</p>
+            <p class="mt-2 text-slate-300">{{ __('motorcycles.hero_tagline') }}</p>
             <div class="mt-5 flex flex-wrap items-center gap-2 text-xs text-slate-300">
-                <a href="{{ route('home') }}" class="hover:text-white">Home</a>
+                <a href="{{ route('home') }}" class="hover:text-white">{{ __('common.home') }}</a>
                 <i class="fa-solid fa-chevron-right text-[8px]"></i>
-                <a href="{{ route('motorcycles.index') }}" class="hover:text-white">Shop</a>
+                <a href="{{ route('motorcycles.index') }}" class="hover:text-white">{{ __('navigation.shop') }}</a>
                 <i class="fa-solid fa-chevron-right text-[8px]"></i>
                 <a href="{{ route('motorcycles.index', ['brand' => $motorcycle->brand_id]) }}" class="hover:text-white">{{ $motorcycle->brand->name }}</a>
                 <i class="fa-solid fa-chevron-right text-[8px]"></i>
@@ -64,11 +65,11 @@
         <section>
             <div class="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
                 @if($motorcycle->is_featured)
-                <span class="absolute left-5 top-5 z-10 rounded-full bg-brand-600 px-3 py-1 text-[10px] font-bold text-white">FEATURED</span>
+                <span class="absolute left-5 top-5 z-10 rounded-full bg-brand-600 px-3 py-1 text-[10px] font-bold text-white">{{ __('motorcycles.featured') }}</span>
                 @endif
                 @if($motorcycle->availability_status === 'available')
                 <span class="absolute right-5 top-5 z-10 rounded-full bg-emerald-600/90 px-3 py-1 text-[10px] font-bold text-white">
-                    <i class="fa-solid fa-circle-check mr-1"></i> Certified
+                    <i class="fa-solid fa-circle-check mr-1"></i> {{ __('motorcycles.certified') }}
                 </span>
                 @endif
 
@@ -83,10 +84,10 @@
                     <img id="mainImage" class="h-full w-full object-cover transition-opacity duration-300"
                          src="{{ $imgs[0] }}" alt="{{ $motorcycle->model_name }}" />
                     @if(count($imgs) > 1)
-                    <button id="prevImage" class="absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-slate-900/60 text-white hover:bg-brand-600 transition" aria-label="Previous">
+                    <button id="prevImage" class="absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-slate-900/60 text-white hover:bg-brand-600 transition" aria-label="{{ __('common.previous') }}">
                         <i class="fa-solid fa-chevron-left"></i>
                     </button>
-                    <button id="nextImage" class="absolute right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-slate-900/60 text-white hover:bg-brand-600 transition" aria-label="Next">
+                    <button id="nextImage" class="absolute right-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-slate-900/60 text-white hover:bg-brand-600 transition" aria-label="{{ __('common.next') }}">
                         <i class="fa-solid fa-chevron-right"></i>
                     </button>
                     <span id="imageCounter" class="absolute bottom-3 right-3 rounded-full bg-slate-900/70 px-3 py-1 text-xs font-medium text-white">1 / {{ count($imgs) }}</span>
@@ -98,7 +99,7 @@
             <div id="thumbnails" class="mt-4 grid grid-cols-4 gap-3">
                 @foreach($imgs as $i => $img)
                 <button class="thumb {{ $i === 0 ? 'active border-brand-500' : 'border-transparent hover:border-brand-400' }} overflow-hidden rounded-xl border-2 bg-white p-1 shadow-sm" data-index="{{ $i }}">
-                    <img class="aspect-[4/3] w-full rounded-lg object-cover" src="{{ $img }}" alt="View {{ $i+1 }}" />
+                    <img class="aspect-[4/3] w-full rounded-lg object-cover" src="{{ $img }}" alt="{{ __('motorcycles.image_view_label') }} {{ $i+1 }}" />
                 </button>
                 @endforeach
             </div>
@@ -109,7 +110,7 @@
         <section class="flex flex-col">
             <div class="flex flex-wrap items-center justify-between gap-3">
                 <span class="rounded-lg bg-brand-50 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-brand-700">
-                    {{ strtoupper($motorcycle->brand->name) }} Official
+                    {{ strtoupper($motorcycle->brand->name) }} {{ __('motorcycles.official') }}
                 </span>
                 <div class="flex items-center gap-1.5 text-sm">
                     <span class="text-amber-400">★★★★☆</span>
@@ -128,10 +129,10 @@
             <div class="mt-6 flex flex-wrap items-end gap-3">
                 @if($motorcycle->price)
                 <span class="text-4xl font-extrabold tracking-tight text-slate-950">${{ number_format($motorcycle->price) }}</span>
-                <span class="pb-1 text-sm text-slate-500">{{ $motorcycle->currency ?: 'USD' }} (Tax Included)</span>
+                <span class="pb-1 text-sm text-slate-500">{{ $motorcycle->currency ?: 'USD' }} {{ __('motorcycles.tax_included') }}</span>
                 @endif
                 <span class="ml-auto rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
-                    ✓ {{ ucfirst($motorcycle->availability_status ?? 'Available') }}
+                    ✓ {{ __('motorcycles.' . ($motorcycle->availability_status ?? 'available')) }}
                 </span>
             </div>
 
@@ -143,7 +144,7 @@
                         <i class="fa-solid fa-gauge-high"></i>
                     </span>
                     <div>
-                        <small class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Engine</small>
+                        <small class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">{{ __('motorcycles.engine') }}</small>
                         <strong class="text-sm text-slate-900">{{ number_format($motorcycle->engine_capacity) }} CC</strong>
                     </div>
                 </div>
@@ -154,7 +155,7 @@
                         <i class="fa-regular fa-calendar"></i>
                     </span>
                     <div>
-                        <small class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Year</small>
+                        <small class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">{{ __('motorcycles.model_year') }}</small>
                         <strong class="text-sm text-slate-900">{{ $motorcycle->year }}</strong>
                     </div>
                 </div>
@@ -165,7 +166,7 @@
                         <i class="fa-solid fa-motorcycle"></i>
                     </span>
                     <div>
-                        <small class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Category</small>
+                        <small class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">{{ __('motorcycles.category') }}</small>
                         <strong class="text-sm text-slate-900">{{ ucfirst($motorcycle->category) }}</strong>
                     </div>
                 </div>
@@ -176,7 +177,7 @@
                         <i class="fa-solid fa-shield-halved"></i>
                     </span>
                     <div>
-                        <small class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Condition</small>
+                        <small class="block text-[10px] font-bold uppercase tracking-wider text-slate-400">{{ __('motorcycles.condition') }}</small>
                         <strong class="text-sm text-slate-900">{{ ucfirst($motorcycle->condition) }}</strong>
                     </div>
                 </div>
@@ -194,53 +195,52 @@
                 <button type="button" id="addToCartBtn"
                         onclick="openCartModal()"
                         class="flex w-full items-center justify-center gap-3 rounded-xl bg-slate-900 px-5 py-4 text-sm font-bold text-white transition hover:bg-brand-700">
-                    <i class="fa-solid fa-cart-plus"></i> Add to Cart to Order
+                    <i class="fa-solid fa-cart-plus"></i> {{ __('motorcycles.add_to_cart_order') }}
                 </button>
                 @endif
                 @if($motorcycle->rental_price_per_day > 0 && $motorcycle->availability_status !== 'sold')
                 <details class="rounded-xl border border-slate-200 bg-white p-4">
                     <summary class="cursor-pointer font-bold text-slate-800">
-                        Rent for {{ $motorcycle->currency ?: 'USD' }} {{ number_format($motorcycle->rental_price_per_day, 2) }} per day
+                        {{ __('motorcycles.rent_for') }} {{ $motorcycle->currency ?: 'USD' }} {{ number_format($motorcycle->rental_price_per_day, 2) }} {{ __('motorcycles.per_day') }}
                     </summary>
                     <form method="POST" action="{{ route('rentals.store', $motorcycle) }}" class="mt-4 space-y-3">
                         @csrf
-                        <label class="block text-xs font-semibold text-slate-600">Full name
+                        <label class="block text-xs font-semibold text-slate-600">{{ __('motorcycles.full_name_label') }}
                             <input name="name" required maxlength="100" value="{{ old('name', auth()->user()->name ?? '') }}" class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2">
                         </label>
-                        <label class="block text-xs font-semibold text-slate-600">Email
+                        <label class="block text-xs font-semibold text-slate-600">{{ __('motorcycles.email_simple') }}
                             <input type="email" name="email" required maxlength="150" value="{{ old('email', auth()->user()->email ?? '') }}" class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2">
                         </label>
-                        <label class="block text-xs font-semibold text-slate-600">Phone
+                        <label class="block text-xs font-semibold text-slate-600">{{ __('motorcycles.phone_simple') }}
                             <input name="phone" required maxlength="30" value="{{ old('phone', auth()->user()->phone ?? '') }}" class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2">
                         </label>
                         <div class="grid grid-cols-2 gap-3">
-                            <label class="block text-xs font-semibold text-slate-600">Pickup date
+                            <label class="block text-xs font-semibold text-slate-600">{{ __('motorcycles.pickup_date') }}
                                 <input type="date" name="rental_start_date" required min="{{ now()->toDateString() }}" value="{{ old('rental_start_date') }}" class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2">
                             </label>
-                            <label class="block text-xs font-semibold text-slate-600">Return date
+                            <label class="block text-xs font-semibold text-slate-600">{{ __('motorcycles.return_date') }}
                                 <input type="date" name="rental_end_date" required min="{{ now()->toDateString() }}" value="{{ old('rental_end_date') }}" class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2">
                             </label>
                         </div>
-                        <p class="text-xs text-slate-500">The final rental price is {{ $motorcycle->currency ?: 'USD' }} {{ number_format($motorcycle->rental_price_per_day, 2) }} per day. This request is not a confirmed booking or payment.</p>
-                        <button class="w-full rounded-lg bg-brand-600 px-4 py-3 text-sm font-bold text-white hover:bg-brand-700">Request Rental</button>
+                        <p class="text-xs text-slate-500">{{ __('motorcycles.rental_note_a') }} {{ $motorcycle->currency ?: 'USD' }} {{ number_format($motorcycle->rental_price_per_day, 2) }} {{ __('motorcycles.rental_note_b') }}</p>
+                        <button class="w-full rounded-lg bg-brand-600 px-4 py-3 text-sm font-bold text-white hover:bg-brand-700">{{ __('motorcycles.request_rental') }}</button>
                     </form>
                 </details>
                 @endif
                 <button id="bookButton"
                         class="flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 px-5 py-4 text-sm font-bold text-white shadow-lg shadow-brand-500/25 transition hover:-translate-y-0.5 hover:from-brand-700 hover:to-brand-600">
                     <i class="fa-solid fa-key"></i>
-                    Book a Test Ride
-                    <span class="text-brand-200 text-xs">(حجز تجربة قيادة)</span>
+                    {{ __('motorcycles.test_ride_heading') }}
                     <i class="fa-solid fa-arrow-right"></i>
                 </button>
                 <div class="grid grid-cols-2 gap-3">
                     <a href="{{ route('motorcycles.index') }}"
                        class="flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-3.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">
-                        <i class="fa-solid fa-arrow-left"></i> رجوع للمتجر
+                        <i class="fa-solid fa-arrow-left"></i> {{ __('motorcycles.back_to_store') }}
                     </a>
                     <a href="{{ route('contact', ['motorcycle_id' => $motorcycle->id]) }}"
                             class="flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-3 py-3.5 text-xs font-bold text-white hover:bg-brand-700 transition">
-                        <i class="fa-regular fa-comments"></i> Contact Seller
+                        <i class="fa-regular fa-comments"></i> {{ __('motorcycles.contact_seller') }}
                     </a>
                 </div>
             </div>
@@ -249,15 +249,15 @@
             <div class="mt-6 grid grid-cols-3 gap-2 border-t border-slate-100 pt-5 text-center">
                 <div class="flex flex-col items-center gap-1.5">
                     <i class="fa-solid fa-truck-fast text-brand-600"></i>
-                    <span class="text-[10px] font-medium text-slate-500 leading-tight">Free Delivery<br>Nationwide</span>
+                    <span class="text-[10px] font-medium text-slate-500 leading-tight">{{ __('motorcycles.trust_1a') }}<br>{{ __('motorcycles.trust_1b') }}</span>
                 </div>
                 <div class="flex flex-col items-center gap-1.5">
                     <i class="fa-solid fa-shield-halved text-brand-600"></i>
-                    <span class="text-[10px] font-medium text-slate-500 leading-tight">30-Day<br>Money Back</span>
+                    <span class="text-[10px] font-medium text-slate-500 leading-tight">{{ __('motorcycles.trust_2a') }}<br>{{ __('motorcycles.trust_2b') }}</span>
                 </div>
                 <div class="flex flex-col items-center gap-1.5">
                     <i class="fa-solid fa-headset text-brand-600"></i>
-                    <span class="text-[10px] font-medium text-slate-500 leading-tight">24/7<br>Support</span>
+                    <span class="text-[10px] font-medium text-slate-500 leading-tight">{{ __('motorcycles.trust_3a') }}<br>{{ __('motorcycles.trust_3b') }}</span>
                 </div>
             </div>
         </section>
@@ -266,7 +266,7 @@
     {{-- Full Description --}}
     @if($motorcycle->description)
     <section class="mt-10 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <h3 class="mb-3 text-base font-extrabold text-slate-900">الوصف الكامل</h3>
+        <h3 class="mb-3 text-base font-extrabold text-slate-900">{{ __('motorcycles.full_description') }}</h3>
         <p class="text-sm leading-7 text-slate-600">{{ $motorcycle->description }}</p>
     </section>
     @endif
@@ -274,10 +274,10 @@
     {{-- Benefits section --}}
     <section id="benefits" class="mt-12 grid grid-cols-2 gap-4 rounded-2xl border border-brand-100 bg-gradient-to-r from-brand-50 via-white to-indigo-50 p-5 sm:grid-cols-4 sm:p-6">
         @foreach([
-            ['fa-shield-halved','Certified & Inspected','Quality you can trust'],
-            ['fa-award','Full Warranty','Peace of mind'],
-            ['fa-headset','Expert Support','Real people, real help'],
-            ['fa-star','Trusted Dealership','Your next ride starts here'],
+            ['fa-shield-halved',__('motorcycles.benefit_1_title'),__('motorcycles.benefit_1_sub')],
+            ['fa-award',__('motorcycles.benefit_2_title'),__('motorcycles.benefit_2_sub')],
+            ['fa-headset',__('motorcycles.benefit_3_title'),__('motorcycles.benefit_3_sub')],
+            ['fa-star',__('motorcycles.benefit_4_title'),__('motorcycles.benefit_4_sub')],
         ] as [$icon,$title,$sub])
         <div class="flex items-center gap-3">
             <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-600 text-white">
@@ -296,12 +296,12 @@
     <section id="similar" class="mt-16">
         <div class="mb-7 flex flex-wrap items-end justify-between gap-3">
             <div>
-                <h2 class="text-2xl font-extrabold tracking-tight text-slate-950">Similar Motorcycles from {{ $motorcycle->brand->name }}</h2>
-                <p class="mt-1.5 text-sm text-slate-500">Explore high-performance models in the same category</p>
+                <h2 class="text-2xl font-extrabold tracking-tight text-slate-950">{{ str_replace(':brand', $motorcycle->brand->name, __('motorcycles.similar_from')) }}</h2>
+                <p class="mt-1.5 text-sm text-slate-500">{{ __('motorcycles.similar_sub') }}</p>
             </div>
             <a href="{{ route('motorcycles.index', ['brand' => $motorcycle->brand_id]) }}"
                class="text-sm font-semibold text-brand-600 hover:text-brand-800 transition">
-                View All Similar <i class="fa-solid fa-arrow-right ml-1"></i>
+                {{ __('motorcycles.view_all_similar') }} <i class="fa-solid fa-arrow-right ml-1"></i>
             </a>
         </div>
         <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -327,11 +327,11 @@
                         @if($r->price)
                         <strong class="text-lg text-slate-900">${{ number_format($r->price) }}</strong>
                         @else
-                        <span class="text-sm text-slate-500">On request</span>
+                        <span class="text-sm text-slate-500">{{ __('motorcycles.on_request') }}</span>
                         @endif
                         <a href="{{ route('motorcycles.show', $r->slug) }}"
                            class="rounded-lg bg-slate-100 px-3 py-2 text-[10px] font-bold text-slate-700 hover:bg-brand-100 hover:text-brand-700 transition">
-                            View →
+                            {{ __('motorcycles.view_arrow') }}
                         </a>
                     </div>
                 </div>
@@ -394,9 +394,9 @@
                 <div class="w-16 h-16 rounded-full bg-brand-50 border-2 border-brand-100 flex items-center justify-content center mb-3 flex items-center justify-center">
                     <i class="fa-solid fa-cart-shopping text-2xl text-brand-600"></i>
                 </div>
-                <h3 class="text-lg font-extrabold text-slate-900">Add to Cart?</h3>
+                <h3 class="text-lg font-extrabold text-slate-900">{{ __('motorcycles.add_to_cart_q') }}</h3>
                 <p class="mt-1.5 text-sm text-slate-500 leading-relaxed max-w-xs">
-                    This motorcycle will be added to your cart. You can review it before placing your order enquiry.
+                    {{ __('motorcycles.cart_modal_desc') }}
                 </p>
             </div>
 
@@ -404,7 +404,7 @@
             <div class="flex items-start gap-2.5 rounded-xl bg-amber-50 border border-amber-100 px-4 py-3 mb-5">
                 <i class="fa-solid fa-circle-info text-amber-500 mt-0.5 flex-shrink-0 text-sm"></i>
                 <p class="text-xs text-amber-700 leading-relaxed">
-                    No payment is taken. This is a <strong>purchase enquiry</strong> — our team will contact you to confirm availability.
+                    {{ __('motorcycles.cart_note_a') }} <strong>{{ __('motorcycles.cart_note_bold') }}</strong> {{ __('motorcycles.cart_note_b') }}
                 </p>
             </div>
 
@@ -412,12 +412,12 @@
             <div class="flex gap-3">
                 <button type="button" onclick="closeCartModal()"
                         class="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-100 transition">
-                    Cancel
+                    {{ __('common.cancel') }}
                 </button>
                 <button type="button" id="cartConfirmBtn" onclick="confirmAddToCart()"
                         class="flex-1 flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-4 py-3 text-sm font-bold text-white hover:bg-brand-700 transition">
                     <i class="fa-solid fa-cart-plus"></i>
-                    Yes, Add to Cart
+                    {{ __('motorcycles.yes_add_to_cart') }}
                 </button>
             </div>
         </div>
@@ -447,7 +447,7 @@ function closeCartModal() {
 function confirmAddToCart() {
     var btn = document.getElementById('cartConfirmBtn');
     btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Adding…';
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> {{ __('motorcycles.adding') }}';
     document.getElementById('addToCartForm').submit();
 }
 // Close on backdrop click
@@ -490,14 +490,14 @@ document.addEventListener('keydown', function(e) {
                     @endif
                 </div>
                 <div>
-                    <p class="text-[9px] font-bold uppercase tracking-[0.22em] text-brand-600">Book a Test Ride</p>
+                    <p class="text-[9px] font-bold uppercase tracking-[0.22em] text-brand-600">{{ __('motorcycles.test_ride_heading') }}</p>
                     <h2 id="modalHeading" class="text-base font-extrabold text-slate-900 leading-tight">
                         {{ $motorcycle->model_name }}
                     </h2>
                     <p class="text-[11px] text-slate-500 mt-0.5">{{ $motorcycle->brand->name }} · {{ $motorcycle->year }}</p>
                 </div>
             </div>
-            <button id="closeModal" type="button" aria-label="Close"
+            <button id="closeModal" type="button" aria-label="{{ __('common.close') }}"
                     class="flex-shrink-0 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition">
                 <i class="fa-solid fa-xmark text-sm"></i>
             </button>
@@ -508,15 +508,15 @@ document.addEventListener('keydown', function(e) {
             <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 border-2 border-emerald-200">
                 <i class="fa-solid fa-circle-check text-2xl text-emerald-500"></i>
             </div>
-            <h3 class="text-lg font-extrabold text-slate-900">Request Sent!</h3>
-            <p class="mt-2 text-sm text-slate-500">Your test ride request has been received. We'll confirm your slot shortly.</p>
+            <h3 class="text-lg font-extrabold text-slate-900">{{ __('motorcycles.request_sent') }}</h3>
+            <p class="mt-2 text-sm text-slate-500">{{ __('motorcycles.request_sent_desc') }}</p>
             <div id="bookingRefWrap" class="mt-4 hidden">
-                <p class="text-xs font-semibold text-slate-500 mb-1">Your booking reference:</p>
+                <p class="text-xs font-semibold text-slate-500 mb-1">{{ __('motorcycles.booking_reference') }}</p>
                 <span id="bookingRef" class="inline-block rounded-lg bg-brand-50 border border-brand-200 px-4 py-2 font-mono text-sm font-bold text-brand-700"></span>
             </div>
-            <p class="mt-3 text-xs text-slate-400">Status: <strong class="text-amber-600">Pending — not yet confirmed.</strong></p>
+            <p class="mt-3 text-xs text-slate-400">{{ __('motorcycles.status_prefix') }} <strong class="text-amber-600">{{ __('motorcycles.status_pending_bold') }}</strong></p>
             <button onclick="closeModal()" class="mt-6 rounded-xl border border-slate-200 px-6 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
-                Close
+                {{ __('common.close') }}
             </button>
         </div>
 
@@ -529,7 +529,7 @@ document.addEventListener('keydown', function(e) {
             {{-- Price strip --}}
             @if($motorcycle->price)
             <div class="flex items-center justify-between rounded-xl bg-slate-50 border border-slate-200 px-4 py-3">
-                <span class="text-xs font-semibold text-slate-500">Motorcycle Price</span>
+                <span class="text-xs font-semibold text-slate-500">{{ __('motorcycles.motorcycle_price') }}</span>
                 <span class="text-sm font-extrabold text-slate-900">${{ number_format($motorcycle->price) }}</span>
             </div>
             @endif
@@ -538,7 +538,7 @@ document.addEventListener('keydown', function(e) {
             <div class="flex items-start gap-2.5 rounded-xl bg-brand-50 border border-brand-100 px-4 py-3">
                 <i class="fa-solid fa-circle-info text-brand-500 mt-0.5 flex-shrink-0 text-sm"></i>
                 <p class="text-xs text-brand-700 leading-relaxed">
-                    This is a <strong>test ride request</strong>, not a purchase. Your booking will be reviewed and confirmed by our team.
+                    {{ __('motorcycles.tr_note_a') }} <strong>{{ __('motorcycles.tr_note_bold') }}</strong>{{ __('motorcycles.tr_note_b') }}
                 </p>
             </div>
 
@@ -546,21 +546,21 @@ document.addEventListener('keydown', function(e) {
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="mb-1.5 block text-xs font-semibold text-slate-700">
-                        Full Name <span class="text-red-500">*</span>
+                        {{ __('motorcycles.full_name_required') }} <span class="text-red-500">*</span>
                     </label>
                     <div class="relative">
                         <i class="fa-solid fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
                         <input type="text" name="name" id="trName"
                                value="{{ auth()->user()->name ?? '' }}"
                                required maxlength="120"
-                               placeholder="Your full name"
+                               placeholder="{{ __('motorcycles.full_name_label') }}"
                                class="w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-3 py-3 text-sm text-slate-900 outline-none transition focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-500/10">
                     </div>
                     <p class="trErr mt-1 hidden text-xs text-red-500 font-medium" data-for="trName"></p>
                 </div>
                 <div>
                     <label class="mb-1.5 block text-xs font-semibold text-slate-700">
-                        Phone <span class="text-red-500">*</span>
+                        {{ __('motorcycles.phone_simple') }} <span class="text-red-500">*</span>
                     </label>
                     <div class="relative">
                         <i class="fa-solid fa-phone absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
@@ -577,7 +577,7 @@ document.addEventListener('keydown', function(e) {
             {{-- Email --}}
             <div>
                 <label class="mb-1.5 block text-xs font-semibold text-slate-700">
-                    Email Address <span class="text-red-500">*</span>
+                    {{ __('motorcycles.enquiry_email') }} <span class="text-red-500">*</span>
                 </label>
                 <div class="relative">
                     <i class="fa-solid fa-envelope absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
@@ -594,7 +594,7 @@ document.addEventListener('keydown', function(e) {
             <div class="grid grid-cols-2 gap-3">
                 <div>
                     <label class="mb-1.5 block text-xs font-semibold text-slate-700">
-                        Preferred Date
+                        {{ __('motorcycles.preferred_date') }}
                     </label>
                     <div class="relative">
                         <i class="fa-regular fa-calendar absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
@@ -604,13 +604,13 @@ document.addEventListener('keydown', function(e) {
                 </div>
                 <div>
                     <label class="mb-1.5 block text-xs font-semibold text-slate-700">
-                        Preferred Time
+                        {{ __('motorcycles.preferred_time') }}
                     </label>
                     <div class="relative">
                         <i class="fa-regular fa-clock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
                         <select name="preferred_time"
                                 class="w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-3 py-3 text-sm text-slate-900 outline-none transition focus:border-brand-500 focus:bg-white appearance-none">
-                            <option value="">Any time</option>
+                            <option value="">{{ __('motorcycles.any_time') }}</option>
                             <option>09:00 – 10:00</option>
                             <option>10:00 – 11:00</option>
                             <option>11:00 – 12:00</option>
@@ -626,8 +626,8 @@ document.addEventListener('keydown', function(e) {
 
             {{-- Notes --}}
             <div>
-                <label class="mb-1.5 block text-xs font-semibold text-slate-700">Notes (optional)</label>
-                <textarea name="notes" rows="2" maxlength="1000" placeholder="Any specific requests or questions…"
+                <label class="mb-1.5 block text-xs font-semibold text-slate-700">{{ __('motorcycles.notes_optional') }}</label>
+                <textarea name="notes" rows="2" maxlength="1000" placeholder="{{ __('motorcycles.notes_placeholder') }}"
                           class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-brand-500 focus:bg-white resize-none"></textarea>
             </div>
 
@@ -636,19 +636,19 @@ document.addEventListener('keydown', function(e) {
                 <button type="submit" id="trSubmit"
                         class="flex w-full items-center justify-center gap-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 py-3.5 text-sm font-bold text-white shadow-lg shadow-brand-500/25 transition hover:from-brand-700 hover:to-brand-600 disabled:opacity-60 disabled:cursor-not-allowed">
                     <i class="fa-solid fa-motorcycle"></i>
-                    <span id="trSubmitText">Submit Test Ride Request</span>
+                    <span id="trSubmitText">{{ __('motorcycles.submit_test_ride') }}</span>
                     <i class="fa-solid fa-arrow-right text-xs"></i>
                 </button>
                 <p class="mt-2.5 text-center text-[10px] text-slate-400">
                     <i class="fa-solid fa-lock text-[9px]"></i>
-                    Secure submission · Your data is never shared · Booking status will be <strong>Pending</strong> until confirmed
+                    {{ __('motorcycles.secure_note_a') }} <strong>{{ __('motorcycles.secure_note_bold') }}</strong> {{ __('motorcycles.secure_note_b') }}
                 </p>
             </div>
 
             {{-- Inline error banner (server-side fallback) --}}
             @if($errors->any())
             <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3">
-                <p class="text-xs font-semibold text-red-700 mb-1"><i class="fa-solid fa-circle-exclamation mr-1"></i> Please fix the following:</p>
+                <p class="text-xs font-semibold text-red-700 mb-1"><i class="fa-solid fa-circle-exclamation mr-1"></i> {{ __('motorcycles.fix_errors') }}</p>
                 <ul class="list-disc list-inside text-xs text-red-600 space-y-0.5">
                     @foreach($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -672,9 +672,9 @@ document.addEventListener('keydown', function(e) {
             <i class="fa-solid fa-circle-check text-emerald-500"></i>
         </div>
         <div class="flex-1 min-w-0">
-            <p class="text-sm font-bold text-slate-900">Test Ride Request Sent!</p>
-            <p class="text-xs text-slate-500 mt-0.5">Ref: <span class="font-mono font-bold text-brand-600">{{ session('booking_success')['reference'] }}</span></p>
-            <p class="text-xs text-amber-600 font-semibold mt-1">Status: Pending — awaiting confirmation.</p>
+            <p class="text-sm font-bold text-slate-900">{{ __('motorcycles.test_ride_sent') }}</p>
+            <p class="text-xs text-slate-500 mt-0.5">{{ __('motorcycles.ref_label') }} <span class="font-mono font-bold text-brand-600">{{ session('booking_success')['reference'] }}</span></p>
+            <p class="text-xs text-amber-600 font-semibold mt-1">{{ __('motorcycles.status_awaiting') }}</p>
         </div>
         <button onclick="document.getElementById('bookingBanner').remove()"
                 class="flex-shrink-0 text-slate-400 hover:text-slate-600 transition">
@@ -726,7 +726,7 @@ document.addEventListener('keydown', function(e) {
             icon.classList.toggle('fa-solid', !wasActive);
             icon.classList.toggle('fa-regular', wasActive);
             icon.classList.toggle('text-pink-500', !wasActive);
-            toast(wasActive ? 'Removed from wishlist' : 'Added to wishlist ♥');
+            toast(wasActive ? @json(__('motorcycles.wishlist_removed')) : @json(__('motorcycles.wishlist_added')));
         });
     });
 
@@ -778,9 +778,9 @@ document.addEventListener('keydown', function(e) {
         const name  = document.getElementById('trName')?.value.trim();
         const phone = document.getElementById('trPhone')?.value.trim();
         const email = document.getElementById('trEmail')?.value.trim();
-        if (!name)                               { showErr('trName',  'Full name is required.'); ok = false; }
-        if (!phone)                              { showErr('trPhone', 'Phone number is required.'); ok = false; }
-        if (!email || !/\S+@\S+\.\S+/.test(email)) { showErr('trEmail', 'A valid email is required.'); ok = false; }
+        if (!name)                               { showErr('trName',  @json(__('motorcycles.err_name_required'))); ok = false; }
+        if (!phone)                              { showErr('trPhone', @json(__('motorcycles.err_phone_required'))); ok = false; }
+        if (!email || !/\S+@\S+\.\S+/.test(email)) { showErr('trEmail', @json(__('motorcycles.err_email_required'))); ok = false; }
         return ok;
     }
 
@@ -790,7 +790,7 @@ document.addEventListener('keydown', function(e) {
 
         // Prevent double-submission
         submitBtn.disabled = true;
-        submitTxt.textContent = 'Sending…';
+        submitTxt.textContent = @json(__('motorcycles.sending'));
 
         const fd = new FormData(form);
 
@@ -822,13 +822,13 @@ document.addEventListener('keydown', function(e) {
                     const elId = map[field];
                     if (elId) showErr(elId, Array.isArray(msgs) ? msgs[0] : msgs);
                 });
-                if (!Object.keys(errs).length) toast('Something went wrong. Please try again.', 3500);
+                if (!Object.keys(errs).length) toast(@json(__('motorcycles.generic_error')), 3500);
             }
         } catch (err) {
-            toast('Network error. Please try again.', 3500);
+            toast(@json(__('motorcycles.network_error')), 3500);
         } finally {
             submitBtn.disabled = false;
-            submitTxt.textContent = 'Submit Test Ride Request';
+            submitTxt.textContent = @json(__('motorcycles.submit_test_ride'));
         }
     });
 

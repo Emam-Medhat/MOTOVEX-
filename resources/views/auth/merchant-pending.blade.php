@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="{{ app()->getLocale() === 'ar' ? 'ar' : 'en' }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MOTOVEX | Merchant Application Pending</title>
+    <title>{{ __('auth.merchant_pending_title') }}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -143,6 +143,7 @@
         }
         .btn-login:hover { background: rgba(255,255,255,0.1); color: #fff; }
     </style>
+@include('partials.rtl-styles')
 </head>
 <body>
     <div class="corner-light corner-light-tl"></div>
@@ -153,48 +154,46 @@
             ⏳
         </div>
 
-        <h1>Application Under Review</h1>
+        <h1>{{ __('auth.merchant_pending_heading') }}</h1>
         <p class="subtitle">
             @if(session('pending_name'))
-                Hi <strong style="color:#e9d5ff">{{ session('pending_name') }}</strong>,
+                {{ __('auth.pending_greeting') }} <strong style="color:#e9d5ff">{{ session('pending_name') }}</strong>,
             @endif
-            your merchant account has been submitted successfully.
+            {{ __('auth.pending_submitted') }}
         </p>
 
         <div class="info-box">
             <p>
-                Your merchant account is <strong>awaiting administrator approval</strong>.
-                You will be able to access your merchant dashboard and list motorcycles
-                once your account has been reviewed and approved by our team.
+                {{ __('auth.pending_info_a') }} <strong>{{ __('auth.pending_info_bold') }}</strong>{{ __('auth.pending_info_b') }}
             </p>
         </div>
 
         <div class="steps">
             <div class="step">
                 <div class="step-num">✓</div>
-                <div class="step-text">Account created — registration successful</div>
+                <div class="step-text">{{ __('auth.pending_step_1') }}</div>
             </div>
             <div class="step">
                 <div class="step-num" style="background: linear-gradient(135deg, #d97706, #b45309);">2</div>
-                <div class="step-text">Admin review — currently under review by our team</div>
+                <div class="step-text">{{ __('auth.pending_step_2') }}</div>
             </div>
             <div class="step">
                 <div class="step-num" style="background: rgba(255,255,255,0.1); color: rgba(196,181,253,0.5);">3</div>
-                <div class="step-text" style="color: rgba(196,181,253,0.4);">Approved — access to your merchant dashboard</div>
+                <div class="step-text" style="color: rgba(196,181,253,0.4);">{{ __('auth.pending_step_3') }}</div>
             </div>
         </div>
 
         <div style="display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0.5rem;">
             <a href="{{ route('home') }}" class="btn-home">
-                ← Return to Homepage
+                {{ __('auth.return_homepage') }}
             </a>
             <a href="{{ route('login') }}" class="btn-login">
-                Sign In
+                {{ __('auth.sign_in') }}
             </a>
         </div>
 
         <p style="margin-top: 1.5rem; font-size: 11px; color: rgba(196,181,253,0.35);">
-            Have questions? <a href="{{ route('contact') }}" style="color: rgba(217,70,239,0.7); text-decoration: none;">Contact us</a>
+            {{ __('auth.have_questions') }} <a href="{{ route('contact') }}" style="color: rgba(217,70,239,0.7); text-decoration: none;">{{ __('auth.contact_us') }}</a>
         </p>
     </div>
 </body>

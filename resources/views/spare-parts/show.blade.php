@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() === 'ar' ? 'ar' : 'en' }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -76,6 +76,7 @@
         .related-card { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid var(--line); background: white; border-radius: 20px; overflow: hidden; }
         .related-card:hover { transform: translateY(-6px); box-shadow: 0 15px 30px -10px rgba(0,0,0,0.08); border-color: #c4b5fd; }
     </style>
+@include('partials.rtl-styles')
 </head>
 <body>
 @include('partials.navbar')
@@ -88,7 +89,7 @@
                 <i class="fa-solid fa-circle-check text-green-500"></i>
                 <span class="text-sm font-bold">{{ session('success') }}</span>
             </div>
-            <a href="{{ route('cart.index') }}" class="text-xs font-black uppercase tracking-widest bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700 transition">View Cart</a>
+            <a href="{{ route('cart.index') }}" class="text-xs font-black uppercase tracking-widest bg-green-600 text-white px-4 py-2 rounded-xl hover:bg-green-700 transition">{{ __('spare_parts.view_cart') }}</a>
         </div>
     @endif
     @if(session('error'))
@@ -103,9 +104,9 @@
 
     {{-- Breadcrumb --}}
     <nav class="flex items-center gap-2 text-xs text-slate-400 mb-7">
-        <a href="{{ route('home') }}" class="hover:text-brand-600 transition">Home</a>
+        <a href="{{ route('home') }}" class="hover:text-brand-600 transition">{{ __('common.home') }}</a>
         <i class="fa-solid fa-chevron-right text-[9px]"></i>
-        <a href="{{ route('spare-parts.index') }}" class="hover:text-brand-600 transition">Spare Parts</a>
+        <a href="{{ route('spare-parts.index') }}" class="hover:text-brand-600 transition">{{ __('spare_parts.page_title') }}</a>
         <i class="fa-solid fa-chevron-right text-[9px]"></i>
         <span class="text-slate-700 font-semibold truncate max-w-[200px]">{{ $sparePart->name }}</span>
     </nav>
@@ -123,7 +124,7 @@
                 @else
                     <div class="flex flex-col items-center justify-center text-slate-600 p-10">
                         <i class="fa-solid fa-gears text-5xl"></i>
-                        <span class="text-sm mt-3 font-medium">No image available</span>
+                        <span class="text-sm mt-3 font-medium">{{ __('spare_parts.no_image_available') }}</span>
                     </div>
                 @endif
             </div>
@@ -174,14 +175,14 @@
             {{-- SKU --}}
             @if($sparePart->sku)
             <p class="text-sm font-mono text-slate-400">
-                <span class="font-bold text-slate-500">Part No:</span> {{ $sparePart->sku }}
+                <span class="font-bold text-slate-500">{{ __('spare_parts.part_number') }}:</span> {{ $sparePart->sku }}
             </p>
             @endif
 
             {{-- Price --}}
             @if($sparePart->price)
             <div class="bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4">
-                <p class="text-xs font-bold uppercase tracking-widest text-slate-400">Price</p>
+                <p class="text-xs font-bold uppercase tracking-widest text-slate-400">{{ __('spare_parts.price_label') }}</p>
                 <p class="text-3xl font-extrabold text-slate-900 mt-1">
                     {{ number_format($sparePart->price, 2) }}
                     <span class="text-sm font-bold text-slate-500">{{ $sparePart->currency }}</span>
@@ -192,7 +193,7 @@
             {{-- Description --}}
             @if($sparePart->description)
             <div>
-                <h2 class="text-sm font-bold text-slate-700 mb-2">Description</h2>
+                <h2 class="text-sm font-bold text-slate-700 mb-2">{{ __('spare_parts.description') }}</h2>
                 <p class="text-sm leading-relaxed text-slate-600">{{ $sparePart->description }}</p>
             </div>
             @endif
@@ -201,7 +202,7 @@
             @if($sparePart->compatibleMotorcycles->isNotEmpty())
             <div>
                 <h2 class="text-sm font-bold text-slate-700 mb-2">
-                    <i class="fa-solid fa-motorcycle text-brand-500 mr-1"></i> Compatible Motorcycles
+                    <i class="fa-solid fa-motorcycle text-brand-500 mr-1"></i> {{ __('spare_parts.compatible_with') }}
                 </h2>
                 <div class="flex flex-wrap gap-2">
                     @foreach($sparePart->compatibleMotorcycles as $moto)
@@ -226,7 +227,7 @@
             @if($sparePart->stock_quantity > 0)
             <p class="text-sm text-slate-500">
                 <i class="fa-solid fa-box text-brand-400 mr-1"></i>
-                <span class="font-bold text-slate-700">{{ $sparePart->stock_quantity }}</span> in stock
+                <span class="font-bold text-slate-700">{{ $sparePart->stock_quantity }}</span> {{ __('spare_parts.in_stock_label') }}
             </p>
             @endif
 
@@ -250,18 +251,18 @@
                     </div>
                     <button type="submit" class="btn-luxury-cart group">
                         <i class="fa-solid fa-cart-plus mr-3 group-hover:scale-110 transition"></i>
-                        Add to Cart
+                        {{ __('spare_parts.add_to_cart') }}
                     </button>
                 </form>
                 @else
                 <button disabled class="btn-luxury-cart opacity-70">
-                    <i class="fa-solid fa-ban mr-2"></i> Currently Unavailable
+                    <i class="fa-solid fa-ban mr-2"></i> {{ __('spare_parts.currently_unavailable') }}
                 </button>
                 @endif
 
                 <a href="{{ route('contact') }}?subject={{ urlencode('Spare Part Enquiry: '.$sparePart->name) }}&enquiry_type=parts"
                    class="btn-luxury-outline">
-                    <i class="fa-solid fa-paper-plane mr-2 text-[11px]"></i> Direct Enquiry
+                    <i class="fa-solid fa-paper-plane mr-2 text-[11px]"></i> {{ __('spare_parts.direct_enquiry') }}
                 </a>
             </div>
         </div>
@@ -271,9 +272,9 @@
     @if($related->isNotEmpty())
     <div class="mt-20">
         <div class="flex items-center justify-between mb-8">
-            <h2 class="text-2xl font-black text-slate-900 tracking-tight uppercase">Related Inventory</h2>
+            <h2 class="text-2xl font-black text-slate-900 tracking-tight uppercase">{{ __('spare_parts.related_inventory') }}</h2>
             <a href="{{ route('spare-parts.index') }}" class="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1.5 transition-all">
-                View All <i class="fa-solid fa-arrow-right"></i>
+                {{ __('navigation.view_all') }} <i class="fa-solid fa-arrow-right"></i>
             </a>
         </div>
         <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">

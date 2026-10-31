@@ -1,761 +1,823 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MOTOVEX | Premium Motorcycles</title>
-  <meta name="csrf-token" content="{{ csrf_token() }}">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { sans: ['Plus Jakarta Sans','Noto Kufi Arabic','sans-serif'] },
-          colors: {
-            brand: {
-              50:'#f5f3ff', 100:'#ede9fe', 200:'#ddd6fe',
-              300:'#c4b5fd', 400:'#a78bfa', 500:'#8b5cf6',
-              600:'#7c3aed', 700:'#6d28d9', 800:'#5b21b6', 900:'#4c1d95'
-            }
-          }
-        }
-      }
-    }
-  </script>
-  <style>
-    *   { box-sizing:border-box; }
-    html{ scroll-behavior:smooth; }
-    body{
-      font-family:'Plus Jakarta Sans','Noto Kufi Arabic',sans-serif;
-      background:#ffffff; color:#0f172a; overflow-x:hidden;
-    }
+@extends('layouts.app')
 
-    ::-webkit-scrollbar       { width:6px; }
-    ::-webkit-scrollbar-track { background:#f1f5f9; }
-    ::-webkit-scrollbar-thumb { background:linear-gradient(180deg,#8b5cf6,#6d28d9); border-radius:20px; }
+@section('title', 'MOTOVEX | ' . __('home.hero_title'))
 
-    /* ── Animations ── */
-    @keyframes fadeUp   { from{opacity:0;transform:translateY(40px)} to{opacity:1;transform:translateY(0)} }
-    @keyframes scaleIn  { from{opacity:0;transform:scale(.88)}       to{opacity:1;transform:scale(1)}      }
-    @keyframes slideR   { from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)} }
-    @keyframes float    { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
-    @keyframes shimmer  { 0%{background-position:-200% center} 100%{background-position:200% center} }
-    @keyframes spin-slow{ from{transform:rotate(0)} to{transform:rotate(360deg)} }
-    @keyframes marquee  { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-    @keyframes countUp  {}
+@push('head')
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--purple:#7847ff;--light:#f6f7fb;--muted:#8994a8}
+html{scroll-behavior:smooth;scroll-padding-top:85px}
+body{background:var(--light);color:#111827;font-family:{{ app()->getLocale()==='ar'?"'Cairo',sans-serif":"'Inter','Cairo',sans-serif" }}}
+a{text-decoration:none;color:inherit}
+.wrap{width:min(1200px,calc(100% - 36px));margin:auto}
 
-    .fade-up { animation:fadeUp .9s cubic-bezier(.16,1,.3,1) forwards; opacity:0; }
-    .scale-in{ animation:scaleIn 1s cubic-bezier(.16,1,.3,1) forwards; opacity:0; }
-    .slide-r { animation:slideR .9s cubic-bezier(.16,1,.3,1) forwards; opacity:0; }
-    .float   { animation:float 5s ease-in-out infinite; }
-    .spin-slow{ animation:spin-slow 22s linear infinite; }
+/* ── HERO ── */
+.hero{min-height:680px;display:flex;align-items:center;color:#111827;position:relative;isolation:isolate;overflow:hidden;background:#f6f7fb}
+.hero:before{content:"";position:absolute;inset:0;z-index:-2;background:linear-gradient(90deg,#f6f7fb 0%,#f0eaffdf 30%,#e8e0ff55 75%),url('https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=2200&q=90') center/cover;animation:zoom 18s ease-in-out infinite alternate}
+.hero:after{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(circle at 75% 45%,#7847ff22,transparent 32%),linear-gradient(0deg,#f6f7fb,transparent 30%)}
+@keyframes zoom{to{transform:scale(1.13)}}
+.heroText{max-width:650px;padding:100px 0}
+.eyebrow{font-size:11px;font-weight:900;letter-spacing:2px;color:#7847ff}
+.hero h1{font-size:clamp(42px,6vw,76px);line-height:1.13;margin:20px 0;font-weight:900;color:#111827}
+.gradient{background:linear-gradient(90deg,#7847ff,#6936f5,#5b21b6);background-clip:text;color:transparent}
+.hero p{max-width:530px;color:#475569;line-height:2;font-size:14px}
+.stats{display:flex;gap:35px;margin-top:50px;flex-wrap:wrap}
+.stats b{display:block;font-size:26px;color:#111827}
+.stats span{font-size:11px;color:#64748b}
 
-    .reveal{
-      opacity:0; transform:translateY(45px);
-      transition:all .85s cubic-bezier(.16,1,.3,1);
-    }
-    .reveal.active{ opacity:1; transform:translateY(0); }
+/* ── BUTTONS ── */
+.btn-legacy{display:inline-flex;align-items:center;gap:10px;padding:13px 23px;border-radius:50px;background:linear-gradient(110deg,#6936f5,#a06cff);color:#fff;font-weight:900;font-size:12px;box-shadow:0 12px 35px #7847ff55;transition:.3s}
+.btn-legacy:hover{transform:translateY(-4px);box-shadow:0 18px 45px #7847ff88}
+.btn-legacy.outline{background:transparent;border:1px solid #7847ff70;box-shadow:none;color:#7847ff}
 
-    /* ── Gradient text ── */
-    .text-gradient{
-      background:linear-gradient(135deg,#6d28d9 0%,#8b5cf6 50%,#a78bfa 100%);
-      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-    }
-    .text-shimmer{
-      background:linear-gradient(90deg,#6d28d9,#8b5cf6,#a78bfa,#8b5cf6,#6d28d9);
-      background-size:200% auto;
-      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-      animation:shimmer 4s linear infinite;
-    }
+/* ── SECTIONS ── */
+.section{padding:82px 0}
+.head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:30px}
+.head h2{font-size:clamp(26px,3vw,38px);font-weight:900;margin:8px 0;color:#111827}
+.head p{color:var(--muted);font-size:13px;line-height:1.8;margin:0}
+.grid{display:grid;gap:18px}
 
-    /* ── Buttons ── */
-    .btn-primary{
-      background:linear-gradient(135deg,#8b5cf6,#6d28d9);
-      box-shadow:0 8px 28px rgba(139,92,246,.35);
-      color:#fff; transition:all .4s cubic-bezier(.16,1,.3,1);
-      position:relative; overflow:hidden;
-    }
-    .btn-primary::after{
-      content:''; position:absolute; inset:0;
-      background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);
-      transform:translateX(-100%); transition:transform .5s;
-    }
-    .btn-primary:hover::after{ transform:translateX(100%); }
-    .btn-primary:hover{ transform:translateY(-3px); box-shadow:0 14px 40px rgba(139,92,246,.5); }
+/* ── BRANDS ── */
+.brands{grid-template-columns:repeat(8,1fr)}
+.brand{background:#fff;border:1px solid #e7eaf1;border-radius:13px;padding:24px 8px;text-align:center;font-weight:900;color:#263249;transition:.3s}
+.brand:hover{transform:translateY(-7px);color:var(--purple);box-shadow:0 15px 35px #7847ff18}
 
-    .btn-outline{
-      border:1.5px solid #ddd6fe; color:#7c3aed;
-      background:transparent; transition:all .3s;
-    }
-    .btn-outline:hover{ background:#f5f3ff; border-color:#8b5cf6; }
+/* ── CATEGORIES ── */
+.cats{grid-template-columns:repeat(4,1fr)}
+.cat{height:270px;position:relative;overflow:hidden;border-radius:17px;color:#fff;background:#111}
+.cat img{width:100%;height:100%;object-fit:cover;transition:.7s}
+.cat:hover img{transform:scale(1.12)}
+.cat:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#111827ed,transparent 75%)}
+.cat div{position:absolute;z-index:1;bottom:20px;inset-inline:20px}
+.cat h3{margin:0;font-size:20px}
+.cat p{font-size:11px;color:#d5dbea}
 
-    /* ── Glass cards ── */
-    .glass{
-      background:rgba(255,255,255,.85);
-      backdrop-filter:blur(16px);
-      border:1px solid rgba(139,92,246,.12);
-    }
+/* ── PRODUCTS ── */
+.products{grid-template-columns:repeat(4,1fr)}
+.product{background:#fff;border:1px solid #e8ebf2;border-radius:17px;overflow:hidden;transition:.35s}
+.product:hover{transform:translateY(-8px);box-shadow:0 20px 45px #101a3018}
+.product img{width:100%;height:210px;object-fit:cover;transition:.5s}
+.product:hover img{transform:scale(1.06)}
+.productInfo{padding:17px}
+.product h3{font-size:15px;margin:10px 0 5px}
+.product p{font-size:11px;color:var(--muted)}
+.price{color:#7044ed;font-weight:900}
 
-    /* ── Card hover ── */
-    .card-hover{
-      transition:all .5s cubic-bezier(.16,1,.3,1);
-      border:1px solid #e9eaf5;
-    }
-    .card-hover:hover{
-      transform:translateY(-10px);
-      border-color:rgba(139,92,246,.3);
-      box-shadow:0 24px 48px -12px rgba(139,92,246,.18);
-    }
+/* ── PROMO ── */
+.promo{border-radius:22px;min-height:310px;padding:45px;color:white;display:flex;align-items:center;background:linear-gradient(90deg,#7847ffef,#7847ff99),url('https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=1800&q=85') center/cover}
+.promo h2{font-size:clamp(30px,4vw,48px);max-width:650px}
 
-    /* ── Hero background ── */
-    .hero-bg{
-      background:
-        radial-gradient(ellipse 90% 60% at 50% -10%, rgba(139,92,246,.13), transparent 55%),
-        radial-gradient(ellipse 60% 40% at 95% 50%,  rgba(99,102,241,.07), transparent),
-        radial-gradient(ellipse 40% 30% at 5%  80%,  rgba(167,139,250,.06), transparent),
-        #f8faff;
-    }
+/* ── SERVICES ── */
+.services{grid-template-columns:repeat(4,1fr)}
+.service{background:#fff;border:1px solid #e8ebf2;border-radius:16px;padding:25px;transition:.3s}
+.service:hover{transform:translateY(-8px);border-color:#bca7ff;box-shadow:0 18px 40px #101a3012}
+.ico-wrap{width:52px;height:52px;border-radius:15px;background:#f0eaff;color:#7044ed;display:grid;place-items:center;font-size:22px;margin-bottom:17px}
+.service h3{font-size:15px;color:#111827}
+.service p{font-size:12px;color:#7b8495;line-height:1.9}
 
-    /* ── Stats bar ── */
-    .stat-item{ border-right:1px solid #e9eaf5; }
-    .stat-item:last-child{ border-right:none; }
+/* ── ABOUT ── */
+.about{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}
+.about img{width:100%;height:390px;object-fit:cover;border-radius:22px}
+.about p{color:#475569;line-height:2.2;font-size:14px}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;background:linear-gradient(110deg,#f0eaff,#e8e0ff);border-radius:20px;padding:32px;margin-top:55px}
+.metrics b{font-size:30px;color:#111827}
+.metrics span{display:block;color:#64748b;font-size:12px}
 
-    /* ── Marquee ── */
-    .marquee-wrap{ overflow:hidden; }
-    .marquee-track{ display:flex; width:max-content; animation:marquee 30s linear infinite; }
+/* ── REVIEWS ── */
+.reviews{grid-template-columns:repeat(3,1fr)}
+.review{background:white;border:1px solid #e8ebf2;border-radius:17px;padding:25px}
+.review p{color:#687386;font-size:13px;line-height:2}
+.stars{color:#f59e0b}
 
-    /* ── Orbit decoration ── */
-    .orbit-ring{
-      position:absolute; border-radius:50%;
-      border:1.5px dashed rgba(139,92,246,.15);
-    }
+/* ── FAQ ── */
+.faq{max-width:850px;margin:auto}
+.faqItem{padding:19px 0;border-bottom:1px solid #e6e9f0}
+.faqQ{width:100%;background:none;border:0;text-align:inherit;font:inherit;font-weight:900;display:flex;justify-content:space-between;cursor:pointer;color:#111827}
+.faqA{max-height:0;overflow:hidden;transition:max-height .35s;color:#778196;font-size:13px;line-height:2}
+.faqItem.open .faqA{max-height:120px;padding-top:12px}
 
-    /* ── Motorcycle card image zoom ── */
-    .moto-card{ overflow:hidden; }
-    .moto-card img{ transition:transform .6s cubic-bezier(.16,1,.3,1); }
-    .moto-card:hover img{ transform:scale(1.08); }
+/* ── MARQUEE ── */
+.marquee{overflow:hidden;background:#7847ff;color:white;padding:14px 0;white-space:nowrap}
+.marquee-track{display:inline-flex;gap:45px;animation:marquee 28s linear infinite;font-weight:900;font-size:13px;letter-spacing:1px}
+.marquee:hover .marquee-track{animation-play-state:paused}
+@keyframes marquee{to{transform:translateX(-50%)}}
 
-    /* ── Why-us icon ── */
-    .why-icon{ transition:transform .4s cubic-bezier(.16,1,.3,1); }
-    .why-card:hover .why-icon{ transform:scale(1.15) rotate(-5deg); }
+/* ── SPLIT FEATURE ── */
+.split-feature{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+.feature-photo{position:relative;min-height:430px;border-radius:24px;overflow:hidden}
+.feature-photo img{position:absolute;width:100%;height:100%;object-fit:cover;inset:0}
+.feature-photo:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#111827a8,transparent 55%)}
+.floating-note{position:absolute;z-index:2;bottom:22px;inset-inline-start:22px;background:#fff;color:#111827;border-radius:15px;padding:17px 20px;box-shadow:0 15px 45px #0003}
+.floating-note b{font-size:23px;display:block}
+.feature-copy h2{font-size:clamp(30px,4vw,48px);line-height:1.25;color:#111827}
+.feature-copy p{line-height:2.1;color:#475569;font-size:14px}
+.checkline{display:flex;gap:12px;align-items:flex-start;margin:17px 0;color:#455166;font-size:13px}
+.checkline i{color:#794cff;margin-top:4px}
 
-    /* ── Section label ── */
-    .section-label{
-      display:inline-flex; align-items:center; gap:.5rem;
-      background:#f5f3ff; border:1px solid #ddd6fe;
-      color:#7c3aed; border-radius:9999px;
-      padding:.35rem 1rem; font-size:.72rem; font-weight:700;
-      letter-spacing:.08em; text-transform:uppercase;
-    }
+/* ── TIMELINE ── */
+.timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;counter-reset:steps}
+.step{padding:25px;border:1px solid #e7eaf1;border-radius:17px;background:#fff;counter-increment:steps;box-shadow:0 4px 12px #0000000a}
+.step:before{content:"0" counter(steps);font-size:34px;font-weight:900;color:#7847ff}
+.step h3{font-size:16px;color:#111827}
+.step p{color:#64748b;font-size:12px;line-height:1.9}
 
-    /* ── Testimonial card ── */
-    .stars{ color:#f59e0b; }
+/* ── BENEFITS ── */
+.benefit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.benefit{display:flex;gap:15px;padding:20px;border-radius:15px;background:#fff;border:1px solid #e7eaf1;box-shadow:0 4px 12px #0000000a}
+.benefit .ico-wrap{flex:0 0 48px;margin:0}
+.benefit p{font-size:12px;line-height:1.8;color:#64748b}
+.benefit h3{margin:2px 0;font-size:14px;color:#111827}
 
-    /* ── Number counter ── */
-    .num-counter{ font-variant-numeric:tabular-nums; }
-  </style>
-</head>
-<body>
+/* ── GALLERY ── */
+.gallery{display:grid;grid-template-columns:1.3fr 1fr 1fr;grid-template-rows:190px 190px;gap:13px}
+.gallery a{position:relative;border-radius:16px;overflow:hidden}
+.gallery a:first-child{grid-row:span 2}
+.gallery img{width:100%;height:100%;object-fit:cover;transition:.6s}
+.gallery a:hover img{transform:scale(1.1)}
+.gallery a:after{content:"";position:absolute;inset:40% 0 0;background:linear-gradient(transparent,#111827c9)}
+.gallery span{position:absolute;z-index:2;bottom:17px;inset-inline-start:18px;color:white;font-weight:900}
 
-{{-- ── NAVBAR ── --}}
-@include('partials.navbar')
+/* ── STORIES ── */
+.brand-story{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.story-card{background:#fff;border:1px solid #e8ebf2;border-radius:17px;overflow:hidden}
+.story-card img{height:180px;width:100%;object-fit:cover}
+.story-card div{padding:20px}
+.story-card h3{font-size:16px;color:#111827}
+.story-card p{font-size:12px;color:#7b8495;line-height:1.9}
 
+/* ── VIDEO COVER ── */
+.video-cover{min-height:340px;border-radius:22px;overflow:hidden;position:relative;background:linear-gradient(#ffffff44,#f6f7fba8),url('https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=1800&q=90') center/cover;display:grid;place-items:center;color:#111827;text-align:center}
+.play-circle{width:76px;height:76px;border:1px solid #7847ffaa;border-radius:50%;display:grid;place-items:center;background:#7847ffcc;font-size:23px;color:#fff;box-shadow:0 0 0 13px #7847ff20;animation:pulse 2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 24px #7847ff08}}
+.video-cover h2{font-size:clamp(25px,4vw,42px);color:#111827}
 
-{{-- ════════════════════════════════════════════
-     1. HERO
-════════════════════════════════════════════ --}}
-<section class="hero-bg relative overflow-hidden pt-4 pb-0 min-h-[92vh] flex items-center">
+/* ── CONTACT ── */
+.contact-panel{display:grid;grid-template-columns:1fr 1fr;gap:25px}
+.contact-card{background:#fff;border:1px solid #e8ebf2;border-radius:18px;padding:26px}
+.contact-card h3{margin:0 0 16px;font-size:17px;color:#111827}
+.contact-card input,.contact-card textarea,.contact-card select{width:100%;padding:13px 15px;border:1px solid #e4e8f0;border-radius:10px;margin:7px 0 13px;font:inherit;font-size:13px;color:#111827}
+.contact-card textarea{min-height:110px;resize:vertical}
+.contact-details{display:grid;gap:14px}
+.contact-line{display:flex;align-items:center;gap:13px;padding:15px;background:#f6f4ff;border-radius:13px;font-size:13px;color:#111827}
+.contact-line i{color:#7847ff;font-size:18px}
 
-  {{-- Decoration rings --}}
-  <div class="orbit-ring w-[700px] h-[700px] absolute -top-40 -left-40 opacity-50"></div>
-  <div class="orbit-ring w-[450px] h-[450px] absolute top-1/2 right-0 translate-x-1/3 -translate-y-1/2 opacity-40"></div>
-  <div class="absolute top-32 right-1/3 w-3 h-3 rounded-full bg-brand-400 opacity-60 float" style="animation-delay:.5s"></div>
-  <div class="absolute bottom-40 left-1/4 w-2 h-2 rounded-full bg-brand-300 opacity-50 float" style="animation-delay:1.2s"></div>
-  <div class="absolute top-1/2 left-16 w-2 h-2 rounded-full bg-violet-400 opacity-40 float" style="animation-delay:2s"></div>
+/* ── APP BANNER ── */
+.app-banner{border-radius:22px;background:linear-gradient(105deg,#f0eaff,#e8e0ff);color:#111827;padding:35px;display:flex;align-items:center;justify-content:space-between;gap:25px}
+.app-banner h2{font-size:clamp(22px,3vw,32px);margin:6px 0;color:#111827}
+.app-banner p{color:#64748b;line-height:1.9;font-size:13px}
+.app-badges{display:flex;gap:10px;flex-wrap:wrap}
+.app-badges a{border:1px solid #7847ff55;padding:12px 17px;border-radius:12px;font-size:12px;font-weight:800;color:#111827;transition:.2s}
+.app-badges a:hover{background:#7847ff;color:#fff;border-color:#7847ff}
 
-  <div class="relative z-10 mx-auto max-w-7xl px-5 sm:px-8 w-full py-16 lg:py-24">
-    <div class="grid lg:grid-cols-2 gap-10 xl:gap-16 items-center">
+/* ── SPARE PARTS STRIP ── */
+.tag-legacy{display:inline-block;border-radius:30px;background:#eee8ff;color:#7044ed;padding:6px 11px;font-size:10px;font-weight:900}
+.category-strip{display:flex;gap:10px;overflow:auto;padding:5px 0 15px}
+.category-strip span{white-space:nowrap;border:1px solid #e5e8ef;background:white;border-radius:30px;padding:10px 17px;font-size:12px;font-weight:800;cursor:default;transition:.2s}
+.category-strip span:hover{background:#7847ff;color:white}
+.season-card{border-radius:18px;background:#f2efff;padding:27px;display:flex;justify-content:space-between;align-items:center;gap:20px}
+.season-card h3{font-size:22px;margin:0 0 8px;color:#111827}
+.season-card p{font-size:12px;color:#70798a;line-height:1.8}
 
-      {{-- TEXT --}}
-      <div>
-        <div class="section-label fade-up mb-6">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          متاح الآن · تجربة قيادة مجانية
-        </div>
+/* ── NEWSLETTER ── */
+.newsletter{background:linear-gradient(110deg,#f0eaff,#e8e0ff);border-radius:22px;padding:40px;color:#111827;display:flex;justify-content:space-between;align-items:center;gap:25px}
+.newsletter h2{font-size:clamp(20px,3vw,30px);margin:6px 0;color:#111827}
+.newsletter input{background:#fff;border:1px solid #e4e8f0;border-radius:40px;padding:14px 18px;color:#111827;min-width:260px;font:inherit}
 
-        <h1 class="text-5xl sm:text-6xl xl:text-7xl font-black leading-[1.05] tracking-tight text-slate-900 fade-up" style="animation-delay:.1s">
-          عيش السرعة<br>
-          <span class="text-shimmer">بإحساس مختلف</span>
-        </h1>
+/* ── PROGRESS BAR ── */
+.progress-bar-top{position:fixed;z-index:100;top:0;inset-inline-start:0;height:3px;background:#9b75ff;width:0}
 
-        <p class="mt-6 text-lg text-slate-500 max-w-lg leading-relaxed fade-up" style="animation-delay:.22s">
-          أفضل الماركات العالمية · فحص معتمد لكل دراجة · توصيل لكل محافظات مصر · ضمان حقيقي
-        </p>
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(35px);transition:opacity .8s,transform .8s cubic-bezier(.2,.7,.2,1)}
+.reveal.show{opacity:1;transform:none}
+.delay{transition-delay:.15s}
 
-        <div class="mt-8 flex flex-wrap gap-4 fade-up" style="animation-delay:.34s">
-          <a href="{{ route('motorcycles.index') }}"
-             class="btn-primary inline-flex items-center gap-2.5 rounded-2xl px-8 py-4 text-sm font-bold">
-            <i class="fa-solid fa-bolt"></i> ادخل المتجر
-          </a>
-          <a href="{{ route('brands.index') }}"
-             class="btn-outline inline-flex items-center gap-2 rounded-2xl px-7 py-4 text-sm font-bold">
-            الماركات <i class="fa-solid fa-arrow-left text-xs"></i>
-          </a>
-        </div>
+/* ── RESPONSIVE ── */
+@media(max-width:950px){
+  .brands{grid-template-columns:repeat(4,1fr)}
+  .cats,.services{grid-template-columns:repeat(2,1fr)}
+  .products{grid-template-columns:repeat(2,1fr)}
+  .about,.split-feature,.contact-panel{grid-template-columns:1fr}
+  .timeline{grid-template-columns:repeat(2,1fr)}
+  .benefit-grid{grid-template-columns:repeat(2,1fr)}
+  .brand-story{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:600px){
+  .section{padding:58px 0}
+  .hero{min-height:620px}.heroText{padding:75px 0}
+  .stats{gap:20px}.stats b{font-size:22px}
+  .head{align-items:start;flex-direction:column}
+  .cats{gap:10px}.cat{height:210px}
+  .products{gap:10px}.product img{height:155px}
+  .services,.reviews,.articles{grid-template-columns:1fr}
+  .promo{padding:25px;min-height:330px}
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .gallery{grid-template-columns:1fr 1fr;grid-template-rows:170px 140px 140px}
+  .gallery a:first-child{grid-column:span 2;grid-row:auto}
+  .timeline,.benefit-grid,.brand-story{grid-template-columns:1fr}
+  .app-banner,.season-card{display:block}.app-badges{margin-top:18px}
+  .feature-photo{min-height:300px}
+  .newsletter{padding:25px;display:block}.newsletter form{margin-top:20px}.newsletter input{width:100%;min-width:0}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+@endpush
 
-        {{-- Trust badges --}}
-        <div class="mt-10 flex flex-wrap items-center gap-4 fade-up" style="animation-delay:.46s">
-          @foreach([['fa-shield-halved','فحص معتمد'],['fa-truck-fast','توصيل سريع'],['fa-headset','دعم 24/7'],['fa-rotate-left','ضمان حقيقي']] as [$ico,$lbl])
-          <div class="flex items-center gap-1.5 text-xs font-semibold text-slate-500">
-            <i class="fa-solid {{ $ico }} text-brand-500"></i> {{ $lbl }}
-          </div>
-          @endforeach
-        </div>
+@section('content')
+<div class="progress-bar-top" id="progress"></div>
+
+<main>
+
+{{-- ══ HERO ══ --}}
+<section class="hero" id="home">
+  <div class="wrap">
+    <div class="heroText">
+      <span class="eyebrow reveal">{{ __('home.hero_eyebrow_full') }}</span>
+      <h1 class="reveal delay">
+        {{ __('home.hero_title_a') }}<br>
+        <span class="gradient">{{ __('home.hero_title_b') }}</span>
+      </h1>
+      <p class="reveal delay">{{ __('home.hero_desc') }}</p>
+      <div class="reveal delay" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:25px">
+        <a class="btn-legacy" href="#motorcycles">{{ __('home.hero_cta_explore') }} ←</a>
+        <a class="btn-legacy outline" href="#about">{{ __('home.hero_cta_about') }}</a>
       </div>
-
-      {{-- IMAGE --}}
-      <div class="relative scale-in" style="animation-delay:.2s">
-        <div class="relative rounded-3xl overflow-hidden shadow-2xl shadow-brand-200/50 border border-brand-100">
-          @if($featuredMotorcycle?->image_url)
-            <img src="{{ $featuredMotorcycle->image_url }}"
-                 class="w-full aspect-[4/3] object-cover"
-                 alt="{{ $featuredMotorcycle->model_name }}" />
-          @else
-            <img src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=1000&q=90"
-                 class="w-full aspect-[4/3] object-cover" alt="Motorcycle" />
-          @endif
-          {{-- Bottom overlay badge --}}
-          <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-white/95 to-transparent pt-16 pb-5 px-5">
-            @if($featuredMotorcycle)
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-xs font-bold uppercase tracking-widest text-brand-600">{{ $featuredMotorcycle->brand->name }}</p>
-                <p class="text-xl font-extrabold text-slate-900">{{ $featuredMotorcycle->model_name }}</p>
-                @if($featuredMotorcycle->engine_capacity)
-                  <p class="text-sm text-slate-500 mt-0.5">{{ $featuredMotorcycle->engine_capacity }} CC
-                    @if($featuredMotorcycle->horsepower) · {{ $featuredMotorcycle->horsepower }} HP @endif
-                  </p>
-                @endif
-              </div>
-              <a href="{{ route('motorcycles.show', $featuredMotorcycle->slug) }}"
-                 class="btn-primary rounded-xl px-5 py-2.5 text-sm font-bold shrink-0">
-                عرض
-              </a>
-            </div>
-            @else
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white shrink-0">
-                <i class="fa-solid fa-shield-halved"></i>
-              </div>
-              <div>
-                <p class="font-bold text-sm text-slate-900">100% معتمدة</p>
-                <p class="text-xs text-slate-500">فحص + ضمان شامل</p>
-              </div>
-            </div>
-            @endif
-          </div>
-        </div>
-
-        {{-- Floating cards --}}
-        <div class="absolute -top-6 -right-6 glass rounded-2xl px-4 py-3 shadow-lg float">
-          <div class="flex items-center gap-2.5">
-            <div class="w-9 h-9 rounded-lg bg-brand-100 flex items-center justify-center text-brand-600">
-              <i class="fa-solid fa-motorcycle"></i>
-            </div>
-            <div>
-              <p class="text-xs font-bold text-slate-900">+150 موديل</p>
-              <p class="text-[10px] text-slate-500">في المخزون</p>
-            </div>
-          </div>
-        </div>
-        <div class="absolute -bottom-5 -left-5 glass rounded-2xl px-4 py-3 shadow-lg float" style="animation-delay:.8s">
-          <div class="flex items-center gap-2.5">
-            <div class="w-9 h-9 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
-              <i class="fa-solid fa-star"></i>
-            </div>
-            <div>
-              <p class="text-xs font-bold text-slate-900">98% رضا</p>
-              <p class="text-[10px] text-slate-500">12,000+ عميل</p>
-            </div>
-          </div>
-        </div>
+      <div class="stats reveal">
+        <div><b data-count="10000">0</b><span>{{ __('home.stat_trusted') }}</span></div>
+        <div><b data-count="25">0</b><span>{{ __('home.stat_brand_models') }}</span></div>
+        <div><b data-count="12">0</b><span>{{ __('home.stat_service_centers') }}</span></div>
       </div>
-
     </div>
-  </div>
-
-  {{-- Wave divider --}}
-  <div class="absolute bottom-0 inset-x-0">
-    <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full">
-      <path d="M0 60 C360 0 1080 0 1440 60 L1440 60 L0 60Z" fill="#ffffff"/>
-    </svg>
   </div>
 </section>
 
-
-{{-- ════════════════════════════════════════════
-     2. STATS BAR
-════════════════════════════════════════════ --}}
-<section class="bg-white border-b border-slate-100">
-  <div class="mx-auto max-w-7xl px-5 sm:px-8">
-    <div class="grid grid-cols-2 md:grid-cols-4 divide-x divide-slate-100 rtl:divide-x-reverse">
-      @foreach([
-        ['150+','دراجة في المخزون',      'fa-motorcycle'],
-        ['12K+','عميل سعيد',             'fa-users'],
-        ['98%', 'نسبة رضا العملاء',      'fa-heart'],
-        ['6',   'ماركات عالمية',         'fa-gem'],
-      ] as [$num,$lbl,$ico])
-      <div class="py-8 px-6 text-center reveal">
-        <div class="flex items-center justify-center gap-2 mb-1">
-          <i class="fa-solid {{ $ico }} text-brand-500 text-lg"></i>
-          <span class="text-3xl font-black text-slate-900 num-counter">{{ $num }}</span>
-        </div>
-        <p class="text-sm text-slate-500 font-medium">{{ $lbl }}</p>
+{{-- ══ BRANDS ══ --}}
+<section class="section" style="padding:35px 0;background:white">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <span class="eyebrow">{{ __('home.brands_eyebrow') }}</span>
+        <h2>{{ __('home.brands_heading') }}</h2>
       </div>
+    </div>
+    <div class="grid brands">
+      @forelse(($brands ?? collect()) as $brand)
+        <a class="brand" href="{{ route('brands.show', $brand->slug) }}">{{ $brand->name }}</a>
+      @empty
+        @foreach(['HONDA','YAMAHA','SUZUKI','Kawasaki','BMW','Benelli','aprilia','KTM'] as $b)
+          <div class="brand">{{ $b }}</div>
+        @endforeach
+      @endforelse
+    </div>
+  </div>
+</section>
+
+{{-- ══ CATEGORIES ══ --}}
+<section class="section" id="categories">
+  <div class="wrap">
+    <div class="head reveal">
+      <div>
+        <span class="eyebrow">{{ __('home.cats_eyebrow') }}</span>
+        <h2>{{ __('home.cats_heading') }}</h2>
+        <p>{{ __('home.cats_subheading') }}</p>
+      </div>
+      <a class="purple" href="{{ route('motorcycles.index') }}">{{ __('home.cats_all_link') }} ←</a>
+    </div>
+    <div class="grid cats">
+      @foreach([
+        ['cats_sport',   'cats_sport_desc',   'photo-1558981806-ec527fa84c39'],
+        ['cats_touring', 'cats_touring_desc',  'photo-1558981403-c5f9899a28bc'],
+        ['cats_adventure','cats_adventure_desc','photo-1568772585407-9361f9bf3a87'],
+        ['cats_scooter', 'cats_scooter_desc',  'photo-1558981806-ec527fa84c39'],
+      ] as [$titleKey,$descKey,$photo])
+      <a class="cat reveal" href="{{ route('motorcycles.index') }}">
+        <img loading="lazy" src="https://images.unsplash.com/{{ $photo }}?auto=format&fit=crop&w=700&q=85" alt="{{ __('home.'.$titleKey) }}">
+        <div><h3>{{ __('home.'.$titleKey) }}</h3><p>{{ __('home.'.$descKey) }}</p></div>
+      </a>
       @endforeach
     </div>
   </div>
 </section>
 
-
-{{-- ════════════════════════════════════════════
-     3. MARQUEE BRANDS
-════════════════════════════════════════════ --}}
-<div class="bg-slate-50 border-y border-slate-100 py-4 marquee-wrap overflow-hidden">
-  <div class="marquee-track gap-10 items-center text-sm font-black uppercase tracking-[0.25em] text-slate-400 select-none">
-    @php $marqueeItems = $brands->count() ? $brands->pluck('name')->toArray() : ['AURUM','HOUGAN','VELOCE','APEX','NITRO','ZENITH']; @endphp
-    @foreach(array_merge($marqueeItems,$marqueeItems,$marqueeItems,$marqueeItems) as $bn)
-      <span class="hover:text-brand-600 transition cursor-default shrink-0">{{ $bn }}</span>
-      <span class="text-brand-300 shrink-0">✦</span>
-    @endforeach
-  </div>
-</div>
-
-
-{{-- ════════════════════════════════════════════
-     4. FEATURED MOTORCYCLE (full-width spotlight)
-════════════════════════════════════════════ --}}
-@if($featuredMotorcycle)
-<section class="py-20 bg-white">
-  <div class="mx-auto max-w-7xl px-5 sm:px-8">
-    <div class="reveal mb-12 text-center">
-      <span class="section-label"><i class="fa-solid fa-fire-flame-curved"></i> موديل مميز</span>
-      <h2 class="mt-4 text-4xl sm:text-5xl font-black text-slate-900">
-        الاختيار <span class="text-gradient">الأول</span>
-      </h2>
-    </div>
-
-    <div class="grid lg:grid-cols-2 gap-10 items-center">
-      {{-- Big image --}}
-      <div class="reveal rounded-3xl overflow-hidden bg-slate-50 border border-slate-100 shadow-xl shadow-slate-100/80">
-        @if($featuredMotorcycle->image_url)
-          <img src="{{ $featuredMotorcycle->image_url }}"
-               class="w-full aspect-[4/3] object-cover hover:scale-105 transition duration-700"
-               alt="{{ $featuredMotorcycle->model_name }}" />
-        @else
-          <div class="w-full aspect-[4/3] flex items-center justify-center text-slate-300">
-            <i class="fa-solid fa-motorcycle text-8xl"></i>
-          </div>
-        @endif
+{{-- ══ MOTORCYCLES ══ --}}
+<section class="section" style="background:#fff" id="motorcycles">
+  <div class="wrap">
+    <div class="head reveal">
+      <div>
+        <span class="eyebrow">{{ __('home.latest_eyebrow') }}</span>
+        <h2>{{ __('home.latest_heading') }}</h2>
+        <p>{{ __('home.latest_subheading') }}</p>
       </div>
-
-      {{-- Details --}}
-      <div class="reveal" style="transition-delay:.1s">
-        <p class="text-xs font-bold uppercase tracking-[.25em] text-brand-600 mb-2">{{ $featuredMotorcycle->brand->name }}</p>
-        <h3 class="text-4xl font-black text-slate-900 mb-4">{{ $featuredMotorcycle->model_name }}</h3>
-        @if($featuredMotorcycle->description)
-          <p class="text-slate-500 leading-relaxed mb-6">{{ Str::limit($featuredMotorcycle->description, 180) }}</p>
-        @endif
-
-        {{-- Specs grid --}}
-        <div class="grid grid-cols-2 gap-3 mb-8">
-          @foreach([
-            ['fa-tachometer-alt', 'المحرك',        $featuredMotorcycle->engine_capacity ? $featuredMotorcycle->engine_capacity.' CC' : null],
-            ['fa-bolt',           'القوة',          $featuredMotorcycle->horsepower     ? $featuredMotorcycle->horsepower.' HP'     : null],
-            ['fa-gauge-high',     'العزم',          $featuredMotorcycle->torque         ? $featuredMotorcycle->torque.' NM'         : null],
-            ['fa-gears',          'ناقل الحركة',    $featuredMotorcycle->transmission   ?: null],
-            ['fa-tag',            'الفئة',          $featuredMotorcycle->category       ?: null],
-            ['fa-check-circle',   'الحالة',         $featuredMotorcycle->availability_status === 'available' ? 'متاح' : ($featuredMotorcycle->availability_status ?? 'غير محدد')],
-          ] as [$ico,$label,$val])
-            @if($val)
-            <div class="flex items-center gap-3 rounded-xl bg-slate-50 border border-slate-100 px-4 py-3">
-              <div class="w-8 h-8 rounded-lg bg-brand-50 flex items-center justify-center text-brand-600 shrink-0">
-                <i class="fa-solid {{ $ico }} text-sm"></i>
-              </div>
-              <div>
-                <p class="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">{{ $label }}</p>
-                <p class="text-sm font-bold text-slate-900">{{ $val }}</p>
-              </div>
-            </div>
-            @endif
-          @endforeach
-        </div>
-
-        {{-- Price + CTA --}}
-        <div class="flex flex-wrap items-center gap-4">
-          @if($featuredMotorcycle->price)
-          <div>
-            <p class="text-xs text-slate-400 font-semibold">السعر</p>
-            <p class="text-3xl font-black text-brand-700">${{ number_format($featuredMotorcycle->price) }}</p>
-          </div>
+      <a class="btn-legacy" href="{{ route('motorcycles.index') }}">{{ __('home.latest_view_all') }} ←</a>
+    </div>
+    <div class="grid products">
+      @forelse(($motorcycles ?? collect())->take(8) as $m)
+      <a class="product reveal" href="{{ route('motorcycles.show', $m->slug) }}">
+        <img loading="lazy" src="{{ $m->image_url ?? 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=700&q=80' }}" alt="{{ $m->model_name }}">
+        <div class="productInfo">
+          <span class="eyebrow">{{ $m->brand->name ?? 'MOTOVEX' }}</span>
+          <h3>{{ $m->model_name }}</h3>
+          <p>{{ $m->year ?? '' }}</p>
+          @if($m->price)
+            <span class="price">{{ number_format($m->price) }} {{ $m->currency ?? 'EGP' }}</span>
+          @else
+            <span class="price">{{ __('home.latest_ask_price') }}</span>
           @endif
-          <a href="{{ route('motorcycles.show', $featuredMotorcycle->slug) }}"
-             class="btn-primary flex-1 sm:flex-none inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 text-sm font-bold">
-            عرض التفاصيل <i class="fa-solid fa-arrow-left text-xs"></i>
-          </a>
         </div>
+      </a>
+      @empty
+      @foreach(['Street Sport','Adventure 650','Urban Scooter','Touring Pro'] as $m)
+      <a class="product reveal" href="{{ route('motorcycles.index') }}">
+        <img loading="lazy" src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=700&q=80" alt="Motorcycle">
+        <div class="productInfo">
+          <span class="eyebrow">MOTOVEX</span>
+          <h3>{{ $m }}</h3>
+          <p>{{ __('home.latest_empty') }}</p>
+          <span class="price">{{ __('home.latest_learn_more') }} ←</span>
+        </div>
+      </a>
+      @endforeach
+      @endforelse
+    </div>
+  </div>
+</section>
+
+{{-- ══ PROMO ══ --}}
+<section class="section">
+  <div class="wrap">
+    <div class="promo reveal">
+      <div>
+        <span class="eyebrow">{{ __('home.promo_eyebrow') }}</span>
+        <h2>{{ __('home.promo_heading') }}</h2>
+        <p style="color:#e0d6ff;font-size:13px;margin:10px 0 20px;line-height:1.8">{{ __('home.promo_subheading') }}</p>
+        <a class="btn-legacy" href="{{ route('promotions') }}" style="background:#fff;color:#7847ff;box-shadow:none">{{ __('home.promo_cta') }} ←</a>
       </div>
     </div>
   </div>
 </section>
-@endif
 
-
-{{-- ════════════════════════════════════════════
-     5. LATEST MOTORCYCLES GRID
-════════════════════════════════════════════ --}}
-<section class="py-20 bg-slate-50">
-  <div class="mx-auto max-w-7xl px-5 sm:px-8">
-
-    <div class="flex items-end justify-between mb-12 reveal">
+{{-- ══ SERVICES ══ --}}
+<section class="section" id="services" style="background:#fff">
+  <div class="wrap">
+    <div class="head reveal">
       <div>
-        <span class="section-label"><i class="fa-solid fa-motorcycle"></i> الموديلات</span>
-        <h2 class="mt-4 text-4xl sm:text-5xl font-black text-slate-900">
-          أحدث <span class="text-gradient">الموديلات</span>
-        </h2>
+        <span class="eyebrow">{{ __('home.services_eyebrow') }}</span>
+        <h2>{{ __('home.services_heading') }}</h2>
+        <p>{{ __('home.services_subheading') }}</p>
       </div>
-      <a href="{{ route('motorcycles.index') }}"
-         class="btn-outline hidden sm:inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold">
-        عرض الكل <i class="fa-solid fa-arrow-left text-xs"></i>
-      </a>
+      <a class="purple" href="{{ route('services') }}">{{ __('home.services_view_all') }} ←</a>
     </div>
-
-    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-      @forelse($latestMotorcycles as $index => $m)
-      <a href="{{ route('motorcycles.show', $m->slug) }}"
-         class="moto-card card-hover bg-white rounded-2xl overflow-hidden block reveal"
-         style="transition-delay:{{ $index * 0.07 }}s">
-        <div class="relative h-48 overflow-hidden bg-slate-100">
-          @if($m->image_url)
-            <img src="{{ $m->image_url }}" alt="{{ $m->model_name }}" class="w-full h-full object-cover" />
-          @else
-            <div class="w-full h-full flex items-center justify-center text-slate-300">
-              <i class="fa-solid fa-motorcycle text-5xl"></i>
-            </div>
-          @endif
-          @if($m->is_featured)
-            <span class="absolute top-3 right-3 rounded-full bg-brand-600 text-white px-2.5 py-0.5 text-[10px] font-bold">مميز</span>
-          @endif
-          @if($m->availability_status === 'available')
-            <span class="absolute top-3 left-3 rounded-full bg-emerald-500 text-white px-2.5 py-0.5 text-[10px] font-bold">متاح</span>
-          @endif
-        </div>
-        <div class="p-5">
-          <p class="text-[10px] font-bold uppercase tracking-[.2em] text-brand-600 mb-1">{{ $m->brand->name }}</p>
-          <h3 class="text-base font-bold text-slate-900 mb-1">{{ $m->model_name }}</h3>
-          <div class="flex flex-wrap gap-1.5 mb-4">
-            @if($m->category)
-              <span class="text-[10px] rounded-full bg-slate-100 px-2.5 py-0.5 text-slate-500">{{ $m->category }}</span>
-            @endif
-            @if($m->engine_capacity)
-              <span class="text-[10px] rounded-full bg-slate-100 px-2.5 py-0.5 text-slate-500">{{ $m->engine_capacity }}cc</span>
-            @endif
-            @if($m->horsepower)
-              <span class="text-[10px] rounded-full bg-slate-100 px-2.5 py-0.5 text-slate-500">{{ $m->horsepower }}hp</span>
-            @endif
-          </div>
-          <div class="flex items-center justify-between">
-            @if($m->price)
-              <span class="text-lg font-black text-brand-700">${{ number_format($m->price) }}</span>
-            @else
-              <span class="text-sm font-semibold text-slate-400">اتصل للسعر</span>
-            @endif
-            <span class="text-brand-600 text-xs font-bold flex items-center gap-1 group-hover:gap-2 transition-all">
-              التفاصيل <i class="fa-solid fa-arrow-left text-[9px]"></i>
-            </span>
-          </div>
-        </div>
+    <div class="grid services">
+      @forelse(($services ?? collect())->take(8) as $s)
+      <a class="service reveal" href="{{ route('services') }}">
+        <div class="ico-wrap"><i class="fa-solid {{ $s->iconClass ?? 'fa-star' }}"></i></div>
+        <h3>{{ $s->title }}</h3>
+        <p>{{ $s->description }}</p>
       </a>
       @empty
-      {{-- Static fallback --}}
       @foreach([
-        ['Sport RS','AURUM','Cruiser','650','photo-1558981806-ec527fa84c39'],
-        ['Naked 400','NITRO','Naked','400','photo-1568772585407-9361f9bf3a87'],
-        ['Adventure X','APEX','Adventure','800','photo-1558981359-219d6364c9c8'],
-        ['Classic GT','VELOCE','Classic','500','photo-1558981403-c5f9899a28bc'],
-      ] as $i => [$name,$brand,$cat,$cc,$photo])
-      <div class="moto-card card-hover bg-white rounded-2xl overflow-hidden reveal" style="transition-delay:{{ $i * 0.07 }}s">
-        <div class="relative h-48 overflow-hidden">
-          <img src="https://images.unsplash.com/{{ $photo }}?auto=format&fit=crop&w=600&q=80"
-               class="w-full h-full object-cover" alt="{{ $name }}" />
-        </div>
-        <div class="p-5">
-          <p class="text-[10px] font-bold uppercase tracking-[.2em] text-brand-600 mb-1">{{ $brand }}</p>
-          <h3 class="text-base font-bold text-slate-900 mb-3">{{ $name }}</h3>
-          <div class="flex gap-1.5 mb-4">
-            <span class="text-[10px] rounded-full bg-slate-100 px-2.5 py-0.5 text-slate-500">{{ $cat }}</span>
-            <span class="text-[10px] rounded-full bg-slate-100 px-2.5 py-0.5 text-slate-500">{{ $cc }}cc</span>
-          </div>
-          <a href="{{ route('motorcycles.index') }}" class="text-brand-600 text-xs font-bold flex items-center gap-1">
-            التفاصيل <i class="fa-solid fa-arrow-left text-[9px]"></i>
-          </a>
-        </div>
+        ['fa-screwdriver-wrench','svc_fallback_1_title','svc_fallback_1_desc'],
+        ['fa-gears',             'svc_fallback_2_title','svc_fallback_2_desc'],
+        ['fa-wallet',            'svc_fallback_3_title','svc_fallback_3_desc'],
+        ['fa-road',              'svc_fallback_4_title','svc_fallback_4_desc'],
+      ] as $s)
+      <div class="service reveal">
+        <div class="ico-wrap"><i class="fa-solid {{ $s[0] }}"></i></div>
+        <h3>{{ __('home.'.$s[1]) }}</h3>
+        <p>{{ __('home.'.$s[2]) }}</p>
       </div>
       @endforeach
       @endforelse
     </div>
-
-    <div class="mt-10 text-center reveal sm:hidden">
-      <a href="{{ route('motorcycles.index') }}"
-         class="btn-primary inline-flex items-center gap-2 rounded-2xl px-8 py-3.5 text-sm font-bold">
-        عرض كل الموديلات <i class="fa-solid fa-arrow-left text-xs"></i>
-      </a>
-    </div>
-
   </div>
 </section>
 
-
-{{-- ════════════════════════════════════════════
-     6. BRANDS SHOWCASE
-════════════════════════════════════════════ --}}
-@if($brands->count())
-<section class="py-20 bg-white">
-  <div class="mx-auto max-w-7xl px-5 sm:px-8">
-
-    <div class="text-center mb-12 reveal">
-      <span class="section-label"><i class="fa-solid fa-gem"></i> الماركات</span>
-      <h2 class="mt-4 text-4xl sm:text-5xl font-black text-slate-900">
-        ماركات <span class="text-gradient">عالمية</span>
-      </h2>
-      <p class="mt-3 text-slate-500 max-w-md mx-auto">مختارة بعناية لتقديم أفضل تجربة قيادة</p>
+{{-- ══ ABOUT ══ --}}
+<section class="section" id="about">
+  <div class="wrap">
+    <div class="about">
+      <div class="reveal">
+        <span class="eyebrow">{{ __('home.about_eyebrow') }}</span>
+        <h2 style="font-size:clamp(32px,4vw,50px);line-height:1.3;color:#111827">
+          {{ __('home.about_heading_a') }}<br>
+          <span class="gradient">{{ __('home.about_heading_b') }}</span>
+        </h2>
+        <p>{{ __('home.about_text') }}</p>
+        <a class="btn-legacy" href="#contact">{{ __('home.about_cta') }} ←</a>
+      </div>
+      <img class="reveal delay" loading="lazy" src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=1000&q=85" alt="Motorcycle riding">
     </div>
-
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-      @foreach($brands as $i => $brand)
-      <a href="{{ route('brands.show', $brand->slug) }}"
-         class="card-hover bg-white rounded-2xl p-5 text-center reveal group"
-         style="transition-delay:{{ $i * 0.06 }}s">
-        @if($brand->logo_url)
-          <img src="{{ $brand->logo_url }}" alt="{{ $brand->name }}"
-               class="h-12 w-auto mx-auto object-contain mb-3 grayscale group-hover:grayscale-0 transition" />
-        @else
-          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-100 to-brand-200 mx-auto flex items-center justify-center mb-3">
-            <span class="text-xl font-black text-brand-700">{{ strtoupper(substr($brand->name,0,1)) }}</span>
-          </div>
-        @endif
-        <p class="text-xs font-bold text-slate-700 group-hover:text-brand-600 transition">{{ $brand->name }}</p>
-        @if(isset($brand->motorcycles_count))
-          <p class="text-[10px] text-slate-400 mt-0.5">{{ $brand->motorcycles_count }} موديل</p>
-        @endif
-      </a>
-      @endforeach
+    <div class="metrics reveal">
+      <div><b data-count="10000">0</b><span>{{ __('home.stat_trusted') }}</span></div>
+      <div><b data-count="25">0</b><span>{{ __('home.stat_brand_models') }}</span></div>
+      <div><b data-count="12">0</b><span>{{ __('home.stat_service_centers') }}</span></div>
+      <div><b>24/7</b><span>{{ app()->getLocale() === 'ar' ? 'دعم ومساندة' : 'Support' }}</span></div>
     </div>
-
-    <div class="mt-10 text-center reveal">
-      <a href="{{ route('brands.index') }}"
-         class="btn-outline inline-flex items-center gap-2 rounded-full px-7 py-3 text-sm font-bold">
-        عرض كل الماركات <i class="fa-solid fa-arrow-left text-xs"></i>
-      </a>
-    </div>
-
   </div>
 </section>
-@endif
 
-
-{{-- ════════════════════════════════════════════
-     7. WHY US
-════════════════════════════════════════════ --}}
-<section class="py-20 bg-slate-50">
-  <div class="mx-auto max-w-7xl px-5 sm:px-8">
-
-    <div class="text-center mb-14 reveal">
-      <span class="section-label"><i class="fa-solid fa-award"></i> لماذا نحن؟</span>
-      <h2 class="mt-4 text-4xl sm:text-5xl font-black text-slate-900">
-        مش مجرد <span class="text-gradient">وكالة</span>
-      </h2>
-      <p class="mt-3 text-slate-500 max-w-lg mx-auto">نقدم تجربة شراء كاملة من الفحص حتى التوصيل</p>
+{{-- ══ REVIEWS ══ --}}
+<section class="section" style="background:#fff">
+  <div class="wrap">
+    <div class="head reveal">
+      <div>
+        <span class="eyebrow">{{ __('home.testimonials_eyebrow') }}</span>
+        <h2>{{ __('home.testimonials_heading') }}</h2>
+      </div>
     </div>
+    <div class="grid reviews">
+      <div class="review reveal"><div class="stars">★★★★★</div><p>{{ __('home.review_1') }}</p><b>{{ __('home.review_customer') }}</b></div>
+      <div class="review reveal"><div class="stars">★★★★★</div><p>{{ __('home.review_2') }}</p><b>{{ __('home.review_customer') }}</b></div>
+      <div class="review reveal"><div class="stars">★★★★★</div><p>{{ __('home.review_3') }}</p><b>{{ __('home.review_customer') }}</b></div>
+    </div>
+  </div>
+</section>
 
-    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-      @foreach([
-        ['fa-shield-halved','فحص معتمد','كل دراجة تعدي على فحص شامل من فريق متخصص قبل التسليم','from-brand-500 to-brand-700','brand'],
-        ['fa-key','تجربة مجانية','جرب الدراجة قبل ما تشتريها واتأكد إنها المناسبة ليك','from-violet-500 to-violet-700','violet'],
-        ['fa-truck-fast','توصيل سريع','توصيل آمن لكل محافظات مصر مع تأمين كامل على الشحنة','from-indigo-500 to-indigo-700','indigo'],
-        ['fa-headset','دعم 24/7','فريق دعم فني متخصص جاهز يرد على أي استفسار في أي وقت','from-purple-500 to-purple-700','purple'],
-      ] as $i => [$ico,$title,$desc,$grad,$color])
-      <div class="why-card card-hover bg-white rounded-2xl p-7 reveal" style="transition-delay:{{ $i * 0.09 }}s">
-        <div class="why-icon w-14 h-14 rounded-2xl bg-gradient-to-br {{ $grad }} flex items-center justify-center text-white text-2xl mb-6 shadow-lg shadow-{{ $color }}-200">
-          <i class="fa-solid {{ $ico }}"></i>
-        </div>
-        <h3 class="text-lg font-extrabold text-slate-900 mb-2">{{ $title }}</h3>
-        <p class="text-sm text-slate-500 leading-relaxed">{{ $desc }}</p>
+{{-- ══ FAQ ══ --}}
+<section class="section" style="background:#fff">
+  <div class="wrap faq">
+    <div class="head">
+      <div>
+        <span class="eyebrow">{{ __('home.faq_eyebrow') }}</span>
+        <h2>{{ __('home.faq_heading') }}</h2>
+      </div>
+    </div>
+    @foreach(['faq_q1'=>'faq_a1','faq_q2'=>'faq_a2','faq_q3'=>'faq_a3','faq_q4'=>'faq_a4'] as $qk=>$ak)
+    <div class="faqItem">
+      <button class="faqQ">{{ __('home.'.$qk) }} <i class="fa fa-plus purple"></i></button>
+      <div class="faqA">{{ __('home.'.$ak) }}</div>
+    </div>
+    @endforeach
+  </div>
+</section>
+
+{{-- ══ MARQUEE ══ --}}
+<section class="marquee">
+  <div class="marquee-track">
+    <span>{{ __('home.marquee_text') }} </span>
+    <span>{{ __('home.marquee_text') }} </span>
+  </div>
+</section>
+
+{{-- ══ WHY MOTOVEX ══ --}}
+<section class="section" id="why-motovex">
+  <div class="wrap split-feature">
+    <div class="feature-photo reveal">
+      <img loading="lazy" src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=1100&q=90" alt="Motorcycle detail">
+      <div class="floating-note"><b>360°</b><span>{{ __('home.why_floating_note') }}</span></div>
+    </div>
+    <div class="feature-copy reveal delay">
+      <span class="eyebrow">{{ __('home.why_eyebrow') }}</span>
+      <h2>{{ __('home.why_heading_a') }} <span class="purple">{{ __('home.why_heading_b') }}</span></h2>
+      <p>{{ __('home.why_text') }}</p>
+      <div class="checkline"><i class="fa-solid fa-circle-check"></i><span>{{ __('home.why_check_1') }}</span></div>
+      <div class="checkline"><i class="fa-solid fa-circle-check"></i><span>{{ __('home.why_check_2') }}</span></div>
+      <div class="checkline"><i class="fa-solid fa-circle-check"></i><span>{{ __('home.why_check_3') }}</span></div>
+      <a class="btn-legacy" href="#about">{{ __('home.why_cta') }} ←</a>
+    </div>
+  </div>
+</section>
+
+{{-- ══ TIMELINE ══ --}}
+<section class="section">
+  <div class="wrap">
+    <div class="head reveal">
+      <div>
+        <span class="eyebrow">{{ __('home.timeline_eyebrow') }}</span>
+        <h2>{{ __('home.timeline_heading') }}</h2>
+        <p>{{ __('home.timeline_subheading') }}</p>
+      </div>
+    </div>
+    <div class="timeline">
+      @foreach([['step1_title','step1_desc'],['step2_title','step2_desc'],['step3_title','step3_desc'],['step4_title','step4_desc']] as $s)
+      <div class="step reveal">
+        <h3>{{ __('home.'.$s[0]) }}</h3>
+        <p>{{ __('home.'.$s[1]) }}</p>
       </div>
       @endforeach
     </div>
-
   </div>
 </section>
 
-
-{{-- ════════════════════════════════════════════
-     8. PROCESS STEPS
-════════════════════════════════════════════ --}}
-<section class="py-20 bg-white">
-  <div class="mx-auto max-w-7xl px-5 sm:px-8">
-
-    <div class="text-center mb-14 reveal">
-      <span class="section-label"><i class="fa-solid fa-list-check"></i> كيف تشتري؟</span>
-      <h2 class="mt-4 text-4xl sm:text-5xl font-black text-slate-900">
-        خطوات <span class="text-gradient">بسيطة</span>
-      </h2>
+{{-- ══ SMART CHOICE CATEGORIES ══ --}}
+<section class="section">
+  <div class="wrap">
+    <div class="head reveal">
+      <div>
+        <span class="eyebrow">{{ __('home.smart_eyebrow') }}</span>
+        <h2>{{ __('home.smart_heading') }}</h2>
+        <p>{{ __('home.smart_subheading') }}</p>
+      </div>
     </div>
-
-    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
-      {{-- Connecting line --}}
-      <div class="hidden lg:block absolute top-10 right-[12.5%] left-[12.5%] h-px bg-gradient-to-l from-brand-200 via-brand-400 to-brand-200"></div>
-
+    <div class="grid cats">
       @foreach([
-        ['01','اختر موديلك','تصفح مئات الموديلات وفلتر حسب الفئة والماركة'],
-        ['02','احجز تجربة','تواصل معنا واحجز تجربة قيادة مجانية'],
-        ['03','افحص واطمن','فريقنا يعمل فحصاً شاملاً قدامك'],
-        ['04','استلم وطر','توصيل لبابك مع ضمان كامل'],
-      ] as $i => [$step,$title,$desc])
-      <div class="text-center reveal" style="transition-delay:{{ $i * 0.1 }}s">
-        <div class="relative inline-flex mb-5">
-          <div class="w-20 h-20 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white text-2xl font-black shadow-lg shadow-brand-200 mx-auto">
-            {{ $step }}
-          </div>
-          @if($i < 3)
-          <div class="absolute top-1/2 -left-full w-full h-px bg-brand-200 hidden lg:block"></div>
+        ['smart_tag_perf',   'smart_title_sport',   'smart_desc_sport',   'photo-1558981806-ec527fa84c39'],
+        ['smart_tag_adv',    'smart_title_adv',     'smart_desc_adv',     'photo-1568772585407-9361f9bf3a87'],
+        ['smart_tag_comfort','smart_title_touring', 'smart_desc_touring', 'photo-1558981403-c5f9899a28bc'],
+        ['smart_tag_city',   'smart_title_urban',   'smart_desc_urban',   'photo-1558981806-ec527fa84c39'],
+      ] as [$tagKey,$titleKey,$descKey,$photo])
+      <a class="cat reveal" href="{{ route('motorcycles.index') }}">
+        <img loading="lazy" src="https://images.unsplash.com/{{ $photo }}?auto=format&fit=crop&w=700&q=85" alt="{{ __('home.'.$titleKey) }}">
+        <div>
+          <span class="tag-legacy">{{ __('home.'.$tagKey) }}</span>
+          <h3>{{ __('home.'.$titleKey) }}</h3>
+          <p>{{ __('home.'.$descKey) }}</p>
+        </div>
+      </a>
+      @endforeach
+    </div>
+  </div>
+</section>
+
+{{-- ══ SPARE PARTS ══ --}}
+<section class="section" style="background:#fff">
+  <div class="wrap">
+    <div class="head reveal">
+      <div>
+        <span class="eyebrow">{{ __('home.parts_ext_eyebrow') }}</span>
+        <h2>{{ __('home.parts_ext_heading') }}</h2>
+        <p>{{ __('home.parts_ext_subheading') }}</p>
+      </div>
+      <a class="btn-legacy" href="{{ route('spare-parts.index') }}">{{ __('home.parts_shop_cta') }} ←</a>
+    </div>
+    <div class="category-strip reveal">
+      @foreach(['parts_cat_oils','parts_cat_filters','parts_cat_brakes','parts_cat_tires','parts_cat_chains','parts_cat_batteries','parts_cat_accessories','parts_cat_protection'] as $cat)
+        <span>{{ __('home.'.$cat) }}</span>
+      @endforeach
+    </div>
+    <div class="grid products" style="margin-bottom:25px">
+      @forelse(($spareParts ?? collect())->take(4) as $sp)
+      <a class="product reveal" href="{{ route('spare-parts.show', $sp->slug) }}">
+        <img loading="lazy" src="{{ $sp->image_url ?? 'https://images.unsplash.com/photo-1611821064430-0d40291d0f0d?auto=format&fit=crop&w=700&q=80' }}" alt="{{ $sp->name }}">
+        <div class="productInfo">
+          <span class="eyebrow">{{ $sp->categoryLabel() }}</span>
+          <h3>{{ $sp->name }}</h3>
+          <p>{{ $sp->brand->name ?? 'MOTOVEX' }}</p>
+          @if($sp->price)
+            <span class="price">{{ number_format($sp->price) }} {{ $sp->currency ?? 'EGP' }}</span>
+          @else
+            <span class="price">{{ __('home.latest_ask_price') }}</span>
           @endif
         </div>
-        <h3 class="text-base font-extrabold text-slate-900 mb-2">{{ $title }}</h3>
-        <p class="text-sm text-slate-500 leading-relaxed max-w-[180px] mx-auto">{{ $desc }}</p>
+      </a>
+      @empty
+      @foreach(['Brake Pad Set','Oil Filter Pro','Chain Kit Premium','Sport Battery'] as $sp)
+      <a class="product reveal" href="{{ route('spare-parts.index') }}">
+        <img loading="lazy" src="https://images.unsplash.com/photo-1611821064430-0d40291d0f0d?auto=format&fit=crop&w=700&q=80" alt="{{ $sp }}">
+        <div class="productInfo">
+          <span class="eyebrow">MOTOVEX</span>
+          <h3>{{ $sp }}</h3>
+          <p>{{ __('home.parts_genuine') }}</p>
+          <span class="price">{{ __('home.latest_learn_more') }} ←</span>
+        </div>
+      </a>
+      @endforeach
+      @endforelse
+    </div>
+    <div class="season-card reveal">
+      <div>
+        <h3>{{ __('home.parts_season_title') }}</h3>
+        <p>{{ __('home.parts_season_text') }}</p>
+      </div>
+      <a class="btn-legacy" href="{{ route('spare-parts.index') }}">{{ __('home.parts_browse_cta') }} ←</a>
+    </div>
+  </div>
+</section>
+
+{{-- ══ BENEFITS ══ --}}
+<section class="section">
+  <div class="wrap">
+    <div class="head reveal">
+      <div>
+        <span class="eyebrow">{{ __('home.commit_eyebrow') }}</span>
+        <h2>{{ __('home.commit_heading') }}</h2>
+      </div>
+    </div>
+    <div class="benefit-grid">
+      @foreach([
+        ['fa-shield-halved','benefit_1_title','benefit_1_desc'],
+        ['fa-headset',      'benefit_2_title','benefit_2_desc'],
+        ['fa-screwdriver-wrench','benefit_3_title','benefit_3_desc'],
+        ['fa-tags',         'benefit_4_title','benefit_4_desc'],
+        ['fa-store',        'benefit_5_title','benefit_5_desc'],
+        ['fa-motorcycle',   'benefit_6_title','benefit_6_desc'],
+      ] as $b)
+      <div class="benefit reveal">
+        <div class="ico-wrap"><i class="fa-solid {{ $b[0] }}"></i></div>
+        <div><h3>{{ __('home.'.$b[1]) }}</h3><p>{{ __('home.'.$b[2]) }}</p></div>
       </div>
       @endforeach
     </div>
-
   </div>
 </section>
 
-
-{{-- ════════════════════════════════════════════
-     9. BIG CTA BANNER
-════════════════════════════════════════════ --}}
-<section class="py-20 bg-slate-50">
-  <div class="mx-auto max-w-7xl px-5 sm:px-8">
-    <div class="reveal relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-600 to-brand-800 p-12 sm:p-16 text-center">
-      {{-- Decoration --}}
-      <div class="absolute inset-0 opacity-10">
-        <div class="orbit-ring w-96 h-96 absolute -top-20 -right-20 border-white"></div>
-        <div class="orbit-ring w-64 h-64 absolute -bottom-10 -left-10 border-white"></div>
+{{-- ══ GALLERY ══ --}}
+<section class="section">
+  <div class="wrap">
+    <div class="head reveal">
+      <div>
+        <span class="eyebrow">{{ __('home.gallery_eyebrow') }}</span>
+        <h2>{{ __('home.gallery_heading') }}</h2>
+        <p>{{ __('home.gallery_subheading') }}</p>
       </div>
-      <div class="relative z-10">
-        <span class="inline-flex items-center gap-2 rounded-full bg-white/20 px-4 py-1.5 text-xs font-bold text-white mb-6">
-          <i class="fa-solid fa-calendar-check"></i> تجربة قيادة مجانية
-        </span>
-        <h2 class="text-4xl sm:text-5xl lg:text-6xl font-black text-white mb-5">
-          جاهز تبدأ رحلتك؟
-        </h2>
-        <p class="text-brand-200 text-lg max-w-md mx-auto mb-10">
-          احجز تجربة قيادة مجانية دلوقتي وخد قرارك وأنت مطمن تماماً
-        </p>
-        <div class="flex flex-wrap items-center justify-center gap-4">
-          <a href="{{ route('contact') }}"
-             class="inline-flex items-center gap-2 rounded-2xl bg-white px-8 py-4 text-sm font-bold text-brand-700 shadow-xl hover:bg-brand-50 transition">
-            <i class="fa-solid fa-calendar-check"></i> احجز تجربة قيادة
-          </a>
-          <a href="{{ route('motorcycles.index') }}"
-             class="inline-flex items-center gap-2 rounded-2xl bg-white/10 border border-white/30 px-8 py-4 text-sm font-bold text-white hover:bg-white/20 transition">
-            تصفح الموديلات <i class="fa-solid fa-arrow-left text-xs"></i>
-          </a>
+    </div>
+    <div class="gallery reveal">
+      <a href="{{ route('motorcycles.index') }}"><img loading="lazy" src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=1000&q=85" alt="Motorcycle"><span>{{ __('home.gallery_perf') }}</span></a>
+      <a href="{{ route('motorcycles.index') }}"><img loading="lazy" src="https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=700&q=85" alt="Adventure"><span>{{ __('home.gallery_adv') }}</span></a>
+      <a href="{{ route('services') }}"><img loading="lazy" src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=700&q=85" alt="Service"><span>{{ __('home.gallery_care') }}</span></a>
+      <a href="{{ route('contact') }}"><img loading="lazy" src="https://images.unsplash.com/photo-1485965120184-e220f721d03e?auto=format&fit=crop&w=700&q=85" alt="Bike"><span>{{ __('home.gallery_details') }}</span></a>
+      <a href="{{ route('motorcycles.index') }}"><img loading="lazy" src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=700&q=85" alt="Ride"><span>{{ __('home.gallery_freedom') }}</span></a>
+    </div>
+  </div>
+</section>
+
+{{-- ══ STORIES/ARTICLES ══ --}}
+<section class="section" style="background:#fff">
+  <div class="wrap">
+    <div class="head reveal">
+      <div>
+        <span class="eyebrow">{{ __('home.articles_eyebrow') }}</span>
+        <h2>{{ __('home.articles_heading') }}</h2>
+      </div>
+    </div>
+    <div class="brand-story">
+      <article class="story-card reveal">
+        <img loading="lazy" src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&q=85" alt="Article 1">
+        <div>
+          <span class="tag-legacy">{{ __('home.article_tag_buyer') }}</span>
+          <h3>{{ __('home.article_title_1') }}</h3>
+          <p>{{ __('home.article_desc_1') }}</p>
+          <a class="purple" href="{{ route('contact') }}">{{ __('home.article_read_more') }} ←</a>
+        </div>
+      </article>
+      <article class="story-card reveal">
+        <img loading="lazy" src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&q=85" alt="Article 2">
+        <div>
+          <span class="tag-legacy">{{ __('home.article_tag_maint') }}</span>
+          <h3>{{ __('home.article_title_2') }}</h3>
+          <p>{{ __('home.article_desc_2') }}</p>
+          <a class="purple" href="{{ route('services') }}">{{ __('home.article_read_more') }} ←</a>
+        </div>
+      </article>
+      <article class="story-card reveal">
+        <img loading="lazy" src="https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=800&q=85" alt="Article 3">
+        <div>
+          <span class="tag-legacy">{{ __('home.article_tag_safety') }}</span>
+          <h3>{{ __('home.article_title_3') }}</h3>
+          <p>{{ __('home.article_desc_3') }}</p>
+          <a class="purple" href="{{ route('contact') }}">{{ __('home.article_read_more') }} ←</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+{{-- ══ VIDEO COVER ══ --}}
+<section class="section">
+  <div class="wrap">
+    <div class="video-cover reveal">
+      <div>
+        <div class="play-circle"><i class="fa-solid fa-play"></i></div>
+        <h2>{{ __('home.video_heading') }}</h2>
+        <p>{{ __('home.video_sub') }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{{-- ══ CONTACT ══ --}}
+<section class="section" id="contact">
+  <div class="wrap">
+    <div class="head reveal">
+      <div>
+        <span class="eyebrow">{{ __('home.contact_eyebrow') }}</span>
+        <h2>{{ __('home.contact_heading') }}</h2>
+        <p>{{ __('home.contact_subheading') }}</p>
+      </div>
+    </div>
+    <div class="contact-panel">
+      <div class="contact-card reveal">
+        <h3>{{ __('home.contact_form_title') }}</h3>
+        <form method="POST" action="{{ route('contact.store') }}">
+          @csrf
+          <input type="hidden" name="enquiry_type" value="general">
+          <input name="name" required placeholder="{{ __('home.contact_name_ph') }}">
+          <input type="email" name="email" required placeholder="{{ __('home.contact_email_ph') }}">
+          <input name="phone" placeholder="{{ __('home.contact_phone_ph') }}">
+          <select name="subject" required>
+            <option value="">{{ __('home.contact_type_label') }}</option>
+            <option value="{{ __('home.contact_type_buy') }}">{{ __('home.contact_type_buy') }}</option>
+            <option value="{{ __('home.contact_type_parts') }}">{{ __('home.contact_type_parts') }}</option>
+            <option value="{{ __('home.contact_type_service') }}">{{ __('home.contact_type_service') }}</option>
+            <option value="{{ __('home.contact_type_other') }}">{{ __('home.contact_type_other') }}</option>
+          </select>
+          <textarea name="message" required placeholder="{{ __('home.contact_msg_ph') }}"></textarea>
+          <button class="btn-legacy" type="submit">{{ __('home.contact_send_btn') }} ←</button>
+        </form>
+      </div>
+      <div class="contact-card reveal delay">
+        <h3>{{ __('home.contact_info_title') }}</h3>
+        <p style="color:#7b8495;font-size:13px;line-height:1.9">{{ __('home.contact_info_desc') }}</p>
+        <div class="contact-details">
+          <div class="contact-line"><i class="fa-solid fa-envelope"></i><span>{{ config('motovex.contact_email','info@motovex.com') }}</span></div>
+          <div class="contact-line"><i class="fa-solid fa-phone"></i><span>{{ config('motovex.phone','+20 100 000 0000') }}</span></div>
+          <div class="contact-line"><i class="fa-solid fa-location-dot"></i><span>{{ config('motovex.address','Egypt') }}</span></div>
+          <div class="contact-line"><i class="fa-regular fa-clock"></i><span>{{ __('home.contact_hours') }}</span></div>
+        </div>
+        <div style="margin-top:25px">
+          <a class="btn-legacy" href="{{ route('contact') }}">{{ __('home.contact_page_cta') }} <i class="fa-solid fa-arrow-right"></i></a>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-
-{{-- ════════════════════════════════════════════
-     10. CONTACT SECTION
-════════════════════════════════════════════ --}}
-<section id="contact" class="py-20 bg-white">
-  <div class="mx-auto max-w-7xl px-5 sm:px-8">
-
-    <div class="grid lg:grid-cols-2 gap-14 items-start">
-
-      {{-- Info --}}
-      <div class="reveal">
-        <span class="section-label mb-6"><i class="fa-solid fa-comments"></i> تواصل معنا</span>
-        <h2 class="mt-4 text-4xl sm:text-5xl font-black text-slate-900 mb-5">
-          كلمنا <span class="text-gradient">دلوقتي</span>
-        </h2>
-        <p class="text-slate-500 mb-10 leading-relaxed">فريقنا جاهز يرد عليك في أسرع وقت ويساعدك في اختيار الدراجة المناسبة</p>
-
-        <div class="space-y-4">
-          @foreach([
-            ['fa-phone',        'الهاتف',   '(+012) 3456 7890', 'from-brand-500 to-brand-700'],
-            ['fa-envelope',     'الإيميل',  'info@motovex.com',  'from-violet-500 to-violet-700'],
-            ['fa-location-dot', 'العنوان',  '123 Motorway St, Cairo, Egypt', 'from-indigo-500 to-indigo-700'],
-          ] as [$ico,$label,$val,$grad])
-          <div class="flex items-center gap-4 p-4 rounded-2xl border border-slate-100 bg-slate-50 hover:border-brand-200 transition">
-            <div class="w-12 h-12 rounded-xl bg-gradient-to-br {{ $grad }} flex items-center justify-center text-white shrink-0 shadow-md">
-              <i class="fa-solid {{ $ico }}"></i>
-            </div>
-            <div>
-              <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">{{ $label }}</p>
-              <p class="font-semibold text-slate-800">{{ $val }}</p>
-            </div>
-          </div>
-          @endforeach
-        </div>
+{{-- ══ APP BANNER ══ --}}
+<section class="section">
+  <div class="wrap">
+    <div class="app-banner reveal">
+      <div>
+        <span class="eyebrow">{{ __('home.app_eyebrow') }}</span>
+        <h2>{{ __('home.app_heading') }}</h2>
+        <p>{{ __('home.app_text') }}</p>
       </div>
-
-      {{-- CTA card --}}
-      <div class="reveal" style="transition-delay:.1s">
-        <div class="rounded-3xl border border-brand-100 bg-gradient-to-br from-brand-50 to-white p-8 shadow-xl shadow-brand-100/50 text-center flex flex-col items-center gap-6">
-          <div class="w-20 h-20 rounded-3xl bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white text-3xl shadow-xl shadow-brand-300/40 float">
-            <i class="fa-solid fa-motorcycle"></i>
-          </div>
-          <div>
-            <h3 class="text-2xl font-extrabold text-slate-900 mb-2">احجز تجربتك</h3>
-            <p class="text-slate-500 leading-relaxed">وملي النموذج الكامل من صفحة التواصل وهنرد عليك خلال 24 ساعة</p>
-          </div>
-          <div class="w-full space-y-3">
-            <a href="{{ route('contact') }}"
-               class="btn-primary w-full inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-4 font-bold text-sm">
-              <i class="fa-solid fa-arrow-left text-xs"></i> اذهب لصفحة التواصل
-            </a>
-            <a href="{{ route('motorcycles.index') }}"
-               class="btn-outline w-full inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-4 font-bold text-sm">
-              تصفح الموديلات أولاً
-            </a>
-          </div>
-        </div>
+      <div class="app-badges">
+        <a href="{{ route('motorcycles.index') }}"><i class="fa-solid fa-motorcycle"></i> {{ __('home.app_cta_bike') }}</a>
+        <a href="{{ route('spare-parts.index') }}"><i class="fa-solid fa-gears"></i> {{ __('home.app_cta_parts') }}</a>
       </div>
-
     </div>
   </div>
 </section>
 
+{{-- ══ NEWSLETTER ══ --}}
+<section class="section">
+  <div class="wrap">
+    <div class="newsletter reveal">
+      <div>
+        <span class="eyebrow">{{ __('home.news_eyebrow') }}</span>
+        <h2>{{ __('home.news_heading') }}</h2>
+        <p>{{ __('home.news_text') }}</p>
+      </div>
+      <form method="POST" action="{{ route('contact.store') }}" style="display:flex;gap:10px;flex-wrap:wrap">
+        @csrf
+        <input type="hidden" name="enquiry_type" value="general">
+        <input type="hidden" name="subject" value="{{ __('home.news_subject') }}">
+        <input type="hidden" name="name" value="Newsletter">
+        <input type="hidden" name="message" value="{{ __('home.news_subject') }}">
+        <input type="email" name="email" required placeholder="{{ __('home.news_placeholder') }}">
+        <button class="btn-legacy">{{ __('home.news_btn') }} ←</button>
+      </form>
+    </div>
+  </div>
+</section>
 
-{{-- ── FOOTER ── --}}
-@include('partials.footer')
+</main>
+@endsection
 
-
+@push('scripts')
 <script>
-  // Reveal on scroll
-  const reveals = document.querySelectorAll('.reveal');
-  const io = new IntersectionObserver(
-    (entries) => entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('active'); }),
-    { threshold: 0.1 }
-  );
-  reveals.forEach(el => io.observe(el));
-</script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Scroll reveal
+  const io = new IntersectionObserver(entries => entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('show'); io.unobserve(e.target); }
+  }), { threshold: .12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-</body>
-</html>
+  // Animated counters
+  const co = new IntersectionObserver(entries => entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target, end = +el.dataset.count, start = performance.now();
+    const run = t => {
+      const p = Math.min((t - start) / 1500, 1);
+      el.textContent = Math.floor(end * (1 - Math.pow(1 - p, 4))).toLocaleString() + (p === 1 ? '+' : '');
+      if (p < 1) requestAnimationFrame(run);
+    };
+    requestAnimationFrame(run);
+    co.unobserve(el);
+  }), { threshold: .6 });
+  document.querySelectorAll('[data-count]').forEach(el => co.observe(el));
+
+  // FAQ accordion
+  document.querySelectorAll('.faqQ').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.parentElement;
+      item.classList.toggle('open');
+      btn.querySelector('i').className = item.classList.contains('open')
+        ? 'fa fa-minus purple' : 'fa fa-plus purple';
+    });
+  });
+
+  // Progress bar
+  const bar = document.getElementById('progress');
+  if (bar) {
+    window.addEventListener('scroll', () => {
+      const max = document.documentElement.scrollHeight - innerHeight;
+      bar.style.width = (max ? scrollY / max * 100 : 0) + '%';
+    }, { passive: true });
+  }
+});
+</script>
+@endpush

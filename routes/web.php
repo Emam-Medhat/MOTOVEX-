@@ -38,6 +38,20 @@ use App\Http\Controllers\Admin\SparePartController as AdminSparePartController;
 use App\Http\Controllers\Admin\ShowroomController;
 use App\Http\Controllers\Admin\TestRideController as AdminTestRideController;
 
+// ─── Locale Switcher ──────────────────────────────────────────────────────────
+Route::get('/lang/{locale}', function (string $locale) {
+    // Only accept supported locales — no arbitrary values.
+    $supported = \App\Http\Middleware\SetLocale::SUPPORTED;
+    if (in_array($locale, $supported, true)) {
+        session(['locale' => $locale]);
+        // Also persist on authenticated user record.
+        if ($user = auth()->user()) {
+            $user->update(['preferred_locale' => $locale]);
+        }
+    }
+    return redirect()->back()->withInput();
+})->name('lang.switch');
+
 // ─── Public Routes ─────────────────────────────────────────────────────────────
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/brands', [BrandController::class, 'index'])->name('brands.index');

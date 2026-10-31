@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() === 'ar' ? 'ar' : 'en' }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Us | MOTOVEX</title>
-    <meta name="description" content="Get in touch with the MOTOVEX team for enquiries, test rides, spare parts, and service bookings.">
+    <title>{{ __('contact.meta_title') }}</title>
+    <meta name="description" content="{{ __('contact.meta_desc') }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -73,6 +73,7 @@
         .reveal { opacity: 0; transform: translateY(24px); transition: all .65s cubic-bezier(.16,1,.3,1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
     </style>
+@include('partials.rtl-styles')
 </head>
 <body>
 
@@ -83,13 +84,13 @@
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 text-center">
         <div class="inline-flex items-center gap-2 rounded-full bg-brand-50 border border-brand-200 px-4 py-1.5 text-xs font-bold text-brand-700 mb-5 reveal">
             <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
-            Get In Touch
+            {{ __('contact.hero_badge') }}
         </div>
         <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight reveal" style="transition-delay:.1s">
-            How Can We Help?
+            {{ __('contact.hero_heading') }}
         </h1>
         <p class="mt-4 text-slate-500 text-lg max-w-xl mx-auto reveal" style="transition-delay:.2s">
-            Whether you have a question about a model, want to book a test ride, or enquire about spare parts — our team is ready.
+            {{ __('contact.hero_sub') }}
         </p>
     </div>
 </section>
@@ -103,13 +104,13 @@
 
             {{-- Contact details --}}
             <div class="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm reveal">
-                <h2 class="text-base font-bold text-slate-900 mb-6">Contact Details</h2>
+                <h2 class="text-base font-bold text-slate-900 mb-6">{{ __('contact.details_heading') }}</h2>
                 <div class="flex flex-col gap-5">
                     @foreach([
-                        ['fa-location-dot', 'Address',    '123 Street, Cairo, Egypt'],
-                        ['fa-envelope',     'Email',      'info@motovex.com'],
-                        ['fa-phone',        'Phone',      '(+012) 3456 7890'],
-                        ['fa-clock',        'Hours',      'Sun – Thu: 10am – 8pm'],
+                        ['fa-location-dot', __('contact.label_address'), '123 Street, Cairo, Egypt'],
+                        ['fa-envelope',     __('contact.label_email'),   'info@motovex.com'],
+                        ['fa-phone',        __('contact.label_phone'),   '(+012) 3456 7890'],
+                        ['fa-clock',        __('contact.label_hours'),   'Sun – Thu: 10am – 8pm'],
                     ] as [$icon, $label, $value])
                     <div class="flex items-start gap-4">
                         <div class="w-10 h-10 rounded-xl bg-brand-50 border border-brand-100 flex items-center justify-center text-brand-600 shrink-0">
@@ -126,7 +127,7 @@
 
             {{-- Stats --}}
             <div class="grid grid-cols-3 gap-3 reveal" style="transition-delay:.1s">
-                @foreach([['150+','Premium Bikes'],['12K+','Happy Clients'],['98%','Satisfaction']] as [$n,$l])
+                @foreach([['150+',__('contact.stat_bikes)],['12K+',__('contact.stat_clients)],['98%',__('contact.stat_satisfaction')]] as [$n,$l])
                 <div class="bg-gradient-to-br from-brand-600 to-brand-800 rounded-2xl p-5 text-center text-white shadow-lg shadow-brand-500/25">
                     <div class="text-2xl font-extrabold">{{ $n }}</div>
                     <div class="text-[11px] font-medium opacity-80 mt-1">{{ $l }}</div>
@@ -136,7 +137,7 @@
 
             {{-- Guarantees --}}
             <div class="flex flex-wrap gap-2 reveal" style="transition-delay:.2s">
-                @foreach(['Certified Inspection','Real Warranty','24/7 Support'] as $tag)
+                @foreach([__('contact.guarantee_1'),__('contact.guarantee_2'),__('contact.guarantee_3')] as $tag)
                 <span class="inline-flex items-center gap-2 bg-brand-50 border border-brand-200 rounded-xl px-3 py-2 text-xs font-semibold text-brand-700">
                     <i class="fa-solid fa-check text-[10px]"></i> {{ $tag }}
                 </span>

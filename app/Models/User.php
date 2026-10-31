@@ -25,6 +25,7 @@ class User extends Authenticatable
         'country',
         'city',
         'preferred_brand_id',
+        'preferred_locale',
         'password',
         'is_active',
         'newsletter_opted_in',

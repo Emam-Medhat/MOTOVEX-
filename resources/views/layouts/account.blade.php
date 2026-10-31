@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="{{ $locale ?? app()->getLocale() }}" dir="{{ $dir ?? (app()->getLocale() === 'ar' ? 'rtl' : 'ltr') }}">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>@yield('title', 'My Account') | MOTOVEX</title>
+  <title>@yield('title', __('account.title')) | MOTOVEX</title>
   <meta name="csrf-token" content="{{ csrf_token() }}" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
@@ -719,6 +719,7 @@
     /* ─── Pagination ─── */
     .ac-pager { margin-top: 1.5rem; display: flex; justify-content: center; }
   </style>
+  @include('partials.rtl-styles')
 </head>
 <body>
 <div class="ac-shell">
@@ -726,41 +727,41 @@
   @include('partials.navbar')
 
   {{-- Mobile horizontal tab bar --}}
-  <nav class="ac-mobile-nav" aria-label="Account navigation">
+  <nav class="ac-mobile-nav" aria-label="{{ __('account.navigation_aria') }}">
     <a href="{{ route('account.dashboard') }}"
        class="ac-tab {{ request()->routeIs('account.dashboard') ? 'is-active' : '' }}">
-      <i class="fa-solid fa-gauge"></i> Overview
+      <i class="fa-solid fa-gauge"></i> {{ __('account.overview') }}
     </a>
     <a href="{{ route('account.orders') }}"
        class="ac-tab {{ request()->routeIs('account.orders*') ? 'is-active' : '' }}">
-      <i class="fa-solid fa-receipt"></i> Orders
+      <i class="fa-solid fa-receipt"></i> {{ __('account.orders') }}
     </a>
     <a href="{{ route('account.enquiries') }}"
        class="ac-tab {{ request()->routeIs('account.enquiries') ? 'is-active' : '' }}">
-      <i class="fa-solid fa-envelope"></i> Enquiries
+      <i class="fa-solid fa-envelope"></i> {{ __('account.enquiries') }}
     </a>
     <a href="{{ route('account.profile') }}"
        class="ac-tab {{ request()->routeIs('account.profile') ? 'is-active' : '' }}">
-      <i class="fa-solid fa-user"></i> Profile
+      <i class="fa-solid fa-user"></i> {{ __('account.profile') }}
     </a>
     <a href="{{ route('account.security') }}"
        class="ac-tab {{ request()->routeIs('account.security') ? 'is-active' : '' }}">
-      <i class="fa-solid fa-shield"></i> Security
+      <i class="fa-solid fa-shield"></i> {{ __('account.security') }}
     </a>
     @if(auth()->user()->isApprovedMerchant())
     <a href="{{ route('account.spare-parts.index') }}"
        class="ac-tab {{ request()->routeIs('account.spare-parts*') ? 'is-active' : '' }}">
-      <i class="fa-solid fa-gears"></i> Spare Parts
+      <i class="fa-solid fa-gears"></i> {{ __('account.spare_parts') }}
     </a>
     <a href="{{ route('account.merchant-orders.index') }}"
        class="ac-tab {{ request()->routeIs('account.merchant-orders*') ? 'is-active' : '' }}">
-      <i class="fa-solid fa-boxes-stacked"></i> Spare Parts Orders
+      <i class="fa-solid fa-boxes-stacked"></i> {{ __('account.spare_parts_orders') }}
     </a>
     @endif
     <form method="POST" action="{{ route('logout') }}" class="ac-signout-form">
       @csrf
       <button type="submit" class="ac-tab is-signout-tab">
-        <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+        <i class="fa-solid fa-arrow-right-from-bracket"></i> {{ __('navigation.sign_out') }}
       </button>
     </form>
   </nav>
@@ -769,7 +770,7 @@
   <div class="ac-body">
 
     {{-- ─── Desktop Sidebar ─── --}}
-    <aside class="ac-sidebar" aria-label="Account navigation">
+    <aside class="ac-sidebar" aria-label="{{ __('account.navigation_aria') }}">
       <div class="ac-sidebar-card">
 
         {{-- User avatar block --}}
@@ -790,32 +791,27 @@
           <a href="{{ route('account.dashboard') }}"
              class="ac-nav-item {{ request()->routeIs('account.dashboard') ? 'is-active' : '' }}">
             <i class="fa-solid fa-gauge"></i>
-            <span>Overview</span>
-            <small style="font-size:.68rem;color:#94a3b8;margin-right:auto;margin-left:.25rem;font-weight:400;">الرئيسية</small>
+            <span>{{ __('account.overview') }}</span>
           </a>
           <a href="{{ route('account.orders') }}"
              class="ac-nav-item {{ request()->routeIs('account.orders', 'account.orders.show') ? 'is-active' : '' }}">
             <i class="fa-solid fa-receipt"></i>
-            <span>My Orders</span>
-            <small style="font-size:.68rem;color:#94a3b8;margin-right:auto;margin-left:.25rem;font-weight:400;">طلباتي</small>
+            <span>{{ __('account.my_orders') }}</span>
           </a>
           <a href="{{ route('account.enquiries') }}"
              class="ac-nav-item {{ request()->routeIs('account.enquiries') ? 'is-active' : '' }}">
             <i class="fa-solid fa-envelope"></i>
-            <span>My Enquiries</span>
-            <small style="font-size:.68rem;color:#94a3b8;margin-right:auto;margin-left:.25rem;font-weight:400;">استفساراتي</small>
+            <span>{{ __('account.my_enquiries') }}</span>
           </a>
           <a href="{{ route('account.profile') }}"
              class="ac-nav-item {{ request()->routeIs('account.profile') ? 'is-active' : '' }}">
             <i class="fa-solid fa-user"></i>
-            <span>Profile</span>
-            <small style="font-size:.68rem;color:#94a3b8;margin-right:auto;margin-left:.25rem;font-weight:400;">الملف الشخصي</small>
+            <span>{{ __('account.profile') }}</span>
           </a>
           <a href="{{ route('account.security') }}"
              class="ac-nav-item {{ request()->routeIs('account.security') ? 'is-active' : '' }}">
             <i class="fa-solid fa-shield"></i>
-            <span>Security</span>
-            <small style="font-size:.68rem;color:#94a3b8;margin-right:auto;margin-left:.25rem;font-weight:400;">الأمان</small>
+            <span>{{ __('account.security') }}</span>
           </a>
 
           @if(auth()->user()->isApprovedMerchant())
@@ -823,14 +819,12 @@
           <a href="{{ route('account.spare-parts.index') }}"
              class="ac-nav-item {{ request()->routeIs('account.spare-parts*') ? 'is-active' : '' }}">
             <i class="fa-solid fa-gears"></i>
-            <span>My Spare Parts</span>
-            <small style="font-size:.68rem;color:#94a3b8;margin-right:auto;margin-left:.25rem;font-weight:400;">قطع الغيار</small>
+            <span>{{ __('account.my_spare_parts') }}</span>
           </a>
           <a href="{{ route('account.merchant-orders.index') }}"
              class="ac-nav-item {{ request()->routeIs('account.merchant-orders*') ? 'is-active' : '' }}">
             <i class="fa-solid fa-boxes-stacked"></i>
-            <span>Spare Parts Orders</span>
-            <small style="font-size:.68rem;color:#94a3b8;margin-right:auto;margin-left:.25rem;font-weight:400;">طلبات القطع</small>
+            <span>{{ __('account.spare_parts_orders') }}</span>
           </a>
           @endif
 
@@ -840,7 +834,7 @@
             @csrf
             <button type="submit" class="ac-nav-item is-signout">
               <i class="fa-solid fa-arrow-right-from-bracket"></i>
-              <span>Sign Out</span>
+              <span>{{ __('navigation.sign_out') }}</span>
             </button>
           </form>
         </nav>
@@ -855,7 +849,7 @@
       <div class="ac-page-header">
         <div class="ac-page-header-inner">
           <div class="ac-heading-bar" aria-hidden="true"></div>
-          <h1 class="ac-heading">@yield('heading', 'Overview')</h1>
+          <h1 class="ac-heading">@yield('heading', __('account.overview'))</h1>
         </div>
       </div>
 

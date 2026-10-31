@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="{{ $locale ?? app()->getLocale() }}" dir="{{ $dir ?? (app()->getLocale() === 'ar' ? 'rtl' : 'ltr') }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Dashboard') — MotoTrade</title>
+    <title>@yield('title', __('dashboard.title')) — MotoTrade</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Kufi+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
     @stack('head')
+    @include('partials.rtl-styles')
     <style>
         :root {
             /* ── Core palette ── */
@@ -644,33 +645,33 @@
         <nav class="nav-links">
 
             {{-- ── Overview ── --}}
-            <div class="nav-section-label">Overview</div>
+            <div class="nav-section-label">{{ __('navigation.overview_section') }}</div>
 
             <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                <i class="bi bi-grid-1x2-fill"></i> Dashboard
+                <i class="bi bi-grid-1x2-fill"></i> {{ __('navigation.dashboard') }}
             </a>
 
             <a href="{{ route('admin.requests.index') }}" class="{{ request()->routeIs('admin.requests*') ? 'active' : '' }}">
-                <i class="bi bi-inboxes-fill"></i> All Requests
+                <i class="bi bi-inboxes-fill"></i> {{ __('dashboard.all_requests') }}
             </a>
 
             {{-- ── Customer Activity ── --}}
-            <div class="nav-section-label">Customer Activity</div>
+            <div class="nav-section-label">{{ __('navigation.customer_activity_section') }}</div>
 
             <a href="{{ route('admin.enquiries.index') }}" class="{{ request()->routeIs('admin.enquiries*') ? 'active' : '' }}">
-                <i class="bi bi-envelope-fill"></i> Enquiries
+                <i class="bi bi-envelope-fill"></i> {{ __('dashboard.enquiries') }}
             </a>
 
             <a href="{{ route('admin.orders.index') }}" class="{{ request()->routeIs('admin.orders*') ? 'active' : '' }}">
-                <i class="bi bi-receipt"></i> Purchase Orders
+                <i class="bi bi-receipt"></i> {{ __('dashboard.purchase_orders') }}
             </a>
 
             <a href="{{ route('admin.test-rides.index') }}" class="{{ request()->routeIs('admin.test-rides*') ? 'active' : '' }}">
-                <i class="bi bi-calendar2-check-fill"></i> Test Rides
+                <i class="bi bi-calendar2-check-fill"></i> {{ __('dashboard.test_rides') }}
             </a>
 
             <a href="{{ route('admin.rentals.index') }}" class="{{ request()->routeIs('admin.rentals*') ? 'active' : '' }}">
-                <i class="bi bi-key-fill"></i> Rentals
+                <i class="bi bi-key-fill"></i> {{ __('dashboard.rentals') }}
             </a>
 
             @if(auth()->user()->isAdmin() || auth()->user()->isDataEntry())
@@ -679,49 +680,49 @@
                 @endphp
 
                 <a href="{{ route('admin.sales.index') }}" class="{{ request()->routeIs('admin.sales*') ? 'active' : '' }}">
-                    <i class="bi bi-cart3"></i> Sales
+                    <i class="bi bi-cart3"></i> {{ __('dashboard.sales') }}
                     @if($pendingSalesCount > 0)
                         <span class="count">{{ $pendingSalesCount }}</span>
                     @endif
                 </a>
 
                 {{-- ── Catalogue ── --}}
-                <div class="nav-section-label">Catalogue</div>
+                <div class="nav-section-label">{{ __('navigation.catalogue_section') }}</div>
 
                 <a href="{{ route('admin.motorcycles.index') }}" class="{{ request()->routeIs('admin.motorcycles*') ? 'active' : '' }}">
-                    <i class="bi bi-bicycle"></i> Motorcycles
+                    <i class="bi bi-bicycle"></i> {{ __('motorcycles.page_title') }}
                 </a>
 
                 <a href="{{ route('admin.brands.index') }}" class="{{ request()->routeIs('admin.brands*') ? 'active' : '' }}">
-                    <i class="bi bi-patch-check-fill"></i> Brands
+                    <i class="bi bi-patch-check-fill"></i> {{ __('navigation.brands') }}
                 </a>
 
                 <a href="{{ route('admin.spare-parts.index') }}" class="{{ request()->routeIs('admin.spare-parts*') ? 'active' : '' }}">
-                    <i class="bi bi-gear-fill"></i> Spare Parts
+                    <i class="bi bi-gear-fill"></i> {{ __('navigation.spare_parts') }}
                 </a>
 
                 <a href="{{ route('admin.promotions.index') }}" class="{{ request()->routeIs('admin.promotions*') ? 'active' : '' }}">
-                    <i class="bi bi-megaphone-fill"></i> Promotions
+                    <i class="bi bi-megaphone-fill"></i> {{ __('navigation.promotions') }}
                 </a>
 
                 {{-- ── Business ── --}}
-                <div class="nav-section-label">Business</div>
+                <div class="nav-section-label">{{ __('navigation.business_section') }}</div>
 
                 <a href="{{ route('admin.services.index') }}" class="{{ request()->routeIs('admin.services*') ? 'active' : '' }}">
-                    <i class="bi bi-tools"></i> Services
+                    <i class="bi bi-tools"></i> {{ __('navigation.services') }}
                 </a>
 
                 <a href="{{ route('admin.showrooms.index') }}" class="{{ request()->routeIs('admin.showrooms*') ? 'active' : '' }}">
-                    <i class="bi bi-shop-window"></i> Showrooms
+                    <i class="bi bi-shop-window"></i> {{ __('navigation.showrooms') }}
                 </a>
             @endif
 
             @if(auth()->user()->isAdmin())
                 {{-- ── Administration ── --}}
-                <div class="nav-section-label">Administration</div>
+                <div class="nav-section-label">{{ __('navigation.administration_section') }}</div>
 
                 <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users*') ? 'active' : '' }}">
-                    <i class="bi bi-people-fill"></i> Users & Merchants
+                    <i class="bi bi-people-fill"></i> {{ __('dashboard.users_and_merchants') }}
                 </a>
             @endif
 
@@ -738,12 +739,13 @@
 
                 <div class="search">
                     <i class="bi bi-search"></i>
-                    <input type="text" placeholder="Search for orders, products, customers...">
+                    <input type="text" placeholder="{{ __('navigation.search_admin') }}">
                 </div>
             </div>
 
             <div class="profile">
-                <i class="bi bi-bell fs-5" style="cursor:pointer"></i>
+                <x-language-switcher variant="admin" />
+                <i class="bi bi-bell fs-5" style="cursor:pointer" title="{{ __('dashboard.notifications') }}"></i>
                 <div class="avatar">
                     @if(auth()->user()->avatar_url)
                         <img src="{{ auth()->user()->avatar_url }}" alt="">
@@ -763,7 +765,7 @@
                             <form method="POST" action="{{ route('logout') }}" id="logout-form">
                                 @csrf
                                 <button type="submit" class="dropdown-item text-danger">
-                                    <i class="bi bi-box-arrow-right me-2"></i> Sign Out
+                                    <i class="bi bi-box-arrow-right me-2"></i> {{ __('navigation.sign_out') }}
                                 </button>
                             </form>
                         </li>

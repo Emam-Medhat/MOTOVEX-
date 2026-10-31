@@ -4,33 +4,42 @@ namespace App\Http\Controllers;
 
 use App\Models\Brand;
 use App\Models\Motorcycle;
+use App\Models\Service;
+use App\Models\SparePart;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        $featuredMotorcycle = Motorcycle::with('brand')
-            ->published()
-            ->featured()
-            ->orderByDesc('horsepower')
-            ->first()
-            ?? Motorcycle::with('brand')
-                ->published()
-                ->orderByDesc('horsepower')
-                ->first();
+        $brands = Brand::published()
+            ->withCount(['motorcycles' => fn ($q) => $q->where('is_published', true)])
+            ->orderBy('sort_order')
+            ->orderBy('name')
+            ->take(8)
+            ->get();
 
-        $latestMotorcycles = Motorcycle::with('brand')
+        $motorcycles = Motorcycle::with('brand')
             ->published()
+            ->orderByDesc('created_at')
+            ->take(8)
+            ->get();
+
+        $spareParts = SparePart::with('brand')
+            ->published()
+            ->available()
             ->orderByDesc('created_at')
             ->take(4)
             ->get();
 
-        $brands = Brand::published()
+        $services = Service::active()->take(8)->get();
+
+        $footerBrands = Brand::published()
+            ->withCount(['motorcycles' => fn ($q) => $q->where('is_published', true)])
             ->orderBy('sort_order')
             ->orderBy('name')
-            ->take(6)
+            ->take(5)
             ->get();
 
-        return view('home', compact('featuredMotorcycle', 'latestMotorcycles', 'brands'));
+        return view('home', compact('brands', 'motorcycles', 'spareParts', 'services', 'footerBrands'));
     }
 }

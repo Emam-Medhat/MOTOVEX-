@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ $locale ?? app()->getLocale() }}" dir="{{ $dir ?? (app()->getLocale() === 'ar' ? 'rtl' : 'ltr') }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'MOTOVEX | Premium Motorcycle Group')</title>
-    <meta name="description" content="@yield('description', 'MOTOVEX — Premium Motorcycle Group. Discover performance machines across our curated brand collection.')">
+    <title>@yield('title', 'MOTOVEX | ' . __('messages.site_tagline'))</title>
+    <meta name="description" content="@yield('description', __('messages.site_description'))">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     @stack('head')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @include('partials.rtl-styles')
 </head>
 <body class="min-h-screen bg-[#0B0D0E] text-[#F5F7F4] antialiased">
     @include('partials.preloader')

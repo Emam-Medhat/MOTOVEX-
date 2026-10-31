@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="{{ app()->getLocale() === 'ar' ? 'ar' : 'en' }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -361,6 +361,7 @@
       margin-top: 1.9rem;
     }
   </style>
+@include('partials.rtl-styles')
 </head>
 <body>
 
@@ -372,9 +373,9 @@
 
       {{-- Breadcrumb --}}
       <nav class="mvx-crumbs" aria-label="Breadcrumb">
-        <a href="{{ route('home') }}"><i class="fa-solid fa-house" aria-hidden="true"></i> الرئيسية</a>
+        <a href="{{ route('home') }}"><i class="fa-solid fa-house" aria-hidden="true"></i> {{ __('brands.breadcrumb_home') }}</a>
         <i class="fa-solid fa-chevron-left sep" aria-hidden="true"></i>
-        <a href="{{ route('brands.index') }}">الماركات</a>
+        <a href="{{ route('brands.index') }}">{{ __('brands.breadcrumb_current') }}</a>
         <i class="fa-solid fa-chevron-left sep" aria-hidden="true"></i>
         <span aria-current="page">{{ $brand->name }}</span>
       </nav>
@@ -391,7 +392,7 @@
           @else
             <span class="mvx-badge">
               <i class="fa-solid fa-gem" aria-hidden="true"></i>
-              ماركة عالمية مختارة
+              {{ __('brands.show_hero_badge') }}
             </span>
           @endif
 
@@ -411,7 +412,7 @@
           <div class="mvx-stat-row">
             <div class="mvx-stat">
               <i class="fa-solid fa-motorcycle" aria-hidden="true"></i>
-              <span>{{ $motorcycles->total() }} موديل</span>
+              <span>{{ $motorcycles->total() }} {{ __('brands.show_models_unit') }}</span>
             </div>
             @if($brand->country)
               <div class="mvx-stat">
@@ -421,7 +422,7 @@
             @endif
             <div class="mvx-stat">
               <i class="fa-solid fa-crown" aria-hidden="true"></i>
-              <span>ماركة مميزة</span>
+              <span>{{ __('brands.show_featured_brand') }}</span>
             </div>
           </div>
 
@@ -429,13 +430,13 @@
           <div style="display:flex;flex-wrap:wrap;gap:.85rem;margin-top:1.8rem;">
             <a href="{{ route('motorcycles.index') }}?brand[]={{ $brand->id }}" class="mvx-btn-primary">
               <i class="fa-solid fa-motorcycle" aria-hidden="true"></i>
-              استكشف كل الموديلات
+              {{ __('brands.show_explore_all') }}
               <i class="fa-solid fa-arrow-left text-xs" aria-hidden="true"></i>
             </a>
             @if($brand->website_url)
               <a href="{{ $brand->website_url }}" target="_blank" rel="noopener" class="mvx-btn-outline">
                 <i class="fa-solid fa-arrow-up-right-from-square text-xs" aria-hidden="true"></i>
-                الموقع الرسمي
+                {{ __('brands.show_official_website') }}
               </a>
             @endif
           </div>
@@ -489,11 +490,11 @@
 
       <div class="mvx-models-head reveal">
         <div>
-          <h2 class="mvx-models-title">الموديلات <em>المتاحة</em></h2>
-          <p class="mvx-models-sub">تصفح تشكيلة {{ $brand->name }} في معرضنا</p>
+          <h2 class="mvx-models-title">{{ __('brands.show_models_heading') }} <em>{{ __('brands.show_models_heading_em') }}</em></h2>
+          <p class="mvx-models-sub">{{ str_replace(':brand', $brand->name, __('brands.show_models_sub')) }}</p>
         </div>
         <a href="{{ route('motorcycles.index') }}?brand[]={{ $brand->id }}" class="mvx-view-all">
-          عرض الكل في الكتالوج
+          {{ __('brands.show_view_all_catalogue') }}
           <i class="fa-solid fa-arrow-left text-xs" aria-hidden="true"></i>
         </a>
       </div>
@@ -501,11 +502,11 @@
       @if($motorcycles->isEmpty())
         <div class="mvx-empty reveal">
           <div class="mvx-empty-ico"><i class="fa-solid fa-motorcycle" aria-hidden="true"></i></div>
-          <h3>لا توجد موديلات متاحة حتى الآن</h3>
-          <p>تابعنا قريباً لمعرفة آخر إضافات {{ $brand->name }}</p>
+          <h3>{{ __('brands.show_empty_heading') }}</h3>
+          <p>{{ str_replace(':brand', $brand->name, __('brands.show_empty_desc')) }}</p>
           <a href="{{ route('brands.index') }}" class="mvx-btn-ghost">
             <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
-            العودة للماركات
+            {{ __('brands.show_back_to_brands') }}
           </a>
         </div>
       @else
@@ -548,7 +549,7 @@
                   @if($moto->availability_status === 'available')
                     <span class="mvx-spec-tag" style="border-color:#bbf7d0;background:#f0fdf4;color:#15803d;">
                       <i class="fa-solid fa-circle-check" aria-hidden="true" style="color:#16a34a;"></i>
-                      متاح
+                      {{ __('brands.show_available') }}
                     </span>
                   @endif
                 </div>
@@ -557,10 +558,10 @@
                   @if($moto->price)
                     <span class="mvx-moto-price">${{ number_format($moto->price) }}</span>
                   @else
-                    <span class="mvx-moto-price-none">اتصل للسعر</span>
+                    <span class="mvx-moto-price-none">{{ __('brands.show_call_for_price') }}</span>
                   @endif
                   <span class="mvx-moto-link">
-                    التفاصيل
+                    {{ __('brands.show_details') }}
                     <i class="fa-solid fa-arrow-left text-xs" aria-hidden="true"></i>
                   </span>
                 </div>
@@ -583,16 +584,16 @@
   <section class="mvx-cta-band">
     <div class="mvx-wrap">
       <div class="mvx-cta-box reveal">
-        <h2>تبحث عن ركوبة مختلفة؟</h2>
-        <p>استكشف كتالوجنا الكامل من الدراجات النارية المميزة من كل الماركات</p>
+        <h2>{{ __('brands.show_cta_heading') }}</h2>
+        <p>{{ __('brands.show_cta_desc') }}</p>
         <div class="mvx-cta-btns">
           <a href="{{ route('motorcycles.index') }}?brand[]={{ $brand->id }}" class="mvx-btn-primary">
-            تصفح كل الموديلات
+            {{ __('brands.show_cta_browse') }}
             <i class="fa-solid fa-arrow-left text-xs" aria-hidden="true"></i>
           </a>
           <a href="{{ route('brands.index') }}" class="mvx-btn-outline">
             <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
-            كل الماركات
+            {{ __('brands.show_cta_all_brands') }}
           </a>
         </div>
       </div>

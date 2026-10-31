@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'meta_title'         => 'Promotions | MOTOVEX',
+    'meta_desc'          => 'Explore exclusive motorcycle promotions, financing deals, and seasonal offers at MOTOVEX.',
+    'hero_badge'         => 'Limited-Time Offers',
+    'hero_line1'         => 'Exclusive',
+    'hero_line2'         => 'Ride Offers',
+    'hero_desc'          => 'Hand-picked promotions across our showrooms — financing deals, trade-in bonuses and seasonal service offers. Every offer below is live right now.',
+    'btn_browse'         => 'Browse Motorcycles',
+    'btn_advisor'        => 'Talk to an Advisor',
+    'section_eyebrow'    => 'Current Promotions',
+    'section_heading'    => 'Offers On Right Now',
+    'section_desc'       => 'Only active and unexpired offers are shown here. Check back often — new deals drop regularly.',
+    'empty_heading'      => 'No active promotions right now',
+    'empty_desc'         => 'Our latest offers are being prepared. In the meantime, explore the full collection.',
+    'pct_off'            => '% OFF',
+    'save_prefix'        => 'Save',
+    'special_offer'      => 'Special Offer',
+    'ends_prefix'        => 'Ends',
+    'now_label'          => 'Now',
+    'ongoing_label'      => 'Ongoing',
+    'cta_view'           => 'View',
+    'cta_explore'        => 'Explore',
+];

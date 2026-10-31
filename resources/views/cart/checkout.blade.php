@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="{{ app()->getLocale() === 'ar' ? 'ar' : 'en' }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Checkout | MOTOVEX</title>
+  <title>{{ __('cart.checkout_title') }} | MOTOVEX</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -254,6 +254,7 @@
     .reveal { opacity: 0; transform: translateY(28px); transition: all .75s cubic-bezier(.16,1,.3,1); }
     .reveal.active { opacity: 1; transform: translateY(0); }
   </style>
+@include('partials.rtl-styles')
 </head>
 <body>
 
@@ -272,29 +273,29 @@
   <div class="co-hero reveal">
     <div class="co-hero-badge">
       <i class="fa-solid fa-lock text-[10px]"></i>
-      Secure Order Enquiry
+      {{ __('cart.secure_enquiry') }}
     </div>
-    <h1>Complete Your Order</h1>
-    <p>Fill in your details and our team will confirm availability and get back to you.</p>
+    <h1>{{ __('cart.checkout_heading') }}</h1>
+    <p>{{ __('cart.checkout_sub') }}</p>
   </div>
 
   {{-- ── Progress steps ── --}}
   <div class="co-steps reveal" style="transition-delay:.08s">
     <div class="co-step done">
       <div class="co-step-dot"><i class="fa-solid fa-check text-xs"></i></div>
-      <span class="co-step-lbl">Browse</span>
+      <span class="co-step-lbl">{{ __('cart.step_browse') }}</span>
     </div>
     <div class="co-step done">
       <div class="co-step-dot"><i class="fa-solid fa-check text-xs"></i></div>
-      <span class="co-step-lbl">Cart</span>
+      <span class="co-step-lbl">{{ __('cart.step_cart') }}</span>
     </div>
     <div class="co-step active">
       <div class="co-step-dot">3</div>
-      <span class="co-step-lbl">Checkout</span>
+      <span class="co-step-lbl">{{ __('cart.step_checkout') }}</span>
     </div>
     <div class="co-step">
       <div class="co-step-dot">4</div>
-      <span class="co-step-lbl">Confirm</span>
+      <span class="co-step-lbl">{{ __('cart.step_confirm') }}</span>
     </div>
   </div>
 
@@ -322,8 +323,8 @@
         <div class="co-card-head">
           <div class="co-card-ico"><i class="fa-solid fa-user"></i></div>
           <div>
-            <div class="co-card-title">Your Information</div>
-            <div class="co-card-sub">We'll use this to confirm your order</div>
+            <div class="co-card-title">{{ __('cart.your_information') }}</div>
+            <div class="co-card-sub">{{ __('cart.info_sub') }}</div>
           </div>
         </div>
         <div class="co-card-body">
@@ -334,7 +335,7 @@
 
             {{-- Name (full width) --}}
             <div class="co-field">
-              <label class="co-label">Full Name <span class="req">*</span></label>
+              <label class="co-label">{{ __('cart.full_name') }} <span class="req">*</span></label>
               <div class="co-input-wrap">
                 <i class="fa-solid fa-user"></i>
                 <input type="text" name="name"
@@ -350,7 +351,7 @@
             {{-- Email + Phone --}}
             <div class="co-grid-2">
               <div class="co-field">
-                <label class="co-label">Email Address <span class="req">*</span></label>
+                <label class="co-label">{{ __('cart.email_address') }} <span class="req">*</span></label>
                 <div class="co-input-wrap">
                   <i class="fa-solid fa-envelope"></i>
                   <input type="email" name="email"
@@ -364,7 +365,7 @@
               </div>
 
               <div class="co-field">
-                <label class="co-label">Phone Number <span class="req">*</span></label>
+                <label class="co-label">{{ __('cart.phone_number') }} <span class="req">*</span></label>
                 <div class="co-input-wrap">
                   <i class="fa-solid fa-phone"></i>
                   <input type="tel" name="phone"
@@ -380,11 +381,11 @@
 
             {{-- Message --}}
             <div class="co-field">
-              <label class="co-label">Additional Notes <span style="color:#94a3b8;font-weight:500">(optional)</span></label>
+              <label class="co-label">{{ __('cart.additional_notes') }} <span style="color:#94a3b8;font-weight:500">{{ __('cart.optional_label') }}</span></label>
               <div class="co-input-wrap" style="position:relative">
                 <i class="fa-solid fa-comment-dots" style="position:absolute;left:14px;top:14px;color:#a78bfa;font-size:13px;pointer-events:none;"></i>
                 <textarea name="message" rows="3"
-                          placeholder="Preferred delivery location, specific questions about the motorcycle…"
+                          placeholder="{{ __('cart.notes_placeholder_co') }}"
                           class="co-input"
                           style="padding-top:.85rem;padding-bottom:.85rem;padding-left:2.65rem;">{{ old('message') }}</textarea>
               </div>
@@ -397,15 +398,15 @@
             <div style="margin-top:1.5rem">
               <button type="submit" id="submitBtn" class="co-submit">
                 <i class="fa-solid fa-motorcycle"></i>
-                <span id="submitTxt">Place Order Enquiry</span>
+                <span id="submitTxt">{{ __('cart.place_order_enquiry') }}</span>
                 <i class="fa-solid fa-arrow-right text-xs arrow"></i>
               </button>
 
               {{-- Security strip --}}
               <div class="co-secure">
-                <div class="co-secure-item"><i class="fa-solid fa-lock"></i> Secure Submission</div>
-                <div class="co-secure-item"><i class="fa-solid fa-shield-halved"></i> No Card Required</div>
-                <div class="co-secure-item"><i class="fa-solid fa-headset"></i> Team Confirms Within 24h</div>
+                <div class="co-secure-item"><i class="fa-solid fa-lock"></i> {{ __('cart.secure_submission') }}</div>
+                <div class="co-secure-item"><i class="fa-solid fa-shield-halved"></i> {{ __('cart.no_card_required') }}</div>
+                <div class="co-secure-item"><i class="fa-solid fa-headset"></i> {{ __('cart.team_24h') }}</div>
               </div>
             </div>
 
@@ -431,8 +432,8 @@
         <div class="co-card-head">
           <div class="co-card-ico"><i class="fa-solid fa-receipt"></i></div>
           <div>
-            <div class="co-card-title">Order Summary</div>
-            <div class="co-card-sub">{{ $itemCount }} item{{ $itemCount !== 1 ? 's' : '' }} selected</div>
+            <div class="co-card-title">{{ __('cart.order_summary') }}</div>
+            <div class="co-card-sub">{{ str_replace(':count', $itemCount, __('cart.items_selected')) }}</div>
           </div>
         </div>
         <div class="co-card-body" style="padding-top:1rem;padding-bottom:1rem;">
@@ -456,7 +457,7 @@
                 @if($moto->price)
                   {{ $moto->currency ?: 'USD' }} {{ number_format($moto->price) }}
                 @else
-                  <span style="font-size:.75rem;color:#94a3b8;">On request</span>
+                  <span style="font-size:.75rem;color:#94a3b8;">{{ __('cart.on_request_text') }}</span>
                 @endif
               </div>
             </div>
@@ -478,13 +479,13 @@
               </div>
               <div style="flex:1;min-width:0;">
                 <div class="co-moto-name">{{ $sp->name }}</div>
-                <div class="co-moto-brand">{{ $sp->brand?->name ?? 'MOTOVEX' }} &middot; Qty {{ $qty }}</div>
+                <div class="co-moto-brand">{{ $sp->brand?->name ?? 'MOTOVEX' }} &middot; {{ __('cart.qty_prefix') }} {{ $qty }}</div>
               </div>
               <div class="co-moto-price">
                 @if($sp->price)
                   {{ $sp->currency ?: 'USD' }} {{ number_format((float) $sp->price * $qty) }}
                 @else
-                  <span style="font-size:.75rem;color:#94a3b8;">On request</span>
+                  <span style="font-size:.75rem;color:#94a3b8;">{{ __('cart.on_request_text') }}</span>
                 @endif
               </div>
             </div>
@@ -493,7 +494,7 @@
           {{-- Total --}}
           @if($total > 0)
           <div class="co-total-row">
-            <span class="co-total-lbl">Total</span>
+            <span class="co-total-lbl">{{ __('cart.total_label') }}</span>
             <span class="co-total-val"><span class="co-total-cur">{{ $cartCurrency }}</span>{{ number_format($total) }}</span>
           </div>
           @endif
@@ -501,7 +502,7 @@
           {{-- Note --}}
           <div class="co-note">
             <i class="fa-solid fa-circle-info"></i>
-            <span>No payment is taken online. This submits an order enquiry — our team will contact you to confirm availability and finalise everything.</span>
+            <span>{{ __('cart.checkout_no_payment') }}</span>
           </div>
 
         </div>
@@ -510,23 +511,23 @@
       {{-- Promises --}}
       <div class="co-card">
         <div class="co-card-body" style="padding:1.25rem 1.4rem;">
-          <p style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#a78bfa;margin-bottom:.85rem;">Our Promise to You</p>
+          <p style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#a78bfa;margin-bottom:.85rem;">{{ __('cart.our_promise') }}</p>
           <div class="co-promises">
             <div class="co-promise">
               <i class="fa-solid fa-shield-halved co-promise-ico"></i>
-              <span class="co-promise-txt">Certified & Inspected Machines</span>
+              <span class="co-promise-txt">{{ __('cart.promise_certified') }}</span>
             </div>
             <div class="co-promise">
               <i class="fa-solid fa-truck-fast co-promise-ico"></i>
-              <span class="co-promise-txt">Nationwide Delivery</span>
+              <span class="co-promise-txt">{{ __('cart.promise_delivery') }}</span>
             </div>
             <div class="co-promise">
               <i class="fa-solid fa-rotate-left co-promise-ico"></i>
-              <span class="co-promise-txt">Genuine Warranty</span>
+              <span class="co-promise-txt">{{ __('cart.promise_warranty') }}</span>
             </div>
             <div class="co-promise">
               <i class="fa-solid fa-headset co-promise-ico"></i>
-              <span class="co-promise-txt">24/7 Expert Support</span>
+              <span class="co-promise-txt">{{ __('cart.promise_support') }}</span>
             </div>
           </div>
         </div>
@@ -584,7 +585,7 @@
     submitted = true;
 
     btn.disabled = true;
-    txt.textContent = 'Submitting…';
+    txt.textContent = @json(__('cart.submitting_text'));
     btn.style.opacity = '.75';
   });
 
@@ -593,7 +594,7 @@
     if (e.persisted) {
       submitted = false;
       if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
-      if (txt) { txt.textContent = 'Place Order Enquiry'; }
+      if (txt) { txt.textContent = @json(__('cart.place_order_enquiry')); }
     }
   });
 </script>

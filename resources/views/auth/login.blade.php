@@ -1,9 +1,9 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+\<!DOCTYPE html>
+<html lang="{{ app()->getLocale() === 'ar' ? 'ar' : 'en' }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AURA MotoVex | تسجيل الدخول</title>
+    <title>{{ __('auth.login_title') }}</title>
 
     {{-- خط Cairo --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -236,6 +236,7 @@
             .bike-video { transform: scale(1.02); }
         }
     </style>
+@include('partials.rtl-styles')
 </head>
 <body class="m-0">
 
@@ -279,8 +280,8 @@
 
                     <!-- Heading -->
                     <div class="text-center mb-8 headline-animate">
-                        <h1 class="text-2xl font-black text-white mb-2">جاهز لركوب حلمك؟</h1>
-                        <p class="text-xs font-bold text-purple-200/50">سجّل الدخول للوصول إلى صالة العرض الخاصة بك</p>
+                        <h1 class="text-2xl font-black text-white mb-2">{{ __('auth.login_heading') }}</h1>
+                        <p class="text-xs font-bold text-purple-200/50">{{ __('auth.login_subheading') }}</p>
                     </div>
 
                     @if(session('status'))
@@ -295,7 +296,7 @@
 
                         <!-- Email -->
                         <div class="space-y-2">
-                            <label for="email" class="block text-[10px] font-bold text-purple-200/60 mr-1">البريد الإلكتروني</label>
+                            <label for="email" class="block text-[10px] font-bold text-purple-200/60 mr-1">{{ __('auth.email_label') }}</label>
                             <div class="relative">
                                 <input type="email"
                                        id="email"
@@ -317,7 +318,7 @@
 
                         <!-- Password -->
                         <div class="space-y-2">
-                            <label for="password" class="block text-[10px] font-bold text-purple-200/60 mr-1">كلمة المرور</label>
+                            <label for="password" class="block text-[10px] font-bold text-purple-200/60 mr-1">{{ __('auth.password_label') }}</label>
                             <div class="relative">
                                 <input type="password"
                                        id="password"
@@ -333,7 +334,7 @@
                                 </span>
                                 <button type="button"
                                         id="toggle-password"
-                                        aria-label="إظهار كلمة المرور"
+                                        aria-label="{{ __('auth.show_password') }}"
                                         class="absolute inset-y-0 left-4 flex items-center text-purple-300/50 hover:text-fuchsia-300 transition-colors">
                                     <svg id="icon-eye-off" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
                                         <path d="M3 3l18 18" stroke-linecap="round"/>
@@ -361,9 +362,9 @@
                                        value="1"
                                        checked
                                        class="w-4 h-4 rounded border-white/20 bg-white/5 accent-[#8B5CF6] cursor-pointer">
-                                <span class="text-purple-200/60 group-hover:text-purple-100 transition">البقاء متصلاً</span>
+                                <span class="text-purple-200/60 group-hover:text-purple-100 transition">{{ __('auth.remember_me') }}</span>
                             </label>
-                            <a href="{{ route('password.request') }}" class="text-fuchsia-300/80 hover:text-fuchsia-200 hover:underline transition">نسيت كلمة المرور؟</a>
+                            <a href="{{ route('password.request') }}" class="text-fuchsia-300/80 hover:text-fuchsia-200 hover:underline transition">{{ __('auth.forgot_password') }}</a>
                         </div>
 
                         <!-- Submit -->
@@ -371,7 +372,7 @@
                                 id="submit-btn"
                                 class="aura-btn w-full py-3.5 mt-1 text-white text-sm font-black rounded-xl transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0">
                             <span class="relative z-10 flex items-center justify-center gap-2">
-                                <span id="submit-label">تسجيل الدخول</span>
+                                <span id="submit-label">{{ __('auth.sign_in') }}</span>
                                 <svg id="submit-arrow" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     <path d="M19 12H5"/><path d="m12 19-7-7 7-7"/>
                                 </svg>
@@ -384,19 +385,19 @@
                     </form>
 
                     <p class="text-center mt-7 text-[11px] font-bold text-purple-200/50">
-                        ليس لديك حساب؟
-                        <a href="{{ route('register') }}" class="text-pink-400 hover:text-pink-300 hover:underline transition">أنشئ حساباً الآن</a>
+                        {{ __('auth.no_account') }}
+                        <a href="{{ route('register') }}" class="text-pink-400 hover:text-pink-300 hover:underline transition">{{ __('auth.create_account_now') }}</a>
                     </p>
                 </div>
             </div>
 
             <!-- Footer -->
             <div class="absolute bottom-6 left-0 right-0 items-center justify-center gap-6 text-[10px] font-bold text-purple-200/30 hidden md:flex">
-                <a href="{{ route('contact') }}" class="hover:text-fuchsia-300 transition">الدعم الفني</a>
+                <a href="{{ route('contact') }}" class="hover:text-fuchsia-300 transition">{{ __('auth.technical_support') }}</a>
                 <span class="w-1 h-1 rounded-full bg-purple-300/30"></span>
                 <span class="font-mono">v2.5.0 Professional</span>
                 <span class="w-1 h-1 rounded-full bg-purple-300/30"></span>
-                <a href="{{ route('home') }}" class="hover:text-fuchsia-300 transition">الرئيسية</a>
+                <a href="{{ route('home') }}" class="hover:text-fuchsia-300 transition">{{ __('auth.back_home') }}</a>
             </div>
         </div>
 
@@ -429,7 +430,7 @@
             <!-- Brand Badge -->
             <div class="absolute top-6 right-6 z-20 flex items-center gap-2 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
                 <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-                <span class="text-[11px] text-white/80 font-medium tracking-wide">LIVE PREVIEW</span>
+                <span class="text-[11px] text-white/80 font-medium tracking-wide">{{ __('auth.live_preview') }}</span>
             </div>
 
             <!-- Bottom Content -->
@@ -445,12 +446,12 @@
                     </div>
 
                     <h2 class="text-2xl md:text-3xl lg:text-4xl font-black text-white leading-tight">
-                        استشعر<br>
-                        <span class="bg-linear-to-l from-purple-300 via-fuchsia-300 to-pink-300 bg-clip-text text-transparent headline-glow">القوة المطلقة</span>
+                        {{ __('auth.login_heading') }}<br>
+                        <span class="bg-linear-to-l from-purple-300 via-fuchsia-300 to-pink-300 bg-clip-text text-transparent headline-glow">{{ __('common.tagline') }}</span>
                     </h2>
 
                     <p class="text-white/55 text-sm max-w-xs hidden md:block">
-                        انضم إلى عالم AURA MotoVex واستكشف أرقى الدراجات المخصصة
+                        {{ __('auth.login_subheading') }}
                     </p>
                 </div>
             </div>
@@ -472,7 +473,7 @@
                 pw.type = show ? 'text' : 'password';
                 eye.classList.toggle('hidden', !show);
                 eyeOff.classList.toggle('hidden', show);
-                toggle.setAttribute('aria-label', show ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور');
+                toggle.setAttribute('aria-label', show ? @json(__('auth.hide_password')) : @json(__('auth.show_password')));
             });
 
             const form = document.querySelector('form');
@@ -484,7 +485,7 @@
             form?.addEventListener('submit', () => {
                 if (!form.checkValidity()) return;
                 btn.disabled = true;
-                label.textContent = 'جاري الدخول...';
+                label.textContent = @json(__('auth.signing_in'));
                 arrow.classList.add('hidden');
                 spinner.classList.remove('hidden');
             });

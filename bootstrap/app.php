@@ -11,6 +11,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Register SetLocale as a global web middleware so every
+        // request — authenticated or not — has its locale resolved
+        // before any controller or Blade template executes.
+        $middleware->web(append: [
+            \App\Http\Middleware\SetLocale::class,
+        ]);
+
         $middleware->alias([
             'role'              => \App\Http\Middleware\CheckRole::class,
             'brand.access'      => \App\Http\Middleware\CheckBrandAccess::class,
