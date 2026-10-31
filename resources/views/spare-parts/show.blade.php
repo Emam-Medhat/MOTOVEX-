@@ -234,7 +234,8 @@
             {{-- CTA --}}
             <div class="mt-6 flex flex-wrap gap-4">
                 @if($sparePart->isAvailable())
-                <form method="POST" action="{{ route('cart.add-part', $sparePart) }}" class="flex items-center gap-4">
+                <form method="POST" action="{{ route('cart.add-part', $sparePart) }}" class="flex items-center gap-4"
+                      data-confirm-cart data-part-name="{{ $sparePart->name }}" data-part-price="{{ $sparePart->price }}" data-part-currency="{{ $sparePart->currency }}">
                     @csrf
                     <div class="qty-control">
                         <button type="button" onclick="var i=this.parentNode.querySelector('input');if(parseInt(i.value)>1)i.value=parseInt(i.value)-1"
@@ -308,5 +309,6 @@
 </div>
 
 @include('partials.footer')
+@include('partials.cart-confirm', ['theme' => 'light'])
 </body>
 </html>

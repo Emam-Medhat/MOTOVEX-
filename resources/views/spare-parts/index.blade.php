@@ -229,7 +229,7 @@
                         <div class="rating">★★★★★ <span style="color:#8da4bf">{{ __('spare_parts.lp_reviews_count', ['count' => data_get($part, 'reviews_count') ?? 12]) }}</span></div>
                         <div class="price-row"><span class="price num-latin">{{ number_format($partPrice($part)) }} {{ $partCur($part) }}</span>@if(data_get($part, 'old_price'))<span class="old-price num-latin">{{ number_format((float) data_get($part, 'old_price')) }}</span>@endif</div>
                         @if($slug && !$unavailable)
-                            <form method="POST" action="{{ route('cart.add-part', $slug) }}">@csrf<input type="hidden" name="quantity" value="1"><button class="btn" type="submit"><i class="fa-solid fa-cart-plus"></i> {{ __('spare_parts.lp_add_to_cart') }}</button></form>
+                            <form method="POST" action="{{ route('cart.add-part', $slug) }}" data-confirm-cart data-part-name="{{ $partName($part) }}" data-part-price="{{ $partPrice($part) }}" data-part-currency="{{ $partCur($part) }}">@csrf<input type="hidden" name="quantity" value="1"><button class="btn" type="submit"><i class="fa-solid fa-cart-plus"></i> {{ __('spare_parts.lp_add_to_cart') }}</button></form>
                         @else
                             <a class="btn {{ $unavailable ? 'btn-disabled' : 'btn-outline' }}" href="{{ $detailUrl ?? route('spare-parts.index') }}"><i class="fa-solid {{ $unavailable ? 'fa-ban' : $arrow }}"></i> {{ $unavailable ? __('spare_parts.lp_out_of_stock_short') : __('spare_parts.view_details') }}</a>
                         @endif
@@ -334,5 +334,6 @@
     const revealObserver=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');revealObserver.unobserve(entry.target)}}),{threshold:.08});
     document.querySelectorAll('.reveal').forEach(el=>revealObserver.observe(el));
 </script>
+@include('partials.cart-confirm', ['theme' => 'dark'])
 </body>
 </html>

@@ -60,6 +60,14 @@ return [
     'related_inventory'     => 'Related Inventory',
     'in_stock_label'        => 'in stock',
 
+    // ── Add-to-cart confirmation modal ────────────────────────────────────────────
+    'confirm_cart_title'    => 'Add to cart?',
+    'confirm_cart_desc'     => 'Are you sure you want to add :name to your cart?',
+    'confirm_cart_qty'      => 'Quantity',
+    'confirm_cart_total'    => 'Total',
+    'confirm_cart_cancel'   => 'Cancel',
+    'confirm_cart_confirm'  => 'Yes, add it',
+
     // ── Part Detail ───────────────────────────────────────────────────────────────
     'description'           => 'Description',
     'compatible_with'       => 'Compatible With',

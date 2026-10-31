@@ -60,6 +60,14 @@ return [
     'related_inventory'     => 'مخزون مشابه',
     'in_stock_label'        => 'متوفر بالمخزون',
 
+    // ── نافذة تأكيد الإضافة للسلة ──────────────────────────────────────
+    'confirm_cart_title'    => 'تأكيد الإضافة للسلة',
+    'confirm_cart_desc'     => 'هل تريد بالتأكيد إضافة :name إلى سلة المشتريات؟',
+    'confirm_cart_qty'      => 'الكمية',
+    'confirm_cart_total'    => 'الإجمالي',
+    'confirm_cart_cancel'   => 'إلغاء',
+    'confirm_cart_confirm'  => 'نعم، أضِفها',
+
     // ── تفاصيل القطعة ─────────────────────────────────────────────────
     'description'           => 'الوصف',
     'compatible_with'       => 'متوافقة مع',

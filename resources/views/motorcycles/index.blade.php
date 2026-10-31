@@ -87,6 +87,15 @@
         return $value !== $key ? $value : ucfirst(str_replace('_', ' ', $status));
     };
 
+    // Translate a raw DB category value back through the categories map.
+    $catName = function ($value) use ($categoryRows) {
+        $match = $categoryRows->first(fn ($row) => strcasecmp($row->value, (string) $value) === 0);
+
+        return $match
+            ? $match->name
+            : ucwords(str_replace(['-', '_'], ' ', strtolower(trim((string) $value))));
+    };
+
     // Brand logos are only rendered when the asset really exists (some rows in
     // brands.logo_url point at files that were never uploaded).
     $resolveLogo = function ($brand) {
@@ -163,7 +172,7 @@
         [dir="rtl"] .num-latin{direction:ltr;unicode-bidi:plaintext;display:inline-block}
         @media(max-width:1000px){.navlinks{gap:12px}.showroom{grid-template-columns:1fr}.fpanel{position:static}.categories{grid-template-columns:repeat(4,1fr)}.bikes{grid-template-columns:repeat(3,1fr)}.brand-grid{grid-template-columns:repeat(4,1fr)}.footer-grid{grid-template-columns:repeat(3,1fr)}.service-grid,.service-grid.four{grid-template-columns:repeat(2,1fr)}}
         @media(max-width:700px){.topbar{height:59px}.navlinks{display:none;position:absolute;top:59px;right:0;left:0;background:#061124;padding:17px;flex-direction:column;align-items:stretch;border-bottom:1px solid #24496e}.navlinks.open{display:flex}.menu-toggle{display:block}.brand{font-size:17px}.navtools{gap:7px}.navtools .navicon:nth-last-child(-n+2){display:none}.hero{min-height:380px;background-position:58% center}.hero-content{padding:44px 0;max-width:92%}.hero h1{font-size:32px}.hero p{font-size:12px}.trust-grid{grid-template-columns:repeat(5,1fr);gap:4px}.trust-item{font-size:8px}.trust-item i{font-size:19px}.section{padding:32px 0}.section-head{display:block}.section-head h2{font-size:18px}.section .more{display:inline-block;margin-top:7px}.categories{grid-template-columns:repeat(4,1fr);gap:8px}.category img{height:78px}.category span{font-size:9px}.toolbar,.toolbar-form{grid-template-columns:1fr 1fr}.toolbar-form .btn{grid-column:1/-1}.ftoggle{display:flex}.fpanel{display:none}.fpanel.open{display:block}.bikes{grid-template-columns:repeat(2,1fr);gap:9px}.product-image{height:126px}.product-info{padding:9px}.product-info h3{font-size:11px}.desc{display:none}.promo{min-height:150px;padding:18px;flex-direction:column;align-items:flex-start}.promo h2{font-size:18px}.promo p{font-size:10.5px}.discount{position:static;transform:none;margin-top:12px;padding:8px 11px;font-size:10px}.discount strong{font-size:22px}.brand-grid{grid-template-columns:repeat(4,1fr);gap:8px}.brand-tile img,.brand-tile .ph{height:32px}.reviews{grid-template-columns:1fr}.articles{grid-template-columns:repeat(2,1fr)}.article img{height:92px}.cta{display:block;padding:20px}.cta .actions{margin-top:14px}.newsletter{display:block;padding:20px}.news-form{margin-top:14px}.footer-grid{grid-template-columns:repeat(2,1fr);gap:18px}.footer-grid>div:first-child{grid-column:1/-1}.copyright{font-size:8px}.mbody{grid-template-columns:1fr}.mimgwrap{width:100%;height:120px}}
-        @media(max-width:390px){.navtools .lang{display:none}.products,.bikes{gap:7px}.product-image{height:108px}.brand-grid{grid-template-columns:repeat(3,1fr)}.service-grid,.service-grid.four{grid-template-columns:1fr}}
+        @media(max-width:390px){.navtools .lang{display:none}.bikes{gap:7px}.product-image{height:108px}.brand-grid{grid-template-columns:repeat(3,1fr)}.service-grid,.service-grid.four{grid-template-columns:1fr}}
         @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.product,.category,.service,.brand-tile,.article,.btn,.vbtn,.chip-x{transition:none}.product:hover,.category:hover,.service:hover,.brand-tile:hover,.article:hover,.btn:hover{transform:none}}
     </style>
     @unless($isRtl)
@@ -331,14 +340,12 @@
                     @if(request('min_cc'))   <input type="hidden" name="min_cc" value="{{ request('min_cc') }}"> @endif
                     @if(request('max_cc'))   <input type="hidden" name="max_cc" value="{{ request('max_cc') }}"> @endif
                     <input class="finput" type="search" name="search" value="{{ request('search') }}" placeholder="{{ __('motorcycles.search_placeholder') }}" aria-label="{{ __('motorcycles.search_aria') }}">
-                    <label class="lang" style="display:contents" aria-label="{{ __('motorcycles.sort_aria') }}">
-                        <select class="finput" name="sort" onchange="this.form.submit()">
-                            <option value="name" @selected($sortKey === 'name')>{{ __('motorcycles.sort_name_az') }}</option>
-                            <option value="price_asc" @selected($sortKey === 'price_asc')>{{ __('motorcycles.sort_price_asc') }}</option>
-                            <option value="price_desc" @selected($sortKey === 'price_desc')>{{ __('motorcycles.sort_price_desc') }}</option>
-                            <option value="power" @selected($sortKey === 'power')>{{ __('motorcycles.sort_power') }}</option>
-                        </select>
-                    </label>
+                    <select class="finput" name="sort" onchange="this.form.submit()" aria-label="{{ __('motorcycles.sort_aria') }}">
+                        <option value="name" @selected($sortKey === 'name')>{{ __('motorcycles.sort_name_az') }}</option>
+                        <option value="price_asc" @selected($sortKey === 'price_asc')>{{ __('motorcycles.sort_price_asc') }}</option>
+                        <option value="price_desc" @selected($sortKey === 'price_desc')>{{ __('motorcycles.sort_price_desc') }}</option>
+                        <option value="power" @selected($sortKey === 'power')>{{ __('motorcycles.sort_power') }}</option>
+                    </select>
                     <button class="btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i> {{ __('motorcycles.search') }}</button>
                     @if($motorcycles->isNotEmpty())
                         <div class="vtoggle" role="group" aria-label="{{ __('motorcycles.layout_aria') }}">
@@ -355,7 +362,7 @@
                             <a class="chip-x" href="{{ $drop(['search']) }}"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> {{ \Illuminate\Support\Str::limit(request('search'), 24) }} <i class="fa-solid fa-xmark" aria-hidden="true"></i></a>
                         @endif
                         @if(request('category'))
-                            <a class="chip-x" href="{{ $drop(['category']) }}">{{ __('motorcycles.category') }}: {{ request('category') }} <i class="fa-solid fa-xmark" aria-hidden="true"></i></a>
+                            <a class="chip-x" href="{{ $drop(['category']) }}">{{ __('motorcycles.category') }}: {{ $catName(request('category')) }} <i class="fa-solid fa-xmark" aria-hidden="true"></i></a>
                         @endif
                         @foreach($activeBrands as $brand)
                             <a class="chip-x" href="{{ $cleanUrl(['brand' => array_values(array_diff($selectedBrands, [$brand->id]))]) }}">{{ $brand->name }} <i class="fa-solid fa-xmark" aria-hidden="true"></i></a>
@@ -575,7 +582,7 @@
             <div><h4>{{ __('footer.showroom_title') }}</h4><div class="footer-links"><span><i class="fa-solid fa-location-dot"></i> {{ __('footer.showroom_text') }}</span><a href="mailto:{{ $footerEmail }}"><i class="fa-regular fa-envelope"></i> <span class="num-latin">{{ $footerEmail }}</span></a><a href="{{ $telHref }}"><i class="fa-solid fa-phone"></i> <span class="num-latin">{{ $footerPhone }}</span></a><span><i class="fa-solid fa-award"></i> {{ __('footer.group_text') }}</span></div></div>
             <div><h4>{{ __('footer.newsletter_heading') }}</h4><p>{{ __('footer.newsletter_text') }}</p><a class="btn" style="width:100%;padding:8px;font-size:10px" href="{{ route('contact') }}">{{ __('motorcycles.talk_to_expert') }} <i class="fa-solid {{ $arrow }}"></i></a></div>
         </div>
-        <div class="copyright"><span>{{ __('navigation.copyright', ['year' => date('Y')]) }}</span><span>{{ __('footer.group_title') }} · {{ __('navigation.all_rights_reserved') }}</span></div>
+        <div class="copyright"><span>{{ __('navigation.copyright', ['year' => date('Y')]) }}</span><span>{{ __('motorcycles.hero_tagline') }}</span></div>
     </div>
 </footer>
 
