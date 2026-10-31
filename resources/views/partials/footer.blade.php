@@ -387,6 +387,18 @@
       &copy; {{ date('Y') }} MOTOVEX.
       {{ $isAr ? 'جميع الحقوق محفوظة.' : 'All rights reserved.' }}
     </span>
+    <span style="color:#3d5a78;font-size:11px">
+      {{ $isAr ? 'تم التطوير بواسطة' : 'Developed by' }}
+      <a href="https://www.linkedin.com/in/emam-medhat-18b708405" target="_blank" rel="noopener"
+         style="color:#7a99b8;font-weight:700;margin:0 3px" title="LinkedIn">
+        eng.emam medhat
+      </a>
+      &mdash; Cairo, Egypt &nbsp;
+      <a href="tel:+201033643475" style="color:#5a7a9a;margin:0 3px" title="{{ $isAr ? 'اتصل' : 'Call' }}">+20 103 364 3475</a>
+      <a href="mailto:emam.dev1@gmail.com" style="color:#5a7a9a;margin:0 3px" title="Email">emam.dev1@gmail.com</a>
+      <a href="https://github.com/Emam-Medhat" target="_blank" rel="noopener" style="color:#5a7a9a;margin:0 3px" title="GitHub"><i class="fa-brands fa-github"></i></a>
+      <a href="https://www.linkedin.com/in/emam-medhat-18b708405" target="_blank" rel="noopener" style="color:#5a7a9a;margin:0 3px" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+    </span>
     <div class="mvfoot-copy-links">
       <a href="#">{{ $isAr ? 'سياسة الخصوصية' : 'Privacy Policy' }}</a>
       <a href="#">{{ $isAr ? 'الشروط والأحكام' : 'Terms of Service' }}</a>

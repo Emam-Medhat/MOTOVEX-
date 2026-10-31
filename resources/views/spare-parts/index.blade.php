@@ -422,7 +422,23 @@
             <div><h4>{{ __('spare_parts.lp_foot_contact') }}</h4><div class="footer-links"><a href="tel:+201000000000"><i class="fa-solid fa-phone"></i> <span class="num-latin">+20 100 000 0000</span></a><a href="mailto:info@motovex.com"><i class="fa-regular fa-envelope"></i> <span class="num-latin">info@motovex.com</span></a><a href="{{ route('contact') }}"><i class="fa-solid fa-location-dot"></i> {{ __('spare_parts.lp_foot_address') }}</a><span><i class="fa-regular fa-clock"></i> {{ __('spare_parts.lp_foot_hours') }}</span></div></div>
             <div><h4>{{ __('spare_parts.lp_foot_app') }}</h4><p>{{ __('spare_parts.lp_foot_app_text') }}</p><a class="app-badge" href="#"><i class="fa-brands fa-google-play"></i> Google Play</a><br><a class="app-badge" href="#"><i class="fa-brands fa-apple"></i> App Store</a></div>
         </div>
-        <div class="copyright"><span>{{ __('spare_parts.lp_foot_copyright', ['year' => date('Y')]) }}</span><span>{{ __('spare_parts.lp_foot_made') }} <i class="fa-solid fa-heart" style="color:#a45cff"></i></span></div>
+        <div class="copyright">
+            <span>{{ __('spare_parts.lp_foot_copyright', ['year' => date('Y')]) }}</span>
+            <span>
+                {{ __('spare_parts.lp_foot_made') }}
+                <i class="fa-solid fa-heart" style="color:#a45cff"></i>
+                &nbsp;&mdash;&nbsp;
+                <a href="https://www.linkedin.com/in/emam-medhat-18b708405" target="_blank" rel="noopener"
+                   style="color:#b689ff;font-weight:700;text-decoration:none">eng.emam medhat</a>
+                &nbsp;&bull; Cairo, Egypt &nbsp;&bull;&nbsp;
+                <a href="tel:+201033643475" style="color:#7a99b8;text-decoration:none">+20 103 364 3475</a>
+                &nbsp;&bull;&nbsp;
+                <a href="mailto:emam.dev1@gmail.com" style="color:#7a99b8;text-decoration:none">emam.dev1@gmail.com</a>
+                &nbsp;
+                <a href="https://github.com/Emam-Medhat" target="_blank" rel="noopener" style="color:#7a99b8;text-decoration:none" title="GitHub"><i class="fa-brands fa-github"></i></a>
+                <a href="https://www.linkedin.com/in/emam-medhat-18b708405" target="_blank" rel="noopener" style="color:#7a99b8;text-decoration:none;margin-inline-start:6px" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+            </span>
+        </div>
     </div>
 </footer>
 <script>

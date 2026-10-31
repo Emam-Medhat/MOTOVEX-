@@ -566,7 +566,22 @@
             <div><h4>{{ __('footer.showroom_title') }}</h4><div class="footer-links"><span><i class="fa-solid fa-location-dot"></i> {{ __('footer.showroom_text') }}</span><a href="mailto:{{ $footerEmail }}"><i class="fa-regular fa-envelope"></i> <span class="num-latin">{{ $footerEmail }}</span></a><a href="{{ $telHref }}"><i class="fa-solid fa-phone"></i> <span class="num-latin">{{ $footerPhone }}</span></a><span><i class="fa-solid fa-award"></i> {{ __('footer.group_text') }}</span></div></div>
             <div><h4>{{ __('footer.newsletter_heading') }}</h4><p>{{ __('footer.newsletter_text') }}</p><a class="btn" style="width:100%;padding:8px;font-size:10px" href="{{ route('contact') }}">{{ __('motorcycles.talk_to_expert') }} <i class="fa-solid {{ $arrow }}"></i></a></div>
         </div>
-        <div class="copyright"><span>{{ __('navigation.copyright', ['year' => date('Y')]) }}</span><span>{{ __('motorcycles.hero_tagline') }}</span></div>
+        <div class="copyright">
+            <span>{{ __('navigation.copyright', ['year' => date('Y')]) }}</span>
+            <span>
+                {{ __('motorcycles.hero_tagline') }}
+                &nbsp;&mdash;&nbsp;
+                <a href="https://www.linkedin.com/in/emam-medhat-18b708405" target="_blank" rel="noopener"
+                   style="color:#b689ff;font-weight:700;text-decoration:none">eng.emam medhat</a>
+                &nbsp;&bull; Cairo, Egypt &nbsp;&bull;&nbsp;
+                <a href="tel:+201033643475" style="color:#7a99b8;text-decoration:none">+20 103 364 3475</a>
+                &nbsp;&bull;&nbsp;
+                <a href="mailto:emam.dev1@gmail.com" style="color:#7a99b8;text-decoration:none">emam.dev1@gmail.com</a>
+                &nbsp;
+                <a href="https://github.com/Emam-Medhat" target="_blank" rel="noopener" style="color:#7a99b8;text-decoration:none" title="GitHub"><i class="fa-brands fa-github"></i></a>
+                <a href="https://www.linkedin.com/in/emam-medhat-18b708405" target="_blank" rel="noopener" style="color:#7a99b8;text-decoration:none;margin-inline-start:6px" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+            </span>
+        </div>
     </div>
 </footer>
 
