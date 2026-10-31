@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="light" />
+    <meta name="color-scheme" content="dark" />
     <title>Promotions | MOTOVEX Premium Motorcycles</title>
-    <style>html,body{background:#f8f9fa!important;color:#0f172a}</style>
+    <style>html,body{background:#050b18!important;color:#f4f8ff}</style>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -36,32 +36,32 @@
         };
     </script>
     <style>
-        html { scroll-behavior: smooth; background: #f8f9fa; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8f9fa; color: #0f172a; }
+        html { scroll-behavior: smooth; background: #050b18; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #050b18; color: #f4f8ff; }
 
         .hero-gradient {
             background:
-                radial-gradient(ellipse 70% 50% at 50% -10%, rgba(124,58,237,.12), transparent),
-                linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+                radial-gradient(ellipse 70% 50% at 50% -10%, rgba(133,60,255,.12), transparent),
+                linear-gradient(180deg, #071326 0%, #050b18 100%);
         }
 
         .card-hover { transition: all 0.35s cubic-bezier(0.4,0,0.2,1); }
         .card-hover:hover {
             transform: translateY(-8px);
-            box-shadow: 0 24px 48px -12px rgba(124,58,237,.18);
-            border-color: rgba(139,92,246,.45);
+            box-shadow: 0 24px 48px -12px rgba(133,60,255,.18);
+            border-color: rgba(166,108,255,.45);
         }
 
         .reveal { opacity: 0; transform: translateY(36px); transition: all 0.75s cubic-bezier(0.16,1,0.3,1); }
         .reveal.active { opacity:1; transform:translateY(0); }
 
         ::-webkit-scrollbar { width: 7px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #7c3aed; border-radius: 10px; }
+        ::-webkit-scrollbar-track { background: #071326; }
+        ::-webkit-scrollbar-thumb { background: #853cff; border-radius: 10px; }
     </style>
 @include('partials.rtl-styles')
 </head>
-<body class="bg-slate-50 text-slate-900 overflow-x-hidden">
+<body class="bg-[#050b18] text-[#f4f8ff] overflow-x-hidden">
 
 @include('partials.navbar')
 
@@ -72,17 +72,17 @@
 
     <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
         <div class="max-w-2xl space-y-6">
-            <div class="inline-flex items-center gap-2 rounded-full border border-brand-500/25 bg-brand-50 px-4 py-1.5 text-xs font-semibold text-brand-700 animate-fade-in">
+            <div class="inline-flex items-center gap-2 rounded-full border border-brand-500/25 bg-brand-900/30 px-4 py-1.5 text-xs font-semibold text-brand-400 animate-fade-in">
                 <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
                 Limited-Time Offers
             </div>
 
             <h1 class="text-5xl sm:text-6xl font-extrabold leading-[1.08] tracking-tight">
-                <span class="block opacity-0 animate-fade-up text-slate-900" style="animation-delay:.1s">Exclusive</span>
-                <span class="block opacity-0 animate-fade-up text-brand-600" style="animation-delay:.25s">Ride Offers</span>
+                <span class="block opacity-0 animate-fade-up text-white" style="animation-delay:.1s">Exclusive</span>
+                <span class="block opacity-0 animate-fade-up text-brand-500" style="animation-delay:.25s">Ride Offers</span>
             </h1>
 
-            <p class="text-lg text-slate-500 leading-relaxed opacity-0 animate-fade-up" style="animation-delay:.4s">
+            <p class="text-lg text-slate-400 leading-relaxed opacity-0 animate-fade-up" style="animation-delay:.4s">
                 Hand-picked promotions across our showrooms — financing deals, trade-in bonuses and seasonal service offers.
                 Every offer below is live right now.
             </p>
@@ -91,7 +91,7 @@
                 <a href="{{ route('motorcycles.index') }}" class="inline-flex items-center gap-3 rounded-2xl bg-brand-600 px-7 py-4 text-sm font-bold text-white shadow-xl shadow-brand-500/25 hover:-translate-y-0.5 hover:bg-brand-500 transition-all duration-300">
                     <i class="fa-solid fa-motorcycle"></i> Browse Motorcycles
                 </a>
-                <a href="{{ route('contact') }}" class="inline-flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-7 py-4 text-sm font-semibold text-slate-700 hover:border-brand-300 hover:text-brand-600 transition-all duration-300">
+                <a href="{{ route('contact') }}" class="inline-flex items-center gap-3 rounded-2xl border border-slate-700 bg-slate-900/50 px-7 py-4 text-sm font-semibold text-slate-300 hover:border-brand-500 hover:text-brand-400 transition-all duration-300">
                     Talk to an Advisor <i class="fa-solid fa-arrow-right text-xs"></i>
                 </a>
             </div>
@@ -100,18 +100,18 @@
 </section>
 
 {{-- Promotions Grid --}}
-<section class="py-20 bg-white">
+<section class="py-20 bg-[#050b18]">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="text-center max-w-2xl mx-auto reveal">
-            <span class="text-brand-600 text-sm font-bold uppercase tracking-widest">Current Promotions</span>
-            <h2 class="mt-3 text-4xl sm:text-5xl font-extrabold text-slate-900">Offers On Right Now</h2>
-            <p class="mt-4 text-slate-500">Only active and unexpired offers are shown here. Check back often — new deals drop regularly.</p>
+            <span class="text-brand-500 text-sm font-bold uppercase tracking-widest">Current Promotions</span>
+            <h2 class="mt-3 text-4xl sm:text-5xl font-extrabold text-white">Offers On Right Now</h2>
+            <p class="mt-4 text-slate-400">Only active and unexpired offers are shown here. Check back often — new deals drop regularly.</p>
         </div>
 
         @if($promotions->isEmpty())
-            <div class="mt-16 max-w-xl mx-auto rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-16 text-center reveal">
-                <i class="fa-solid fa-tags text-4xl text-slate-300"></i>
-                <h3 class="mt-4 text-lg font-bold text-slate-800">No active promotions right now</h3>
+            <div class="mt-16 max-w-xl mx-auto rounded-2xl border border-dashed border-slate-700 bg-slate-900/30 p-16 text-center reveal">
+                <i class="fa-solid fa-tags text-4xl text-slate-700"></i>
+                <h3 class="mt-4 text-lg font-bold text-slate-300">No active promotions right now</h3>
                 <p class="mt-2 text-sm text-slate-500">Our latest offers are being prepared. In the meantime, explore the full collection.</p>
                 <a href="{{ route('motorcycles.index') }}"
                    class="mt-6 inline-flex items-center gap-2 rounded-xl bg-brand-600 px-6 py-3 text-sm font-bold text-white hover:bg-brand-500 transition-colors">
@@ -149,10 +149,10 @@
                         $currency = $mc && $mc->currency ? $mc->currency . ' ' : '';
                     @endphp
 
-                    <article class="card-hover reveal group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" style="transition-delay: {{ $i * 0.1 }}s">
+                    <article class="card-hover reveal group flex flex-col overflow-hidden rounded-2xl border border-slate-800 bg-[#08162a] shadow-lg" style="transition-delay: {{ $i * 0.1 }}s">
                         <div class="relative">
                             @if($imgUrl)
-                                <img src="{{ $imgUrl }}" alt="{{ $promo->title }}" class="h-52 w-full object-cover" loading="lazy">
+                                <img src="{{ $imgUrl }}" alt="{{ $promo->title }}" class="h-52 w-full object-cover brightness-90" loading="lazy">
                             @else
                                 <div class="h-52 w-full bg-gradient-to-br from-brand-600 via-brand-500 to-indigo-600 flex items-center justify-center">
                                     <i class="fa-solid fa-tags text-5xl text-white/70"></i>
@@ -174,32 +174,32 @@
 
                         <div class="flex flex-1 flex-col p-7">
                             <div class="flex items-center gap-2 text-xs">
-                                <span class="rounded-full bg-brand-50 px-3 py-1 font-semibold text-brand-700">
+                                <span class="rounded-full bg-brand-900/40 px-3 py-1 font-semibold text-brand-400">
                                     {{ $promo->brand->name ?? 'MOTOVEX' }}
                                 </span>
                                 @if($promo->end_date)
-                                    <span class="text-slate-400">
+                                    <span class="text-slate-500">
                                         <i class="fa-regular fa-clock"></i> Ends {{ $promo->end_date->format('d M Y') }}
                                     </span>
                                 @endif
                             </div>
 
-                            <h3 class="mt-3 text-xl font-bold text-slate-900">{{ $promo->title }}</h3>
-                            <p class="mt-2 text-sm leading-6 text-slate-500">{{ $promo->description }}</p>
+                            <h3 class="mt-3 text-xl font-bold text-white">{{ $promo->title }}</h3>
+                            <p class="mt-2 text-sm leading-6 text-slate-400">{{ $promo->description }}</p>
 
                             @if($promo->hasPriceableDiscount())
                                 <div class="mt-5 flex items-baseline gap-3">
-                                    <span class="text-2xl font-extrabold text-brand-600">
+                                    <span class="text-2xl font-extrabold text-brand-500">
                                         {{ $currency }}{{ number_format($promo->discountedPrice()) }}
                                     </span>
-                                    <span class="text-sm text-slate-400 line-through">
+                                    <span class="text-sm text-slate-500 line-through">
                                         {{ $currency }}{{ number_format((float) $mc->price) }}
                                     </span>
                                 </div>
                             @endif
 
                             @if($promo->start_date || $promo->end_date)
-                                <p class="mt-4 text-xs text-slate-400">
+                                <p class="mt-4 text-xs text-slate-500">
                                     <i class="fa-regular fa-calendar"></i>
                                     {{ $promo->start_date ? $promo->start_date->format('d M Y') : 'Now' }}
                                     &ndash;
@@ -208,7 +208,7 @@
                             @endif
 
                             <a href="{{ $ctaUrl }}"
-                               class="mt-auto pt-6 inline-flex items-center gap-2 text-sm font-bold text-brand-600 transition-colors hover:text-brand-700">
+                               class="mt-auto pt-6 inline-flex items-center gap-2 text-sm font-bold text-brand-400 transition-colors hover:text-brand-300">
                                 {{ $ctaLabel }}
                                 <i class="fa-solid fa-arrow-right text-xs transition-transform group-hover:translate-x-1"></i>
                             </a>

@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateBrandRequest;
 use App\Models\Brand;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class BrandController extends Controller
@@ -51,6 +52,11 @@ class BrandController extends Controller
         $data['slug'] = $this->uniqueSlug($data['name']);
         $data['is_published'] = $request->boolean('is_published');
 
+        if ($request->hasFile('logo')) {
+            $data['logo_url'] = $request->file('logo')->store('brands', 'public');
+        }
+        unset($data['logo']);
+
         Brand::create($data);
 
         return redirect()->route('admin.brands.index')->with('success', 'Brand created successfully.');
@@ -77,6 +83,15 @@ class BrandController extends Controller
         $data = $request->validated();
         $data['slug'] = $this->uniqueSlug($data['name'], $brand->id);
         $data['is_published'] = $request->boolean('is_published');
+
+        if ($request->hasFile('logo')) {
+            // Delete old logo if it's a stored file (not an external URL)
+            if ($brand->logo_url && !str_starts_with($brand->logo_url, 'http')) {
+                Storage::disk('public')->delete($brand->logo_url);
+            }
+            $data['logo_url'] = $request->file('logo')->store('brands', 'public');
+        }
+        unset($data['logo']);
 
         $brand->update($data);
 

@@ -1,4 +1,4 @@
-\<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="{{ app()->getLocale() === 'ar' ? 'ar' : 'en' }}" dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
@@ -51,7 +51,7 @@
         /* ===== Main Container (full screen) ===== */
         .glass-main {
             position: relative;
-            background: rgba(12, 7, 24, 0.85);
+            background: rgba(12, 7, 24, 0.12);
             overflow: hidden;
         }
         .glass-main::after {
@@ -80,17 +80,14 @@
 
         /* ===== Login Panel Background (dark aurora) ===== */
         .login-bg {
-            background:
-                radial-gradient(120% 90% at 15% 10%, rgba(109, 84, 183, 0.45) 0%, transparent 55%),
-                radial-gradient(100% 80% at 85% 85%, rgba(236, 72, 153, 0.28) 0%, transparent 55%),
-                linear-gradient(160deg, #150c2b 0%, #0d0719 55%, #090413 100%);
+            background: transparent;
         }
 
         /* ===== Obsidian Glass Card ===== */
         .glass-card {
             position: relative;
             border-radius: 1.5rem;
-            background: linear-gradient(155deg, rgba(255, 255, 255, 0.10) 0%, rgba(255, 255, 255, 0.03) 45%, rgba(168, 85, 247, 0.06) 100%);
+            background: linear-gradient(155deg, rgba(20, 12, 35, 0.62) 0%, rgba(20, 12, 35, 0.48) 45%, rgba(40, 18, 55, 0.40) 100%);
             backdrop-filter: blur(26px);
             -webkit-backdrop-filter: blur(26px);
             border: 1px solid rgba(255, 255, 255, 0.12);
@@ -163,12 +160,11 @@
         /* ===== Bike Panel ===== */
         .bike-overlay {
             background:
-                linear-gradient(to left, rgba(7, 4, 15, 0.85) 0%, transparent 42%),
-                linear-gradient(to top, rgba(7, 4, 15, 0.8) 0%, transparent 52%),
+                linear-gradient(to left, rgba(7, 4, 15, 0.45) 0%, transparent 55%),
+                linear-gradient(to top, rgba(7, 4, 15, 0.62) 0%, transparent 60%),
                 linear-gradient(135deg, rgba(109, 84, 183, 0.28) 0%, transparent 62%);
         }
-        .bike-video { animation: bikeZoom 22s ease-in-out infinite; }
-        @keyframes bikeZoom { 0%, 100% { transform: scale(1.02); } 50% { transform: scale(1.06); } }
+        .bike-video { object-fit: cover; object-position: center; }
 
         /* Light beam sweeping across the video */
         .light-beam {
@@ -233,7 +229,6 @@
                 animation-iteration-count: 1 !important;
                 transition-duration: 0.01ms !important;
             }
-            .bike-video { transform: scale(1.02); }
         }
     </style>
 @include('partials.rtl-styles')
@@ -247,12 +242,10 @@
     <div class="corner-light corner-light-br"></div>
 
     <!-- Main Container : full screen -->
-    <div class="glass-main w-full h-full flex flex-col md:flex-row relative z-10">
+    <div class="glass-main w-full h-full relative z-10">
 
         <!-- ================= Login Panel ================= -->
-        <div class="login-bg w-full md:w-[52%] flex-1 min-h-0 md:h-full flex flex-col items-center p-6 sm:p-8 md:p-10 relative overflow-y-auto overflow-x-hidden">
-
-            <div class="absolute inset-0 grid-pattern opacity-50 pointer-events-none z-0"></div>
+        <div class="login-bg absolute inset-0 z-20 w-full h-full flex flex-col items-center p-6 sm:p-8 md:p-10 overflow-y-auto overflow-x-hidden">
 
             <!-- Main Glass Card -->
             <div class="relative w-full max-w-[430px] my-auto z-10 animate-slide-up">
@@ -402,9 +395,9 @@
         </div>
 
         <!-- ================= Bike Panel ================= -->
-        <div class="w-full md:w-[46%] h-[18vh] min-h-[130px] shrink-0 md:h-full relative overflow-hidden bg-[#050310]">
+        <div class="absolute inset-0 z-0 w-full h-full overflow-hidden bg-[#050310]">
 
-            <video class="absolute inset-0 h-full w-full object-cover bike-video"
+            <video class="absolute inset-0 h-full w-full bike-video"
                    autoplay muted loop playsinline preload="auto"
                    aria-label="Kawasaki Ninja H2">
                 <source src="{{ asset('media/kawasaki-ninja-h2.mp4') }}" type="video/mp4">
@@ -431,29 +424,6 @@
             <div class="absolute top-6 right-6 z-20 flex items-center gap-2 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
                 <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
                 <span class="text-[11px] text-white/80 font-medium tracking-wide">{{ __('auth.live_preview') }}</span>
-            </div>
-
-            <!-- Bottom Content -->
-            <div class="absolute bottom-0 left-0 right-0 p-6 md:p-10 z-20">
-                <div class="space-y-3 headline-animate">
-                    <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/15">
-                        <svg class="w-3.5 h-3.5 text-aura-neon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <circle cx="5" cy="17" r="3.2"/><circle cx="19" cy="17" r="3.2"/>
-                            <path d="M8.2 17h7.6"/><path d="M12 10h5.5"/><path d="M12 10 15.2 6H18l2.6 6.2"/>
-                            <path d="M8.2 17 11 11.4h1"/><path d="M9.6 6H13.4"/>
-                        </svg>
-                        <span class="text-[11px] text-white/90 font-semibold tracking-wider uppercase">Ninja H2 Custom</span>
-                    </div>
-
-                    <h2 class="text-2xl md:text-3xl lg:text-4xl font-black text-white leading-tight">
-                        {{ __('auth.login_heading') }}<br>
-                        <span class="bg-linear-to-l from-purple-300 via-fuchsia-300 to-pink-300 bg-clip-text text-transparent headline-glow">{{ __('common.tagline') }}</span>
-                    </h2>
-
-                    <p class="text-white/55 text-sm max-w-xs hidden md:block">
-                        {{ __('auth.login_subheading') }}
-                    </p>
-                </div>
             </div>
 
             <!-- Decorative Line -->

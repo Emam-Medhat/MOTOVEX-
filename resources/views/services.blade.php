@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="light" />
+    <meta name="color-scheme" content="dark" />
     <title>Services | MOTOVEX Premium Motorcycles</title>
-    <style>html,body{background:#f8f9fa!important;color:#0f172a}</style>
+    <style>html,body{background:#050b18!important;color:#f4f8ff}</style>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <script>
         tailwind.config = {
-            darkMode: false,
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: { sans: ['Plus Jakarta Sans','sans-serif'] },
@@ -36,13 +36,13 @@
         };
     </script>
     <style>
-        html { scroll-behavior: smooth; background: #f8f9fa; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8f9fa; color: #0f172a; }
+        html { scroll-behavior: smooth; background: #050b18; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #050b18; color: #f4f8ff; }
 
         .hero-gradient {
             background:
-                radial-gradient(ellipse 70% 50% at 50% -10%, rgba(124,58,237,.12), transparent),
-                linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+                radial-gradient(ellipse 70% 50% at 50% -10%, rgba(133,60,255,.18), transparent),
+                linear-gradient(180deg, #050b18 0%, #08162a 100%);
         }
 
         .card-hover {
@@ -50,8 +50,8 @@
         }
         .card-hover:hover {
             transform: translateY(-8px);
-            box-shadow: 0 24px 48px -12px rgba(124,58,237,.18);
-            border-color: rgba(139,92,246,.45);
+            box-shadow: 0 24px 48px -12px rgba(133,60,255,.35);
+            border-color: rgba(139,92,246,.55);
         }
 
         .reveal {
@@ -62,18 +62,40 @@
         .reveal.active { opacity:1; transform:translateY(0); }
 
         .stat-number {
-            background: linear-gradient(135deg, #0f172a 0%, #7c3aed 100%);
+            background: linear-gradient(135deg, #f4f8ff 0%, #a66cff 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         ::-webkit-scrollbar { width: 7px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-track { background: #08162a; }
         ::-webkit-scrollbar-thumb { background: #7c3aed; border-radius: 10px; }
+
+        /* ── Dark overrides for Tailwind light classes ── */
+        .bg-white  { background-color: #08162a !important; }
+        .bg-slate-50 { background-color: #050b18 !important; }
+        .border-slate-200 { border-color: #15385d !important; }
+        .border-y.border-slate-200 { border-color: #15385d !important; }
+        .text-slate-900 { color: #f4f8ff !important; }
+        .text-slate-800 { color: #dceaff !important; }
+        .text-slate-700 { color: #c0d2e8 !important; }
+        .text-slate-600 { color: #91a9c6 !important; }
+        .text-slate-500 { color: #7a94b0 !important; }
+        .border-brand-100 { border-color: #2d1b69 !important; }
+        .bg-brand-50  { background-color: #0d0a22 !important; }
+        .bg-indigo-50 { background-color: #0a0e28 !important; }
+        .bg-emerald-50 { background-color: #062016 !important; }
+        .bg-amber-50   { background-color: #1a1000 !important; }
+        .bg-violet-50  { background-color: #0f0720 !important; }
+        .text-brand-700 { color: #c4abff !important; }
+        .hover\:text-brand-600:hover { color: #a66cff !important; }
+        .hover\:border-brand-300:hover { border-color: #7c3aed !important; }
+        .border-slate-200.bg-white { border-color: #15385d !important; background-color: #08162a !important; }
+        .shadow-sm { box-shadow: 0 4px 12px rgba(0,0,0,.4) !important; }
     </style>
 @include('partials.rtl-styles')
 </head>
-<body class="bg-slate-50 text-slate-900 overflow-x-hidden">
+<body class="overflow-x-hidden" style="background:#050b18;color:#f4f8ff">
 
 @include('partials.navbar')
 
@@ -93,11 +115,11 @@
                 </div>
 
                 <h1 class="text-5xl sm:text-6xl font-extrabold leading-[1.08] tracking-tight">
-                    <span class="block opacity-0 animate-fade-up text-slate-900" style="animation-delay:.1s">Everything</span>
-                    <span class="block opacity-0 animate-fade-up text-brand-600" style="animation-delay:.25s">Your Ride Needs</span>
+                    <span class="block opacity-0 animate-fade-up" style="color:#f4f8ff;animation-delay:.1s">Everything</span>
+                    <span class="block opacity-0 animate-fade-up text-brand-400" style="animation-delay:.25s">Your Ride Needs</span>
                 </h1>
 
-                <p class="text-lg text-slate-500 max-w-lg leading-relaxed opacity-0 animate-fade-up" style="animation-delay:.4s">
+                <p class="text-lg max-w-lg leading-relaxed opacity-0 animate-fade-up" style="color:#91a9c6;animation-delay:.4s">
                     MOTOVEX offers comprehensive ownership support — from the day you choose your bike to every mile after. Factory-trained experts, genuine parts, full protection.
                 </p>
 
@@ -105,7 +127,7 @@
                     <a href="{{ route('contact') }}" class="inline-flex items-center gap-3 rounded-2xl bg-brand-600 px-7 py-4 text-sm font-bold text-white shadow-xl shadow-brand-500/25 hover:-translate-y-0.5 hover:bg-brand-500 transition-all duration-300">
                         <i class="fa-solid fa-calendar-check"></i> Book a Service
                     </a>
-                    <a href="{{ route('motorcycles.index') }}" class="inline-flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-7 py-4 text-sm font-semibold text-slate-700 hover:border-brand-300 hover:text-brand-600 transition-all duration-300">
+                    <a href="{{ route('motorcycles.index') }}" class="inline-flex items-center gap-3 rounded-2xl border px-7 py-4 text-sm font-semibold transition-all duration-300" style="border-color:#2d4a6e;color:#c0d2e8;background:#0d1e36">
                         Browse Motorcycles <i class="fa-solid fa-arrow-right text-xs"></i>
                     </a>
                 </div>
@@ -114,39 +136,39 @@
                 <div class="flex gap-8 pt-4 opacity-0 animate-fade-up" style="animation-delay:.7s">
                     <div>
                         <div class="text-3xl font-extrabold stat-number">150+</div>
-                        <div class="text-xs text-slate-500 mt-1">Premium Bikes</div>
+                        <div class="text-xs mt-1" style="color:#7a94b0">Premium Bikes</div>
                     </div>
                     <div>
                         <div class="text-3xl font-extrabold stat-number">12K+</div>
-                        <div class="text-xs text-slate-500 mt-1">Happy Customers</div>
+                        <div class="text-xs mt-1" style="color:#7a94b0">Happy Customers</div>
                     </div>
                     <div>
                         <div class="text-3xl font-extrabold stat-number">98%</div>
-                        <div class="text-xs text-slate-500 mt-1">Satisfaction</div>
+                        <div class="text-xs mt-1" style="color:#7a94b0">Satisfaction</div>
                     </div>
                 </div>
             </div>
 
             {{-- Visual --}}
             <div class="relative opacity-0 animate-scale-in" style="animation-delay:.3s">
-                <div class="relative rounded-3xl overflow-hidden border border-slate-200 shadow-2xl shadow-brand-500/10">
+                <div class="relative rounded-3xl overflow-hidden shadow-2xl" style="border:1px solid #1d3a5e;box-shadow:0 25px 50px rgba(133,60,255,.15)">
                     <img src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=900&q=90"
                          alt="MOTOVEX Service" class="w-full aspect-[4/3] object-cover" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent"></div>
-                    <div class="absolute bottom-5 left-5 right-5 rounded-2xl border border-white/20 bg-white/90 backdrop-blur-md p-4 shadow-lg">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent"></div>
+                    <div class="absolute bottom-5 left-5 right-5 rounded-2xl p-4 shadow-lg" style="border:1px solid rgba(255,255,255,.1);background:rgba(8,22,42,.85);backdrop-filter:blur(12px)">
                         <div class="flex items-center gap-4">
                             <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-600 text-white">
                                 <i class="fa-solid fa-shield-halved text-lg"></i>
                             </div>
                             <div>
-                                <div class="font-bold text-sm text-slate-900">100% Certified</div>
-                                <div class="text-xs text-slate-500">Full Inspection + Warranty</div>
+                                <div class="font-bold text-sm" style="color:#f4f8ff">100% Certified</div>
+                                <div class="text-xs" style="color:#7a94b0">Full Inspection + Warranty</div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="absolute -top-5 -right-5 w-22 h-22 w-20 h-20 rounded-2xl border border-brand-200 bg-brand-50 flex items-center justify-center animate-float shadow-md">
-                    <i class="fa-solid fa-wrench text-2xl text-brand-600"></i>
+                <div class="absolute -top-5 -right-5 w-20 h-20 rounded-2xl flex items-center justify-center animate-float shadow-md" style="border:1px solid #2d1b69;background:#0d0a22">
+                    <i class="fa-solid fa-wrench text-2xl text-brand-400"></i>
                 </div>
             </div>
         </div>
@@ -154,45 +176,52 @@
 </section>
 
 {{-- Services Grid --}}
-<section class="py-24 bg-white">
+<section class="py-24" style="background:#08162a">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="text-center max-w-2xl mx-auto reveal">
-            <span class="text-brand-600 text-sm font-bold uppercase tracking-widest">What We Offer</span>
-            <h2 class="mt-3 text-4xl sm:text-5xl font-extrabold text-slate-900">Our Services</h2>
-            <p class="mt-4 text-slate-500">Every detail designed to make your ownership experience exceptional from day one.</p>
+            <span class="text-brand-400 text-sm font-bold uppercase tracking-widest">What We Offer</span>
+            <h2 class="mt-3 text-4xl sm:text-5xl font-extrabold" style="color:#f4f8ff">Our Services</h2>
+            <p class="mt-4" style="color:#7a94b0">Every detail designed to make your ownership experience exceptional from day one.</p>
         </div>
 
         @php
             $serviceTones = [
-                'bg-violet-50 text-violet-600',
-                'bg-indigo-50 text-indigo-600',
-                'bg-emerald-50 text-emerald-600',
-                'bg-amber-50 text-amber-600',
+                'text-violet-400' => 'background:#1a0a3e',
+                'text-indigo-400' => 'background:#0a0e28',
+                'text-emerald-400' => 'background:#062016',
+                'text-amber-400'   => 'background:#1a1000',
+            ];
+            $serviceTonesArr = [
+                ['color:#c4b5fd','background:#1a0a3e'],
+                ['color:#a5b4fc','background:#0a0e28'],
+                ['color:#6ee7b7','background:#062016'],
+                ['color:#fcd34d','background:#1a1000'],
             ];
         @endphp
 
         <div class="mt-16 grid sm:grid-cols-2 gap-7">
             @forelse($services as $i => $service)
-            <div class="card-hover reveal overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" style="transition-delay: {{ $i * 0.1 }}s">
+            <div class="card-hover reveal overflow-hidden rounded-2xl shadow-sm" style="border:1px solid #1d3a5e;background:linear-gradient(155deg,#0d2039,#071326 72%)" data-delay="{{ $i * 0.1 }}s">
                 @if($service->image_url)
                 <img src="{{ $service->image_url }}" alt="{{ $service->title }}" class="h-44 w-full object-cover" loading="lazy">
                 @endif
                 <div class="p-8">
                     <div class="flex items-start gap-5">
-                        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl {{ $serviceTones[$i % count($serviceTones)] }} text-2xl">
+                        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-2xl"
+                             style="{{ $serviceTonesArr[$i % count($serviceTonesArr)][1] }};color:{{ $serviceTonesArr[$i % count($serviceTonesArr)][0] }}">
                             <i class="fa-solid {{ $service->icon_class }}"></i>
                         </div>
                         <div>
-                            <h3 class="text-xl font-bold text-slate-900">{{ $service->title }}</h3>
-                            <p class="mt-2 text-sm leading-6 text-slate-500">{{ $service->description }}</p>
+                            <h3 class="text-xl font-bold" style="color:#f4f8ff">{{ $service->title }}</h3>
+                            <p class="mt-2 text-sm leading-6" style="color:#91a9c6">{{ $service->description }}</p>
                         </div>
                     </div>
                     @if($service->full_description)
-                    <p class="mt-6 text-sm leading-7 text-slate-600">{{ $service->full_description }}</p>
+                    <p class="mt-6 text-sm leading-7" style="color:#91a9c6">{{ $service->full_description }}</p>
                     @endif
                     @if($service->cta_label)
                     <a href="{{ $service->cta_route ?: '#' }}"
-                       class="mt-6 inline-flex items-center gap-2 text-sm font-bold text-brand-600 transition-colors hover:text-brand-700">
+                       class="mt-6 inline-flex items-center gap-2 text-sm font-bold transition-colors" style="color:#a66cff">
                         {{ $service->cta_label }}
                         <i class="fa-solid fa-arrow-right text-xs"></i>
                     </a>
@@ -200,10 +229,10 @@
                 </div>
             </div>
             @empty
-            <div class="sm:col-span-2 rounded-2xl border border-dashed border-slate-300 bg-white p-16 text-center">
-                <i class="fa-solid fa-screwdriver-wrench text-4xl text-slate-300"></i>
-                <h3 class="mt-4 text-lg font-bold text-slate-800">No services available yet</h3>
-                <p class="mt-2 text-sm text-slate-500">Our team is preparing the latest ownership services. Please check back soon.</p>
+            <div class="sm:col-span-2 rounded-2xl border border-dashed p-16 text-center" style="border-color:#1d3a5e;background:#08162a">
+                <i class="fa-solid fa-screwdriver-wrench text-4xl" style="color:#2d4a6e"></i>
+                <h3 class="mt-4 text-lg font-bold" style="color:#dceaff">No services available yet</h3>
+                <p class="mt-2 text-sm" style="color:#7a94b0">Our team is preparing the latest ownership services. Please check back soon.</p>
                 <a href="{{ route('contact') }}"
                    class="mt-6 inline-flex items-center gap-2 rounded-xl bg-brand-600 px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-brand-500">
                     <i class="fa-solid fa-paper-plane"></i> Contact Us
@@ -215,7 +244,7 @@
 </section>
 
 {{-- Features Strip --}}
-<section class="py-16 bg-slate-50 border-y border-slate-200">
+<section class="py-16 border-y" style="border-color:#15385d;background:#070f20">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 text-center">
             @foreach([
@@ -226,12 +255,12 @@
                 ['fa-certificate','Certified','150-point check'],
                 ['fa-crown','Premium Brands','Top brands only'],
             ] as $f)
-            <div class="reveal flex flex-col items-center gap-2">
-                <div class="w-12 h-12 rounded-full bg-brand-100 flex items-center justify-center text-brand-600 text-lg">
+            <div class="flex flex-col items-center gap-2 reveal">
+                <div class="w-12 h-12 rounded-full flex items-center justify-center text-lg" style="background:#1a0a3e;color:#a66cff">
                     <i class="fa-solid {{ $f[0] }}"></i>
                 </div>
-                <span class="text-xs font-bold text-slate-800">{{ $f[1] }}</span>
-                <span class="text-[10px] text-slate-500">{{ $f[2] }}</span>
+                <span class="text-xs font-bold" style="color:#dceaff">{{ $f[1] }}</span>
+                <span class="text-[10px]" style="color:#7a94b0">{{ $f[2] }}</span>
             </div>
             @endforeach
         </div>
@@ -239,15 +268,15 @@
 </section>
 
 {{-- CTA --}}
-<section class="py-24 bg-white relative overflow-hidden">
-    <div class="absolute inset-0 bg-gradient-to-b from-brand-50/40 to-transparent pointer-events-none"></div>
+<section class="py-24 relative overflow-hidden" style="background:#08162a">
+    <div class="absolute inset-0 bg-gradient-to-b from-purple-900/10 to-transparent pointer-events-none"></div>
     <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div class="rounded-3xl border border-brand-100 bg-gradient-to-br from-brand-50 via-white to-indigo-50 p-10 sm:p-16 text-center reveal shadow-xl shadow-brand-500/8">
+        <div class="rounded-3xl border p-10 sm:p-16 text-center reveal shadow-xl" style="border-color:#2d1b69;background:linear-gradient(135deg,#0d0a22,#08162a,#0a0e28)">
             <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand-600 text-white mb-6">
                 <i class="fa-solid fa-calendar-check text-2xl"></i>
             </div>
-            <h2 class="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-tight">Ready to Book a Service?</h2>
-            <p class="mt-4 text-slate-500 text-lg max-w-xl mx-auto">
+            <h2 class="text-4xl sm:text-5xl font-extrabold leading-tight" style="color:#f4f8ff">Ready to Book a Service?</h2>
+            <p class="mt-4 text-lg max-w-xl mx-auto" style="color:#91a9c6">
                 Contact our team and we'll get you booked in at the next available slot. Fast, professional, and hassle-free.
             </p>
             <div class="mt-10 flex flex-wrap justify-center gap-4">
@@ -256,7 +285,7 @@
                     <i class="fa-solid fa-paper-plane"></i> Book Now
                 </a>
                 <a href="tel:+201234567890"
-                   class="inline-flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-8 py-4 text-sm font-semibold text-slate-700 hover:border-brand-300 hover:text-brand-600 transition-all duration-300">
+                   class="inline-flex items-center gap-3 rounded-2xl border px-8 py-4 text-sm font-semibold transition-all duration-300" style="border-color:#2d4a6e;color:#c0d2e8;background:#0d1e36">
                     <i class="fa-solid fa-phone"></i> Call Us
                 </a>
             </div>

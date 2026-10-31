@@ -7,12 +7,13 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background: #0a0614;
+      background: #050b18;
       color: #f8fafc;
       min-height: 100vh;
       overflow-x: hidden;
@@ -23,10 +24,10 @@
     .bg-mesh {
       position: fixed; inset: 0; z-index: 0; pointer-events: none;
       background:
-        radial-gradient(ellipse 80% 60% at 20% 0%, rgba(124,58,237,.35) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 50% at 80% 100%, rgba(99,102,241,.25) 0%, transparent 55%),
-        radial-gradient(ellipse 50% 40% at 50% 50%, rgba(167,139,250,.1) 0%, transparent 70%),
-        linear-gradient(160deg, #0a0614 0%, #110d22 40%, #0d0a1e 100%);
+        radial-gradient(ellipse 80% 60% at 20% 0%, rgba(124,58,237,.25) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 100%, rgba(99,102,241,.15) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 40% at 50% 50%, rgba(167,139,250,.05) 0%, transparent 70%),
+        linear-gradient(160deg, #050b18 0%, #08162a 40%, #050b18 100%);
     }
 
     /* Animated particles */
@@ -234,6 +235,12 @@
         {{ __('cart.your_order_reference') }}
       </p>
       <div class="ref-badge">{{ $reference }}</div>
+      
+      {{-- Barcode --}}
+      <div style="margin-top:1.5rem;display:flex;justify-content:center;opacity:.85;filter:drop-shadow(0 0 10px rgba(167,139,250,.2));">
+        <svg id="barcode"></svg>
+      </div>
+
       <p style="font-size:.76rem;color:#64748b;margin-top:.85rem;display:flex;align-items:center;justify-content:center;gap:.45rem;">
         <i class="fa-solid fa-copy" style="color:#6d28d9;cursor:pointer;" onclick="copyRef('{{ $reference }}')" title="{{ __('cart.your_order_reference') }}"></i>
         <span id="refCopyMsg">{{ __('cart.copy_ref_hint') }}</span>
@@ -331,6 +338,23 @@
 </style>
 
 <script>
+// ── Barcode generation ────────────────────────────────────────
+(function generateBarcode() {
+  if (typeof JsBarcode === 'undefined') return;
+  var ref = @json($reference ?? '');
+  if (!ref) return;
+  
+  JsBarcode("#barcode", ref, {
+    format: "CODE128",
+    lineColor: "#a78bfa",
+    width: 2.2,
+    height: 44,
+    displayValue: false,
+    background: "transparent",
+    margin: 0
+  });
+})();
+
 // ── Copy reference ────────────────────────────────────────────
 function copyRef(ref) {
   navigator.clipboard.writeText(ref).then(function() {

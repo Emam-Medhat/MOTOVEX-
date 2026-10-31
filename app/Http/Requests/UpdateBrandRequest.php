@@ -18,7 +18,7 @@ class UpdateBrandRequest extends FormRequest
         return [
             'name'         => ['required', 'string', 'max:100', 'unique:brands,name,' . $brandId],
             'description'  => ['required', 'string', 'max:2000'],
-            'logo_url'     => ['nullable', 'url', 'max:500'],
+            'logo'         => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,svg', 'max:2048'],
             'website_url'  => ['nullable', 'url', 'max:500'],
             'country'      => ['nullable', 'string', 'max:100'],
             'is_published' => ['sometimes', 'boolean'],

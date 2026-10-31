@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
     <title>{{ __('contact.meta_title') }}</title>
     <meta name="description" content="{{ __('contact.meta_desc') }}">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -24,38 +25,38 @@
         };
     </script>
     <style>
-        html, body { background: #f8f9fa; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; color: #0f172a; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        html, body { background: #050b18; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; color: #f4f8ff; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
         ::-webkit-scrollbar { width: 7px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-track { background: #08162a; }
         ::-webkit-scrollbar-thumb { background: #7c3aed; border-radius: 10px; }
 
         .cp-input {
             width: 100%;
-            border: 1.5px solid #e2e8f0;
+            border: 1.5px solid #1d3a5e;
             border-radius: 12px;
-            background: #f8fafc;
+            background: #071326;
             padding: 11px 14px;
             font-size: 14px;
-            color: #0f172a;
+            color: #dceaff;
             font-family: inherit;
             outline: none;
             transition: border-color .2s, background .2s, box-shadow .2s;
         }
-        .cp-input::placeholder { color: #94a3b8; }
+        .cp-input::placeholder { color: #4a6a8a; }
         .cp-input:focus {
-            border-color: #8b5cf6;
-            background: #fff;
-            box-shadow: 0 0 0 3px rgba(139,92,246,.12);
+            border-color: #853cff;
+            background: #08162a;
+            box-shadow: 0 0 0 3px rgba(133,60,255,.18);
         }
-        .cp-input.is-error { border-color: #ef4444; background: #fff5f5; }
-        .cp-input.is-error:focus { box-shadow: 0 0 0 3px rgba(239,68,68,.12); }
+        .cp-input.is-error { border-color: #ef4444; background: #1a0505; }
+        .cp-input.is-error:focus { box-shadow: 0 0 0 3px rgba(239,68,68,.18); }
 
         .cp-label {
             display: block;
             font-size: 11px;
             font-weight: 700;
-            color: #64748b;
+            color: #5a7a9a;
             margin-bottom: 6px;
             text-transform: uppercase;
             letter-spacing: 0.07em;
@@ -75,36 +76,36 @@
     </style>
 @include('partials.rtl-styles')
 </head>
-<body>
+<body style="background:#050b18;color:#f4f8ff">
 
 @include('partials.navbar')
 
 {{-- Hero --}}
-<section class="bg-white border-b border-slate-200">
+<section style="background:#08162a;border-bottom:1px solid #15385d">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 text-center">
-        <div class="inline-flex items-center gap-2 rounded-full bg-brand-50 border border-brand-200 px-4 py-1.5 text-xs font-bold text-brand-700 mb-5 reveal">
+        <div class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold mb-5 reveal" style="background:#0d0a22;border:1px solid #2d1b69;color:#c4abff">
             <span class="w-2 h-2 rounded-full bg-brand-500 animate-pulse"></span>
             {{ __('contact.hero_badge') }}
         </div>
-        <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight reveal" style="transition-delay:.1s">
+        <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight reveal" style="color:#f4f8ff;transition-delay:.1s">
             {{ __('contact.hero_heading') }}
         </h1>
-        <p class="mt-4 text-slate-500 text-lg max-w-xl mx-auto reveal" style="transition-delay:.2s">
+        <p class="mt-4 text-lg max-w-xl mx-auto reveal" style="color:#91a9c6;transition-delay:.2s">
             {{ __('contact.hero_sub') }}
         </p>
     </div>
 </section>
 
 {{-- Main --}}
-<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
+<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14" style="background:#050b18">
     <div class="grid lg:grid-cols-5 gap-10 lg:gap-14">
 
         {{-- ── Left: Info + Stats ──────────────────────────────── --}}
         <aside class="lg:col-span-2 flex flex-col gap-8">
 
             {{-- Contact details --}}
-            <div class="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm reveal">
-                <h2 class="text-base font-bold text-slate-900 mb-6">{{ __('contact.details_heading') }}</h2>
+            <div class="rounded-2xl p-7 shadow-sm reveal" style="background:#08162a;border:1px solid #15385d">
+                <h2 class="text-base font-bold mb-6" style="color:#f4f8ff">{{ __('contact.details_heading') }}</h2>
                 <div class="flex flex-col gap-5">
                     @foreach([
                         ['fa-location-dot', __('contact.label_address'), '123 Street, Cairo, Egypt'],
@@ -113,12 +114,12 @@
                         ['fa-clock',        __('contact.label_hours'),   'Sun – Thu: 10am – 8pm'],
                     ] as [$icon, $label, $value])
                     <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 rounded-xl bg-brand-50 border border-brand-100 flex items-center justify-center text-brand-600 shrink-0">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-brand-400 shrink-0" style="background:#0d0a22;border:1px solid #2d1b69">
                             <i class="fa-solid {{ $icon }} text-sm"></i>
                         </div>
                         <div>
-                            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">{{ $label }}</p>
-                            <p class="text-sm font-semibold text-slate-800 mt-0.5">{{ $value }}</p>
+                            <p class="text-[10px] font-bold uppercase tracking-widest" style="color:#5a7a9a">{{ $label }}</p>
+                            <p class="text-sm font-semibold mt-0.5" style="color:#dceaff">{{ $value }}</p>
                         </div>
                     </div>
                     @endforeach
@@ -127,7 +128,7 @@
 
             {{-- Stats --}}
             <div class="grid grid-cols-3 gap-3 reveal" style="transition-delay:.1s">
-                @foreach([['150+',__('contact.stat_bikes)],['12K+',__('contact.stat_clients)],['98%',__('contact.stat_satisfaction')]] as [$n,$l])
+                @foreach([['150+',__('contact.stat_bikes')],['12K+',__('contact.stat_clients')],['98%',__('contact.stat_satisfaction')]] as [$n,$l])
                 <div class="bg-gradient-to-br from-brand-600 to-brand-800 rounded-2xl p-5 text-center text-white shadow-lg shadow-brand-500/25">
                     <div class="text-2xl font-extrabold">{{ $n }}</div>
                     <div class="text-[11px] font-medium opacity-80 mt-1">{{ $l }}</div>
@@ -138,7 +139,7 @@
             {{-- Guarantees --}}
             <div class="flex flex-wrap gap-2 reveal" style="transition-delay:.2s">
                 @foreach([__('contact.guarantee_1'),__('contact.guarantee_2'),__('contact.guarantee_3')] as $tag)
-                <span class="inline-flex items-center gap-2 bg-brand-50 border border-brand-200 rounded-xl px-3 py-2 text-xs font-semibold text-brand-700">
+                <span class="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold" style="background:#0d0a22;border:1px solid #2d1b69;color:#c4abff">
                     <i class="fa-solid fa-check text-[10px]"></i> {{ $tag }}
                 </span>
                 @endforeach
@@ -150,22 +151,22 @@
 
             {{-- Success flash --}}
             @if(session('success'))
-            <div class="mb-6 flex items-center gap-3 bg-emerald-50 border border-emerald-200 rounded-2xl px-5 py-4 text-sm font-semibold text-emerald-800">
-                <i class="fa-solid fa-circle-check text-emerald-500 text-lg shrink-0"></i>
+            <div class="mb-6 flex items-center gap-3 rounded-2xl px-5 py-4 text-sm font-semibold" style="background:#062016;border:1px solid #0d5c2e;color:#6ee7b7">
+                <i class="fa-solid fa-circle-check text-lg shrink-0" style="color:#34d399"></i>
                 {{ session('success') }}
             </div>
             @endif
 
             {{-- Errors summary --}}
             @if($errors->any())
-            <div class="mb-5 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700">
+            <div class="mb-5 rounded-xl px-4 py-3 text-sm" style="background:#1a0505;border:1px solid #5c1212;color:#fca5a5">
                 <i class="fa-solid fa-triangle-exclamation mr-1"></i>
                 Please fix the errors below.
             </div>
             @endif
 
-            <div class="bg-white border border-slate-200 rounded-3xl shadow-sm p-7 sm:p-10">
-                <h2 class="text-xl font-extrabold text-slate-900 mb-7">Send Your Message</h2>
+            <div class="rounded-3xl shadow-sm p-7 sm:p-10" style="background:#08162a;border:1px solid #15385d">
+                <h2 class="text-xl font-extrabold mb-7" style="color:#f4f8ff">Send Your Message</h2>
 
                 <form method="POST" action="{{ route('contact.store') }}" novalidate>
                     @csrf
@@ -174,16 +175,16 @@
                     @if(isset($motorcycle) && $motorcycle)
                         <input type="hidden" name="motorcycle_id" value="{{ $motorcycle->id }}">
                         <input type="hidden" name="enquiry_type"  value="product">
-                        <div class="mb-5 flex items-center gap-3 rounded-xl bg-brand-50 border border-brand-200 px-4 py-3 text-sm font-semibold text-brand-800">
-                            <i class="fa-solid fa-motorcycle text-brand-500"></i>
+                        <div class="mb-5 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold" style="background:#0d0a22;border:1px solid #2d1b69;color:#c4abff">
+                            <i class="fa-solid fa-motorcycle" style="color:#a66cff"></i>
                             Product enquiry: {{ $motorcycle->brand->name }} {{ $motorcycle->model_name }}
                         </div>
                     @endif
 
                     {{-- Spare parts note (when coming from spare-parts page) --}}
                     @if(!empty($prefillSubject) && str_contains($prefillSubject, 'Spare Part'))
-                    <div class="mb-5 flex items-center gap-3 rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm font-semibold text-amber-800">
-                        <i class="fa-solid fa-gears text-amber-500"></i>
+                    <div class="mb-5 flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold" style="background:#1a1000;border:1px solid #5c3a00;color:#fcd34d">
+                        <i class="fa-solid fa-gears" style="color:#fbbf24"></i>
                         Spare Part Enquiry — form pre-filled for you
                     </div>
                     @endif
@@ -260,7 +261,7 @@
                         <i class="fa-solid fa-paper-plane"></i> Send Message
                     </button>
 
-                    <p class="mt-4 text-center text-xs text-slate-400">
+                    <p class="mt-4 text-center text-xs" style="color:#4a6a8a">
                         <i class="fa-solid fa-lock mr-1"></i>
                         Your information is kept private and never shared.
                     </p>

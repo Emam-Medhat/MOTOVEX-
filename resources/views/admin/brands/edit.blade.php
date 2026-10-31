@@ -1,5 +1,6 @@
 @extends('layouts.admin')
 @section('title', 'Edit ' . $brand->name)
+@php use Illuminate\Support\Facades\Storage; @endphp
 
 @section('content')
 <div class="page-header">
@@ -13,7 +14,7 @@
 </div>
 
 <div class="panel border-0 shadow-sm p-4">
-    <form method="POST" action="{{ route('admin.brands.update', $brand) }}">
+    <form method="POST" action="{{ route('admin.brands.update', $brand) }}" enctype="multipart/form-data">
         @csrf @method('PUT')
 
         <div class="row g-4">
@@ -44,9 +45,18 @@
             </div>
 
             <div class="col-md-12">
-                <label class="form-label">Logo URL</label>
-                <input type="url" name="logo_url" value="{{ old('logo_url', $brand->logo_url) }}"
-                       class="form-control">
+                <label class="form-label">Logo</label>
+                @if($brand->logo_url)
+                    <div class="mb-2">
+                        <img src="{{ str_starts_with($brand->logo_url, 'http') ? $brand->logo_url : Storage::url($brand->logo_url) }}"
+                             alt="{{ $brand->name }}" style="height:60px; object-fit:contain;">
+                        <span class="text-muted small ms-2">Current logo</span>
+                    </div>
+                @endif
+                <input type="file" name="logo" accept="image/*"
+                       class="form-control {{ $errors->has('logo') ? 'is-invalid' : '' }}">
+                <div class="form-text">Leave empty to keep existing logo. Accepted: JPG, PNG, WEBP, SVG — max 2 MB</div>
+                @error('logo')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
             </div>
 
             <div class="col-md-12 mt-4">

@@ -268,6 +268,9 @@
     .mvx-group-title i { color: #8B5CF6; font-size: 13px; }
     .mvx-group-title::after { content: ''; flex: 1; height: 1px; background: #E9E8F5; }
 </style>
+
+{{-- Shared checkout popup styles — same source as the standalone checkout page. --}}
+@include('cart.checkout-styles')
 @endpush
 
 @section('content')
@@ -605,7 +608,7 @@
                         <span class="mvx-total-value"><small>{{ $cartCurrency }}</small>{{ number_format($total) }}</span>
                     </div>
 
-                    <a href="{{ route('cart.checkout') }}" class="mvx-cta mt-6">
+                    <a href="{{ route('cart.checkout') }}" class="mvx-cta mt-6" id="mvx-checkout-btn">
                         {{ __('cart.proceed_checkout') }}
                         <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
                     </a>
@@ -639,5 +642,133 @@
             }
         });
     });
+
+    // ── Checkout Modal ────────────────────────────────────────────────────────
+    // Fetches the modal HTML fragment from /cart/checkout?modal=1 and injects
+    // it into an overlay so the cart page stays visible behind the modal.
+    // Falls back gracefully to normal navigation if fetch fails.
+    (function () {
+        var checkoutBtn = document.getElementById('mvx-checkout-btn');
+        if (!checkoutBtn) return;
+
+        checkoutBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            var checkoutUrl = checkoutBtn.getAttribute('href');
+            var modalUrl    = checkoutUrl + (checkoutUrl.indexOf('?') === -1 ? '?' : '&') + 'modal=1';
+
+            // Show loading state on button
+            checkoutBtn.style.opacity   = '.65';
+            checkoutBtn.style.pointerEvents = 'none';
+
+            fetch(modalUrl, {
+                credentials: 'same-origin',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(function (res) {
+                if (!res.ok) throw new Error('Network error ' + res.status);
+                return res.text();
+            })
+            .then(function (html) {
+                openModal(html, checkoutUrl);
+            })
+            .catch(function () {
+                // Fallback: navigate normally
+                window.location.href = checkoutUrl;
+            })
+            .finally(function () {
+                checkoutBtn.style.opacity      = '';
+                checkoutBtn.style.pointerEvents = '';
+            });
+        });
+
+        function openModal (innerHtml, checkoutUrl) {
+            // Build overlay
+            var backdrop = document.createElement('div');
+            backdrop.id  = 'cko-backdrop';
+            backdrop.setAttribute('role', 'dialog');
+            backdrop.setAttribute('aria-modal', 'true');
+            backdrop.setAttribute('aria-labelledby', 'cko-title');
+
+            var modal = document.createElement('div');
+            modal.id  = 'cko-modal';
+
+            // Close button
+            var closeBtn = document.createElement('button');
+            closeBtn.id        = 'cko-close';
+            closeBtn.type      = 'button';
+            closeBtn.setAttribute('aria-label', 'Close');
+            closeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+
+            modal.appendChild(closeBtn);
+
+            // Modal content
+            var content = document.createElement('div');
+            content.innerHTML = innerHtml;
+            modal.appendChild(content);
+
+            backdrop.appendChild(modal);
+            document.body.appendChild(backdrop);
+            document.body.style.overflow = 'hidden';
+
+            // ── Close helpers ──
+            function closeModal () {
+                document.body.style.overflow = '';
+                backdrop.style.opacity    = '0';
+                backdrop.style.transition = 'opacity .2s';
+                setTimeout(function () {
+                    if (backdrop.parentNode) backdrop.parentNode.removeChild(backdrop);
+                }, 220);
+            }
+
+            closeBtn.addEventListener('click', closeModal);
+
+            backdrop.addEventListener('click', function (e) {
+                if (e.target === backdrop) closeModal();
+            });
+
+            document.addEventListener('keydown', function onKey (e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                    document.removeEventListener('keydown', onKey);
+                }
+            });
+
+            // ── Form submit → intercept & POST, handle redirect ──
+            var form = document.getElementById('cko-form');
+            if (form) {
+                // Focus first field
+                var firstInput = form.querySelector('input:not([type="hidden"])');
+                if (firstInput) setTimeout(function () { firstInput.focus(); }, 280);
+
+                var submitted = false;
+                var submitBtn = document.getElementById('cko-submit');
+                var submitTxt = document.getElementById('cko-submit-txt');
+
+                form.addEventListener('submit', function (ev) {
+                    // Client-side validation
+                    var nameF  = form.querySelector('[name="name"]');
+                    var emailF = form.querySelector('[name="email"]');
+                    var phoneF = form.querySelector('[name="phone"]');
+                    var valid  = true;
+                    [nameF, emailF, phoneF].forEach(function (f) {
+                        if (!f || !f.value.trim()) { if (f) f.classList.add('is-err'); valid = false; }
+                        else { if (f) f.classList.remove('is-err'); }
+                    });
+                    if (!valid) { ev.preventDefault(); return; }
+                    if (submitted) { ev.preventDefault(); return; }
+
+                    submitted = true;
+                    if (submitBtn) submitBtn.disabled = true;
+                    if (submitTxt) submitTxt.textContent = 'Processing…';
+
+                    // Let the form POST normally — the server will redirect to order-success
+                    // which will be a full page navigation (no modal needed there).
+                });
+            }
+        }
+
+        // Modal CSS lives in the cart.checkout-styles partial (loaded through the head stack),
+        // so the popup on this page and the standalone checkout page never diverge.
+    })();
 </script>
 @endpush

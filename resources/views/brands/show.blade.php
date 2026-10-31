@@ -26,21 +26,21 @@
   </script>
   <style>
     :root {
-      --mvx-bg:           #ffffff;
-      --mvx-lav:          #f7f6fd;
-      --mvx-lav-2:        #f0edfa;
-      --mvx-surface:      #ffffff;
-      --mvx-ink:          #172033;
-      --mvx-ink-2:        #3f4a5c;
-      --mvx-muted:        #64748b;
-      --mvx-line:         #e8e7f2;
-      --mvx-line-2:       #dcd9ee;
-      --mvx-primary:      #7c3aed;
-      --mvx-primary-d:    #6d28d9;
-      --mvx-primary-soft: #f3e8ff;
+      --mvx-bg:           #050b18;
+      --mvx-lav:          #08162a;
+      --mvx-lav-2:        #0b1c34;
+      --mvx-surface:      #08162a;
+      --mvx-ink:          #f4f8ff;
+      --mvx-ink-2:        #dceaff;
+      --mvx-muted:        #91a9c6;
+      --mvx-line:         #15385d;
+      --mvx-line-2:       #1e4d7a;
+      --mvx-primary:      #853cff;
+      --mvx-primary-d:    #a66cff;
+      --mvx-primary-soft: rgba(139, 92, 246, 0.15);
       --mvx-radius:       18px;
-      --mvx-shadow-sm:    0 1px 2px rgba(23,32,51,.04);
-      --mvx-shadow-lg:    0 22px 44px -22px rgba(124,58,237,.28);
+      --mvx-shadow-sm:    0 4px 12px rgba(0, 0, 0, .3);
+      --mvx-shadow-lg:    0 22px 44px -22px rgba(139, 92, 246, .4);
     }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
@@ -86,7 +86,7 @@
     /* ── Badge ── */
     .mvx-badge {
       display: inline-flex; align-items: center; gap: .45rem;
-      border-radius: 999px; border: 1px solid #e2d8fb;
+      border-radius: 999px; border: 1px solid rgba(139, 92, 246, 0.3);
       background: var(--mvx-primary-soft); color: var(--mvx-primary-d);
       padding: .4rem .85rem; font-size: .72rem; font-weight: 700; letter-spacing: .01em;
     }
@@ -96,8 +96,8 @@
       position: relative;
       border-bottom: 1px solid var(--mvx-line);
       background:
-        radial-gradient(110% 120% at 100% 0%, rgba(124,58,237,.07), transparent 58%),
-        linear-gradient(180deg,#fbfaff 0%,#ffffff 100%);
+        radial-gradient(110% 120% at 100% 0%, rgba(139, 92, 246, .07), transparent 58%),
+        linear-gradient(180deg,#071326 0%,#050b18 100%);
       padding-block: 2.5rem 2.5rem;
     }
     @media (min-width:768px) { .mvx-hero { padding-block: 3.5rem; } }
@@ -127,7 +127,7 @@
     .mvx-stat {
       display: flex; align-items: center; gap: .55rem;
       padding: .55rem 1rem; border-radius: 12px;
-      border: 1px solid var(--mvx-line); background: var(--mvx-lav);
+      border: 1px solid var(--mvx-line); background: #0c2039;
       font-size: .82rem; font-weight: 700; color: var(--mvx-ink-2);
     }
     .mvx-stat i { color: var(--mvx-primary); font-size: .78rem; }
@@ -138,19 +138,19 @@
       padding: .85rem 1.75rem; border-radius: 13px;
       background: var(--mvx-primary); color: #fff; font-size: .9rem; font-weight: 700;
       text-decoration: none;
-      box-shadow: 0 12px 28px -14px rgba(124,58,237,.8);
+      box-shadow: 0 12px 28px -14px rgba(133, 60, 255, .8);
       transition: background .25s, transform .25s, box-shadow .25s;
     }
-    .mvx-btn-primary:hover { background: var(--mvx-primary-d); transform: translateY(-2px); box-shadow: 0 18px 36px -14px rgba(109,40,217,.9); }
+    .mvx-btn-primary:hover { background: var(--mvx-primary-d); transform: translateY(-2px); box-shadow: 0 18px 36px -14px rgba(166, 108, 255, .9); }
 
     .mvx-btn-outline {
       display: inline-flex; align-items: center; gap: .55rem;
       padding: .83rem 1.6rem; border-radius: 13px;
-      border: 1px solid var(--mvx-line-2); background: var(--mvx-surface);
+      border: 1px solid var(--mvx-line-2); background: #071326;
       color: var(--mvx-ink-2); font-size: .9rem; font-weight: 700; text-decoration: none;
       transition: border-color .2s, color .2s, background .2s;
     }
-    .mvx-btn-outline:hover { border-color: var(--mvx-primary); color: var(--mvx-primary-d); background: var(--mvx-lav); }
+    .mvx-btn-outline:hover { border-color: var(--mvx-primary); color: var(--mvx-primary-d); background: #0c2039; }
 
     /* Hero image */
     .mvx-hero-img-wrap {
@@ -159,13 +159,13 @@
       border: 1px solid var(--mvx-line);
       background: var(--mvx-lav);
       aspect-ratio: 16/10;
-      box-shadow: 0 28px 56px -22px rgba(124,58,237,.15);
+      box-shadow: 0 28px 56px -22px rgba(0, 0, 0, .3);
     }
-    .mvx-hero-img-wrap img { width:100%; height:100%; object-fit:cover; display:block; }
+    .mvx-hero-img-wrap img { width:100%; height:100%; object-fit:cover; display:block; filter: brightness(0.9); }
     .mvx-hero-fallback {
       width:100%; height:100%; display:flex; align-items:center; justify-content:center;
       flex-direction:column; gap:.6rem;
-      background: radial-gradient(120% 100% at 50% 20%, var(--mvx-lav) 0%, var(--mvx-lav-2) 100%);
+      background: radial-gradient(120% 100% at 50% 20%, #0d2039 0%, var(--mvx-lav-2) 100%);
     }
     .mvx-hero-initial {
       font-size: 5rem; font-weight: 900; color: var(--mvx-primary-d);
@@ -180,11 +180,11 @@
       position: absolute; bottom: -1.25rem; right: 1.5rem;
       display: flex; align-items: center; justify-content: center;
       width: 5.5rem; height: 5.5rem; border-radius: 16px;
-      background: #fff; border: 1px solid var(--mvx-line);
-      box-shadow: 0 12px 28px -12px rgba(23,32,51,.18);
+      background: #0c2039; border: 1px solid var(--mvx-line);
+      box-shadow: 0 12px 28px -12px rgba(0, 0, 0, .3);
       padding: .9rem; overflow: hidden;
     }
-    .mvx-logo-pill img { max-height: 100%; max-width: 100%; object-fit: contain; }
+    .mvx-logo-pill img { max-height: 100%; max-width: 100%; object-fit: contain; filter: brightness(0) invert(0.9); }
 
     /* ── Models section ── */
     .mvx-models-sec {
@@ -222,9 +222,9 @@
     /* ── Moto card ── */
     .mvx-moto-card {
       position: relative; display: flex; flex-direction: column;
-      background: var(--mvx-surface); border: 1px solid var(--mvx-line);
+      background: linear-gradient(155deg, #102642, #071326 72%); border: 1px solid var(--mvx-line);
       border-radius: var(--mvx-radius); overflow: hidden;
-      box-shadow: var(--mvx-shadow-sm);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
       transition: transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s, border-color .35s;
       text-decoration: none; color: inherit;
       animation: mvxRise .55s cubic-bezier(.16,1,.3,1) backwards;
@@ -233,13 +233,13 @@
     @media (prefers-reduced-motion:reduce) { .mvx-moto-card { animation: none; } }
     .mvx-moto-card:hover {
       transform: translateY(-6px);
-      border-color: #ded7f5;
-      box-shadow: var(--mvx-shadow-lg);
+      border-color: #8d4cff;
+      box-shadow: 0 0 25px rgba(115, 58, 255, 0.2);
     }
 
     .mvx-moto-img {
       position: relative; aspect-ratio: 16/10;
-      overflow: hidden; background: var(--mvx-lav);
+      overflow: hidden; background: #071426;
     }
     .mvx-moto-img img {
       width: 100%; height: 100%; object-fit: cover; display: block;
@@ -250,14 +250,14 @@
     .mvx-moto-badge-year {
       position: absolute; top: .75rem; right: .75rem;
       padding: .28rem .65rem; border-radius: 999px;
-      background: rgba(255,255,255,.92); backdrop-filter: blur(8px);
-      font-size: .72rem; font-weight: 700; color: var(--mvx-ink);
-      border: 1px solid rgba(255,255,255,.6);
+      background: rgba(11, 28, 52, 0.92); backdrop-filter: blur(8px);
+      font-size: .72rem; font-weight: 700; color: #fff;
+      border: 1px solid rgba(255,255,255,.1);
     }
     .mvx-moto-badge-cat {
       position: absolute; top: .75rem; left: .75rem;
       padding: .28rem .65rem; border-radius: 999px;
-      background: rgba(124,58,237,.88); backdrop-filter: blur(8px);
+      background: rgba(133, 60, 255, 0.88); backdrop-filter: blur(8px);
       font-size: .7rem; font-weight: 700; color: #fff;
     }
 
@@ -280,7 +280,7 @@
     .mvx-spec-tag {
       display: inline-flex; align-items: center; gap: .3rem;
       padding: .28rem .6rem; border-radius: 8px;
-      border: 1px solid var(--mvx-line); background: #f8f9fc;
+      border: 1px solid var(--mvx-line); background: #0c2039;
       font-size: .72rem; font-weight: 600; color: var(--mvx-ink-2);
     }
     .mvx-spec-tag i { font-size: .62rem; color: var(--mvx-primary); }
@@ -291,7 +291,7 @@
       display: flex; align-items: center; justify-content: space-between;
     }
     .mvx-moto-price {
-      font-size: 1.15rem; font-weight: 900; color: var(--mvx-primary-d);
+      font-size: 1.15rem; font-weight: 900; color: #ffc13f;
     }
     .mvx-moto-price-none {
       font-size: .82rem; font-weight: 600; color: var(--mvx-muted);
@@ -313,7 +313,7 @@
       display: grid; place-items: center;
       width: 3.4rem; height: 3.4rem;
       margin: 0 auto 1rem; border-radius: 14px;
-      background: #fff; border: 1px solid var(--mvx-line-2);
+      background: #0c2039; border: 1px solid var(--mvx-line-2);
       color: var(--mvx-primary-d); font-size: 1.3rem;
     }
     .mvx-empty h3 { font-size: 1.1rem; font-weight: 800; color: var(--mvx-ink); }
@@ -322,11 +322,11 @@
       display: inline-flex; align-items: center; gap: .5rem;
       margin-top: 1.35rem; padding: .7rem 1.25rem;
       border-radius: 11px; border: 1px solid var(--mvx-line-2);
-      background: #fff; color: var(--mvx-ink);
+      background: #0c2039; color: var(--mvx-ink);
       font-size: .85rem; font-weight: 700; text-decoration: none;
       transition: border-color .2s, color .2s, box-shadow .2s;
     }
-    .mvx-btn-ghost:hover { border-color: var(--mvx-primary); color: var(--mvx-primary-d); box-shadow: 0 8px 20px -14px rgba(124,58,237,.8); }
+    .mvx-btn-ghost:hover { border-color: var(--mvx-primary); color: var(--mvx-primary-d); box-shadow: 0 8px 20px -14px rgba(139, 92, 246,.8); }
 
     .mvx-pager { margin-top: 2.5rem; display: flex; justify-content: center; }
 
@@ -335,14 +335,14 @@
     .mvx-cta-box {
       position: relative; border-radius: 22px;
       border: 1px solid var(--mvx-line);
-      background: linear-gradient(160deg,#faf8ff 0%,#f3effb 100%);
+      background: linear-gradient(160deg,#0c1f38 0%,#071326 100%);
       padding: 3rem 1.5rem; text-align: center; overflow: hidden;
     }
     .mvx-cta-box::before {
       content: ''; position: absolute;
       top: -50%; left: 50%; transform: translateX(-50%);
       width: 40rem; height: 18rem;
-      background: radial-gradient(ellipse, rgba(124,58,237,.09), transparent 65%);
+      background: radial-gradient(ellipse, rgba(139, 92, 246,.09), transparent 65%);
       pointer-events: none;
     }
     .mvx-cta-box h2 {

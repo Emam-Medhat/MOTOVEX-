@@ -87,9 +87,7 @@
     html[dir="rtl"] .sidebar {
         left: auto !important;
         right: 0 !important;
-        transform: translateX(100%);
     }
-    html[dir="rtl"] .sidebar.show { transform: translateX(0); }
     html[dir="rtl"] .main {
         margin-left: 0 !important;
         margin-right: 242px !important;
@@ -103,6 +101,26 @@
     html[dir="rtl"] .search input { padding: 11px 43px 11px 15px; }
     html[dir="rtl"] .filter-bar input { padding-left: 12px; padding-right: 32px; }
     html[dir="rtl"] .search-wrap i { left: auto; right: 10px; }
+
+    /* Mobile: hide sidebar off-screen to the right in RTL */
+    @media(max-width: 768px) {
+        html[dir="rtl"] .sidebar {
+            transform: translateX(100%);
+        }
+        html[dir="rtl"] .sidebar.show {
+            transform: translateX(0) !important;
+        }
+        html[dir="rtl"] .main {
+            margin-right: 0 !important;
+        }
+    }
+
+    @media(max-width: 1100px) {
+        html[dir="rtl"] .main {
+            margin-right: 210px !important;
+            margin-left: 0 !important;
+        }
+    }
 
     /* ── Account portal (Tailwind) ─────────────────────────────────── */
     html[dir="rtl"] .ac-nav-item { text-align: right; }

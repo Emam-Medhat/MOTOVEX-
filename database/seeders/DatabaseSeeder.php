@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             EnquirySeeder::class,
             PromotionSeeder::class,
+            MotovexPromotionSeeder::class,
             ShowroomSeeder::class,
             // Real-world sport & racing motorcycles (safe to re-run)
             RacingBrandSeeder::class,

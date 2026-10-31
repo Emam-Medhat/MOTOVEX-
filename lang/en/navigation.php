@@ -24,6 +24,7 @@ return [
     'dashboard'         => 'Dashboard',
     'overview'          => 'Overview',
     'back_to_site'      => 'Back to site',
+    'visit_website'     => 'Visit website',
 
     // ── Search ──────────────────────────────────────────────────────────────────
     'search'            => 'Search',

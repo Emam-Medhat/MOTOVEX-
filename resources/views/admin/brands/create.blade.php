@@ -13,7 +13,7 @@
 </div>
 
 <div class="panel border-0 shadow-sm p-4">
-    <form method="POST" action="{{ route('admin.brands.store') }}">
+    <form method="POST" action="{{ route('admin.brands.store') }}" enctype="multipart/form-data">
         @csrf
 
         <div class="row g-4">
@@ -48,11 +48,11 @@
             </div>
 
             <div class="col-md-12">
-                <label class="form-label">Logo URL</label>
-                <input type="url" name="logo_url" value="{{ old('logo_url') }}"
-                       class="form-control {{ $errors->has('logo_url') ? 'is-invalid' : '' }}"
-                       placeholder="https://…">
-                @error('logo_url')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+                <label class="form-label">Logo</label>
+                <input type="file" name="logo" accept="image/*"
+                       class="form-control {{ $errors->has('logo') ? 'is-invalid' : '' }}">
+                <div class="form-text">Accepted: JPG, PNG, WEBP, SVG — max 2 MB</div>
+                @error('logo')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
             </div>
 
             <div class="col-md-12 mt-4">

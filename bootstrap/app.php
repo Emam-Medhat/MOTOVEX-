@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // before any controller or Blade template executes.
         $middleware->web(append: [
             \App\Http\Middleware\SetLocale::class,
+            \App\Http\Middleware\RequireAuthForPublicPages::class,
         ]);
 
         $middleware->alias([
@@ -23,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'brand.access'      => \App\Http\Middleware\CheckBrandAccess::class,
             'active'            => \App\Http\Middleware\EnsureUserIsActive::class,
             'merchant.approved' => \App\Http\Middleware\EnsureMerchantIsApproved::class,
+            'require.auth'      => \App\Http\Middleware\RequireAuthForPublicPages::class,
         ]);
 
         $middleware->redirectTo(

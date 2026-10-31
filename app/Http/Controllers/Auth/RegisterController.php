@@ -7,7 +7,6 @@ use App\Http\Requests\RegisterRequest;
 use App\Models\Brand;
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class RegisterController extends Controller
@@ -61,13 +60,11 @@ class RegisterController extends Controller
                 ->with('pending_name', $user->name);
         }
 
-        // Customer: log them in and take them to their account.
-        Auth::login($user);
-        $request->session()->regenerate();
-
+        // Customer: do NOT log them in either — send them to the login page
+        // so they sign in with their new credentials.
         return redirect()
-            ->route('account.dashboard')
-            ->with('success', 'Welcome to MOTOVEX! Your account is ready.');
+            ->route('login')
+            ->with('status', 'Welcome to MOTOVEX! Your account is ready — please log in.');
     }
 
     /**

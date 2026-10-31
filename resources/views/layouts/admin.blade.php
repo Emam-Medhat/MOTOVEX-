@@ -48,7 +48,7 @@
             background: linear-gradient(180deg,#0752a8,#06438c);
             position: fixed;
             top: 0;
-            left: 0;
+            inset-inline-start: 0;
             height: 100vh;
             color: white;
             z-index: 1000;
@@ -116,7 +116,7 @@
         }
 
         .nav-links .count {
-            margin-left: auto;
+            margin-inline-start: auto;
             background: #ef4444;
             color: #fff;
             padding: 2px 8px;
@@ -127,7 +127,7 @@
         }
 
         .main {
-            margin-left: 242px;
+            margin-inline-start: 242px;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -155,14 +155,15 @@
             width: 100%;
             border: 1px solid #dce5f2;
             border-radius: 8px;
-            padding: 11px 15px 11px 43px;
+            padding: 11px 15px;
+            padding-inline-start: 43px;
             outline: none;
             font-size: 13px;
         }
 
         .search i {
             position: absolute;
-            left: 15px;
+            inset-inline-start: 15px;
             top: 12px;
             color: var(--muted);
             font-size: 16px;
@@ -375,7 +376,7 @@
 
         @media(max-width: 1100px) {
             .sidebar { width: 210px; }
-            .main { margin-left: 210px; }
+            .main { margin-inline-start: 210px; }
             .content { padding: 18px; }
         }
 
@@ -384,8 +385,11 @@
                 transform: translateX(-100%);
                 width: 242px;
             }
-            .sidebar.show { transform: translateX(0); }
-            .main { margin-left: 0; }
+            [dir="rtl"] .sidebar {
+                transform: translateX(100%);
+            }
+            .sidebar.show { transform: translateX(0) !important; }
+            .main { margin-inline-start: 0; }
             .mobile-toggle { display: inline-block; }
             .search { width: 55%; }
             .profile-info { display: none; }
@@ -531,7 +535,7 @@
             font-family: inherit; outline: none;
             transition: border-color .15s, box-shadow .15s;
         }
-        .filter-bar input { min-width: 220px; padding-left: 32px; }
+        .filter-bar input { min-width: 220px; padding-inline-start: 32px; }
         .filter-bar select { min-width: 130px; cursor: pointer; }
         .filter-bar input:focus,
         .filter-bar select:focus {
@@ -549,7 +553,7 @@
         .filter-clear:hover { border-color: #fecaca; color: #dc2626; background: #fff1f2; }
         .search-wrap { position: relative; }
         .search-wrap i {
-            position: absolute; left: 10px; top: 50%;
+            position: absolute; inset-inline-start: 10px; top: 50%;
             transform: translateY(-50%); color: #94a3b8;
             font-size: 12px; pointer-events: none;
         }
@@ -634,15 +638,18 @@
 <div class="admin-layout">
     <!-- SIDEBAR -->
     <aside class="sidebar" id="sidebar">
-        <div class="logo">
+        <a href="{{ route('home') }}" class="logo text-white text-decoration-none">
             <i class="bi bi-bicycle"></i>
             <div>
                 <h4>MotoTrade</h4>
                 <small>Ride Your Business</small>
             </div>
-        </div>
+        </a>
 
         <nav class="nav-links">
+            <a href="{{ route('home') }}">
+                <i class="bi bi-globe2"></i> {{ __('navigation.visit_website') }}
+            </a>
 
             {{-- ── Overview ── --}}
             <div class="nav-section-label">{{ __('navigation.overview_section') }}</div>
@@ -759,7 +766,7 @@
                 </div>
                 
                 <div class="dropdown">
-                    <i class="bi bi-chevron-down ms-2" style="cursor:pointer" data-bs-toggle="dropdown"></i>
+                    <i class="bi bi-chevron-down ms-2" style="cursor:pointer;margin-inline-start:.5rem!important" data-bs-toggle="dropdown"></i>
                     <ul class="dropdown-menu dropdown-menu-end shadow border-0">
                         <li>
                             <form method="POST" action="{{ route('logout') }}" id="logout-form">
@@ -768,6 +775,11 @@
                                     <i class="bi bi-box-arrow-right me-2"></i> {{ __('navigation.sign_out') }}
                                 </button>
                             </form>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ route('account.profile') }}">
+                                <i class="bi bi-person me-2"></i> {{ __('common.profile') }}
+                            </a>
                         </li>
                     </ul>
                 </div>

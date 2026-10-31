@@ -145,8 +145,6 @@
     <style>
         :root{--bg:#050b18;--panel:#08162a;--panel2:#0b1c34;--line:#15385d;--blue:#13a8ff;--cyan:#4bd8ff;--purple:#853cff;--text:#f4f8ff;--muted:#91a9c6;--gold:#ffc247;--radius:17px}
         *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;overflow-x:hidden}a{color:inherit;text-decoration:none}button,input,select{font:inherit}.container{width:min(1240px,calc(100% - 34px));margin:auto}
-        .topbar{height:67px;background:rgba(3,9,22,.96);border-bottom:1px solid #17365b;position:sticky;top:0;z-index:100;backdrop-filter:blur(18px);box-shadow:0 8px 30px #0007}.nav{height:100%;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{display:flex;align-items:center;gap:9px;font-weight:900;letter-spacing:.4px;font-size:21px;white-space:nowrap}.brand-mark{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,#a64bff,#4b39ff 55%,#11b9ff);display:grid;place-items:center;box-shadow:0 0 22px #743cff88}.brand small{display:block;font-size:7px;letter-spacing:2px;color:#91a9c6;line-height:1}.navlinks{display:flex;align-items:center;gap:22px;font-size:12px;font-weight:700;color:#c8d7e9}.navlinks a{transition:.25s}.navlinks a:hover,.navlinks a.active{color:#b78aff;text-shadow:0 0 13px #8b43ff}.navtools{display:flex;align-items:center;gap:13px}.navicon{width:30px;height:30px;border:1px solid #1c3e64;border-radius:50%;display:grid;place-items:center;color:#d6eaff;font-size:12px;position:relative}.cart-dot{position:absolute;top:-5px;right:-4px;background:#f33b65;border-radius:50%;width:14px;height:14px;font-size:9px;display:grid;place-items:center}.lang{font-size:11px;color:#dceaff}.menu-toggle{display:none;background:none;border:0;color:white;font-size:22px}
-        .langsw{display:flex;align-items:center;gap:5px}.langsw a{padding:3px 7px;border-radius:6px;border:1px solid transparent;line-height:1;transition:.2s}.langsw a.on{color:#fff;background:#173253;border-color:#2f5ea0}.langsw a:hover{color:#c9aaff}
         .hero{min-height:430px;position:relative;display:flex;align-items:center;overflow:hidden;background:linear-gradient(90deg,#020918 0%,rgba(2,9,24,.94) 34%,rgba(2,9,24,.2) 100%),url('{{ $img('vayu-r1-1100.jpg') }}') center/cover;border-bottom:1px solid #14508a}.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#050b18 0%,transparent 26%,transparent 80%,#07132966);pointer-events:none}.hero-content{position:relative;z-index:1;max-width:560px;padding:62px 0}.eyebrow{color:#a979ff;font-size:12px;font-weight:800;letter-spacing:1px}.hero h1{font-size:clamp(31px,4.8vw,54px);line-height:1.28;margin:12px 0 8px;font-weight:900}.hero h1 span{display:block;color:#a66cff;text-shadow:0 0 24px #8b40ff66}.hero p{color:#c0d2e8;line-height:1.9;font-size:13.5px;max-width:470px}.actions{display:flex;gap:12px;margin-top:22px;flex-wrap:wrap}.btn{border:1px solid #a45cff;background:linear-gradient(110deg,#853dff,#4a35db);color:white;padding:11px 22px;border-radius:9px;font-weight:800;font-size:12px;box-shadow:0 0 20px #713bff66;cursor:pointer;display:inline-flex;align-items:center;gap:8px;justify-content:center;transition:.25s}.btn:hover{transform:translateY(-3px);box-shadow:0 0 28px #853dff99}.btn-outline{background:#07162cbb;border-color:#37618c;box-shadow:none}.btn-disabled{background:#16263b;border-color:#2b4463;color:#9db1c6;box-shadow:none;cursor:default}.btn-disabled:hover{transform:none;box-shadow:none}.hero-glow{position:absolute;width:320px;height:320px;border-radius:50%;border:1px solid #178bff55;box-shadow:0 0 70px #087dff33;left:10%;top:10%}
         .crumbs{display:flex;align-items:center;gap:8px;font-size:10.5px;color:#8ea7c4;margin-bottom:14px}.crumbs i{font-size:8px;opacity:.6}.crumbs a:hover{color:#b78aff}.crumbs span{color:#d6e6f8}
         .pill{display:inline-flex;align-items:center;gap:6px;background:#0d2440;border:1px solid #2b5d8f;border-radius:20px;padding:4px 11px;font-size:11px;color:#b7cde6;font-weight:700;vertical-align:middle}
@@ -192,32 +190,18 @@
         @media(max-width:700px){[dir="ltr"] .discount{position:static;transform:none}[dir="ltr"] .navlinks{right:0;left:0}}
     </style>
     @endunless
+    <style>
+        .hero {
+            background-image: linear-gradient({{ $isRtl ? '270deg' : '90deg' }}, rgba(2,9,24,.76) 0%, rgba(2,9,24,.48) 42%, rgba(2,9,24,.16) 100%), url('{{ asset('storage/motorcycles/kawasaki-ninja-zx-6r.jpg') }}');
+        }
+    </style>
 </head>
 <body>
-<header class="topbar">
-    <div class="container nav">
-        <a class="brand" href="{{ route('home') }}"><span class="brand-mark"><i class="fa-solid fa-motorcycle"></i></span><span>MOTOVEX<small>RIDE YOUR DREAM</small></span></a>
-        <button class="menu-toggle" id="menuToggle" aria-label="{{ __('motorcycles.lp_menu_open') }}" aria-expanded="false" aria-controls="navLinks"><i class="fa-solid fa-bars"></i></button>
-        <nav class="navlinks" id="navLinks">
-            <a href="{{ route('home') }}">{{ __('navigation.home') }}</a><a href="{{ route('motorcycles.index') }}" class="active">{{ __('navigation.all_motorcycles') }}</a><a href="{{ route('brands.index') }}">{{ __('navigation.brands') }}</a><a href="{{ route('spare-parts.index') }}">{{ __('navigation.spare_parts') }}</a><a href="{{ route('services') }}">{{ __('navigation.services') }}</a><a href="{{ route('promotions') }}">{{ __('navigation.promotions') }}</a><a href="{{ route('contact') }}">{{ __('navigation.contact') }}</a>
-        </nav>
-        <div class="navtools">
-            <div class="lang langsw" role="group" aria-label="{{ __('common.switch_language') }}">
-                <a href="{{ route('lang.switch', 'en') }}" rel="nofollow" class="{{ $locale === 'en' ? 'on' : '' }}">EN</a>
-                <a href="{{ route('lang.switch', 'ar') }}" rel="nofollow" class="{{ $locale === 'ar' ? 'on' : '' }}">ع</a>
-            </div>
-            <a class="navicon" href="{{ route('promotions') }}" aria-label="{{ __('navigation.promotions') }}"><i class="fa-solid fa-tag"></i></a>
-            <a class="navicon" href="{{ route('cart.index') }}" aria-label="{{ __('navigation.cart') }}"><i class="fa-solid fa-cart-shopping"></i>@if($cartCount > 0)<span class="cart-dot num-latin">{{ $cartCount }}</span>@endif</a>
-            <a class="navicon" href="{{ $accountUrl }}" aria-label="{{ __('navigation.my_account') }}"><i class="fa-regular fa-user"></i></a>
-            <a class="navicon" href="#catalogue" aria-label="{{ __('navigation.search') }}"><i class="fa-solid fa-magnifying-glass"></i></a>
-        </div>
-    </div>
-</header>
+@include('partials.navbar')
 
 <main>
     {{-- ═══════════════ 1. HERO ═══════════════ --}}
     <section class="hero">
-        <div class="hero-glow" aria-hidden="true"></div>
         <div class="container"><div class="hero-content">
             <nav class="crumbs" aria-label="{{ __('common.breadcrumb') }}">
                 <a href="{{ route('home') }}"><i class="fa-solid fa-house" aria-hidden="true"></i> {{ __('common.home') }}</a>

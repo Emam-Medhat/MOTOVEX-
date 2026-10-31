@@ -157,7 +157,7 @@ class CartController extends Controller
     }
 
     // ─── Checkout page ────────────────────────────────────────────────────────
-    public function checkout()
+    public function checkout(Request $request)
     {
         ['motorcycles' => $motoItems, 'spare_parts' => $spItems] = $this->getCartWithModels();
 
@@ -200,6 +200,13 @@ class CartController extends Controller
 
         // Regenerate submission token
         session()->put('cart_submission_token', (string) Str::uuid());
+
+        // When requested via AJAX (modal=1), return only the modal partial
+        if ($request->boolean('modal') || $request->ajax()) {
+            return response()
+                ->view('cart.checkout-modal', compact('motoItems', 'spItems', 'total'))
+                ->header('X-Checkout-Modal', '1');
+        }
 
         return view('cart.checkout', compact('motoItems', 'spItems', 'total'));
     }
